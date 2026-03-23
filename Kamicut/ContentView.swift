@@ -31,6 +31,13 @@ struct ContentView: View {
             .navigationTitle(String(localized: "App.Name"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        vm.showSavedCutsList = true
+                    } label: {
+                        Image(systemName: "folder")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         vm.reset()
@@ -73,6 +80,10 @@ struct ContentView: View {
                 .presentationDetents([.height(100), .medium, .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
+        }
+        .sheet(isPresented: $vm.showSavedCutsList) {
+            SavedCutsListView(vm: vm)
+                .presentationDetents([.medium, .large])
         }
     }
 

@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct KamicutApp: App {
@@ -6,5 +7,6 @@ struct KamicutApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: SavedCut.self)
     }
 }
