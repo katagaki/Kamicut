@@ -5,6 +5,13 @@ import SwiftUI
 enum TextAreaPosition: String, Codable, CaseIterable {
     case top = "Top"
     case bottom = "Bottom"
+
+    var localizedName: String {
+        switch self {
+        case .top: return String(localized: "TextArea.Position.Top")
+        case .bottom: return String(localized: "TextArea.Position.Bottom")
+        }
+    }
 }
 
 // MARK: - Template
@@ -35,6 +42,17 @@ struct CircleCutTemplate: Identifiable, Hashable, Codable {
 
     // Header font name
     var headerFontName: String
+
+    var localizedDisplayName: String {
+        switch name {
+        case "templateA": return String(localized: "Template.ComiketA")
+        case "templateB": return String(localized: "Template.ComiketB")
+        case "mangaReport": return String(localized: "Template.MangaReport")
+        case "comitia": return String(localized: "Template.Comitia")
+        case "custom": return String(localized: "Template.Custom")
+        default: return displayName
+        }
+    }
 
     static func == (lhs: CircleCutTemplate, rhs: CircleCutTemplate) -> Bool {
         lhs.id == rhs.id

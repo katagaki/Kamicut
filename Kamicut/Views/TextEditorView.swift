@@ -9,22 +9,22 @@ struct TextPropertiesSections: View {
 
     var body: some View {
         // Content
-        Section("Content") {
-            TextField("Text", text: $element.content, axis: .vertical)
+        Section("TextEditor.Content") {
+            TextField(String(localized: "TextEditor.TextPlaceholder"), text: $element.content, axis: .vertical)
                 .lineLimit(1...5)
         }
 
         // Font & Size
-        Section("Font") {
-            FontPickerRow(selectedFontName: $element.fontName, label: "Font")
+        Section("TextEditor.Font") {
+            FontPickerRow(selectedFontName: $element.fontName, label: String(localized: "Common.Font"))
             HStack {
-                Text("Size")
+                Text("Common.Size")
                 Spacer()
-                TextField("Size", value: $element.fontSize, format: FloatingPointFormatStyle<CGFloat>())
+                TextField("Common.Size", value: $element.fontSize, format: FloatingPointFormatStyle<CGFloat>())
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(width: 60)
-                Text("px")
+                Text("Common.Px")
                     .foregroundStyle(.secondary)
                 Stepper("", value: $element.fontSize, in: 1...999, step: 1)
                     .labelsHidden()
@@ -32,17 +32,17 @@ struct TextPropertiesSections: View {
         }
 
         // Color
-        Section("Color") {
-            ColorPickerRow(title: "Text Color", color: $element.color)
+        Section("Common.Color") {
+            ColorPickerRow(title: String(localized: "TextEditor.TextColor"), color: $element.color)
         }
 
         // Outline
-        Section("Outline") {
-            Toggle("Outline", isOn: $element.outline.enabled.animation(.smooth.speed(2.0)))
+        Section("TextEditor.Outline") {
+            Toggle("TextEditor.Outline", isOn: $element.outline.enabled.animation(.smooth.speed(2.0)))
             if element.outline.enabled {
-                ColorPickerRow(title: "Outline Color", color: $element.outline.color)
+                ColorPickerRow(title: String(localized: "TextEditor.OutlineColor"), color: $element.outline.color)
                 HStack {
-                    Text("Width")
+                    Text("Common.Width")
                     Spacer()
                     Stepper("\(element.outline.width, specifier: "%.1f") pt",
                             value: $element.outline.width, in: 0.5...10, step: 0.5)
@@ -51,24 +51,24 @@ struct TextPropertiesSections: View {
         }
 
         // Shadow
-        Section("Shadow") {
-            Toggle("Shadow", isOn: $element.shadow.enabled.animation(.smooth.speed(2.0)))
+        Section("TextEditor.Shadow") {
+            Toggle("TextEditor.Shadow", isOn: $element.shadow.enabled.animation(.smooth.speed(2.0)))
             if element.shadow.enabled {
-                ColorPickerRow(title: "Shadow Color", color: $element.shadow.color)
+                ColorPickerRow(title: String(localized: "TextEditor.ShadowColor"), color: $element.shadow.color)
                 HStack {
-                    Text("Radius")
+                    Text("TextEditor.Radius")
                     Spacer()
                     Stepper("\(element.shadow.radius, specifier: "%.1f")",
                             value: $element.shadow.radius, in: 0...20, step: 0.5)
                 }
                 HStack {
-                    Text("Offset X")
+                    Text("TextEditor.OffsetX")
                     Spacer()
                     Stepper("\(element.shadow.offsetX, specifier: "%.1f")",
                             value: $element.shadow.offsetX, in: -20...20, step: 0.5)
                 }
                 HStack {
-                    Text("Offset Y")
+                    Text("TextEditor.OffsetY")
                     Spacer()
                     Stepper("\(element.shadow.offsetY, specifier: "%.1f")",
                             value: $element.shadow.offsetY, in: -20...20, step: 0.5)
@@ -77,9 +77,9 @@ struct TextPropertiesSections: View {
         }
 
         // Rotation
-        Section("Rotation") {
+        Section("TextEditor.Rotation") {
             HStack {
-                Text("Angle")
+                Text("TextEditor.Angle")
                 Spacer()
                 Text("\(Int(element.rotation))°")
                     .foregroundStyle(.secondary)
@@ -131,7 +131,7 @@ struct FontPickerRow: View {
         let stripped = fontName
             .replacingOccurrences(of: family.replacingOccurrences(of: " ", with: ""), with: "")
             .replacingOccurrences(of: "-", with: "")
-        return stripped.isEmpty ? "Regular" : stripped
+        return stripped.isEmpty ? String(localized: "Fonts.Regular") : stripped
     }
 }
 
@@ -181,8 +181,8 @@ struct FontPickerSheet: View {
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: "Search fonts")
-            .navigationTitle("Fonts")
+            .searchable(text: $searchText, prompt: Text("Fonts.Search"))
+            .navigationTitle(String(localized: "Fonts.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -196,7 +196,7 @@ struct FontPickerSheet: View {
         let stripped = fontName
             .replacingOccurrences(of: family.replacingOccurrences(of: " ", with: ""), with: "")
             .replacingOccurrences(of: "-", with: "")
-        return stripped.isEmpty ? "Regular" : stripped
+        return stripped.isEmpty ? String(localized: "Fonts.Regular") : stripped
     }
 }
 

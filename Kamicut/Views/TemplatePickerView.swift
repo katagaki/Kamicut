@@ -17,7 +17,7 @@ struct TemplatePickerView: View {
         NavigationStack {
             Form {
                 // Predefined templates
-                Section("Predefined Templates") {
+                Section("Template.PredefinedTemplates") {
                     ForEach(CircleCutTemplate.predefined) { tmpl in
                         templateRow(tmpl)
                     }
@@ -25,109 +25,109 @@ struct TemplatePickerView: View {
                 }
 
                 // Canvas Size
-                Section("Canvas Size (px)") {
+                Section("Template.CanvasSize") {
                     HStack {
-                        Text("Width")
+                        Text("Common.Width")
                         Spacer()
-                        TextField("Width", value: $editingTemplate.canvasSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField("Common.Width", value: $editingTemplate.canvasSize.width, format: FloatingPointFormatStyle<CGFloat>())
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
-                        Text("px")
+                        Text("Common.Px")
                     }
                     HStack {
-                        Text("Height")
+                        Text("Common.Height")
                         Spacer()
-                        TextField("Height", value: $editingTemplate.canvasSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField("Common.Height", value: $editingTemplate.canvasSize.height, format: FloatingPointFormatStyle<CGFloat>())
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
-                        Text("px")
+                        Text("Common.Px")
                     }
                 }
 
                 // Border
-                Section("Border") {
+                Section("Template.Border") {
                     HStack {
-                        Text("Outer")
+                        Text("Template.Outer")
                         Spacer()
-                        TextField("Outer", value: $editingTemplate.outerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField("Template.Outer", value: $editingTemplate.outerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
-                        Text("px")
+                        Text("Common.Px")
                     }
                     HStack {
-                        Text("Inner")
+                        Text("Template.Inner")
                         Spacer()
-                        TextField("Inner", value: $editingTemplate.innerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField("Template.Inner", value: $editingTemplate.innerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
-                        Text("px")
+                        Text("Common.Px")
                     }
                 }
 
                 // Text Area
-                Section("Text Area") {
-                    Toggle("Enable Text Area", isOn: $editingTemplate.textAreaEnabled)
+                Section("Template.TextArea") {
+                    Toggle("Template.EnableTextArea", isOn: $editingTemplate.textAreaEnabled)
                     if editingTemplate.textAreaEnabled {
-                        Picker("Position", selection: $editingTemplate.textAreaPosition) {
+                        Picker("Common.Position", selection: $editingTemplate.textAreaPosition) {
                             ForEach(TextAreaPosition.allCases, id: \.self) { pos in
-                                Text(pos.rawValue).tag(pos)
+                                Text(pos.localizedName).tag(pos)
                             }
                         }
                         HStack {
-                            Text("Height")
+                            Text("Common.Height")
                             Spacer()
-                            TextField("Height", value: $editingTemplate.textAreaHeight, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Height", value: $editingTemplate.textAreaHeight, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
-                            Text("px")
+                            Text("Common.Px")
                         }
-                        Toggle("Transparent Background", isOn: $editingTemplate.textAreaTransparent)
+                        Toggle("Template.TransparentBackground", isOn: $editingTemplate.textAreaTransparent)
                     }
                 }
 
                 // Top-Left Box
-                Section("Top-Left Box (Space Number)") {
-                    Toggle("Enable Top-Left Box", isOn: $editingTemplate.topLeftBoxEnabled)
+                Section("Template.TopLeftBox") {
+                    Toggle("Template.EnableTopLeftBox", isOn: $editingTemplate.topLeftBoxEnabled)
                     if editingTemplate.topLeftBoxEnabled {
                         HStack {
-                            Text("Width")
+                            Text("Common.Width")
                             Spacer()
-                            TextField("Width", value: $editingTemplate.topLeftBoxSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Width", value: $editingTemplate.topLeftBoxSize.width, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
-                            Text("px")
+                            Text("Common.Px")
                         }
                         HStack {
-                            Text("Height")
+                            Text("Common.Height")
                             Spacer()
-                            TextField("Height", value: $editingTemplate.topLeftBoxSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Height", value: $editingTemplate.topLeftBoxSize.height, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
-                            Text("px")
+                            Text("Common.Px")
                         }
                     }
                 }
 
                 // Header Font
-                Section("Header Font") {
-                    FontPickerRow(selectedFontName: $editingTemplate.headerFontName, label: "Font")
+                Section("Template.HeaderFont") {
+                    FontPickerRow(selectedFontName: $editingTemplate.headerFontName, label: String(localized: "Common.Font"))
                 }
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("Template")
+            .navigationTitle(String(localized: "Toolbar.Template"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(role: .cancel) {
                         dismiss()
-                    } label: { Text("Cancel") }
+                    } label: { Text("Common.Cancel") }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(role: .confirm) {
@@ -145,7 +145,7 @@ struct TemplatePickerView: View {
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(tmpl.displayName)
+                    Text(tmpl.localizedDisplayName)
                         .foregroundColor(.primary)
                     Text("\(Int(tmpl.canvasSize.width))×\(Int(tmpl.canvasSize.height))px")
                         .font(.caption)

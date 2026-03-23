@@ -12,17 +12,17 @@ struct ExportSheetView: View {
         NavigationStack {
             Form {
                 // Format
-                Section("Format") {
-                    Picker("File Format", selection: $vm.document.exportSettings.format) {
+                Section("Export.Format") {
+                    Picker("Export.FileFormat", selection: $vm.document.exportSettings.format) {
                         ForEach(ExportFormat.allCases) { format in
-                            Text(format.rawValue).tag(format)
+                            Text(format.localizedName).tag(format)
                         }
                     }
                     .pickerStyle(.segmented)
 
                     if vm.document.exportSettings.format == .jpg {
                         HStack {
-                            Text("JPEG Quality")
+                            Text("Export.JpegQuality")
                             Spacer()
                             Text("\(Int(vm.document.exportSettings.jpegQuality * 100))%")
                                 .foregroundColor(.secondary)
@@ -32,18 +32,18 @@ struct ExportSheetView: View {
                 }
 
                 // Color Mode
-                Section("Color Mode") {
-                    Picker("Color Mode", selection: $vm.document.exportSettings.colorMode) {
+                Section("Export.ColorMode") {
+                    Picker("Export.ColorMode", selection: $vm.document.exportSettings.colorMode) {
                         ForEach(ExportColorMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
+                            Text(mode.localizedName).tag(mode)
                         }
                     }
                     .pickerStyle(.segmented)
                 }
 
                 // Resolution
-                Section("Resolution") {
-                    Picker("Resolution", selection: $vm.document.exportSettings.resolution) {
+                Section("Export.Resolution") {
+                    Picker("Export.Resolution", selection: $vm.document.exportSettings.resolution) {
                         ForEach(ExportResolution.allCases) { res in
                             Text(res.label).tag(res)
                         }
@@ -57,7 +57,7 @@ struct ExportSheetView: View {
                     let w = Int(vm.document.template.canvasSize.width)
                     let h = Int(vm.document.template.canvasSize.height)
                     HStack {
-                        Label("Output size", systemImage: "ruler")
+                        Label("Export.OutputSize", systemImage: "ruler")
                         Spacer()
                         Text("\(w) × \(h) px")
                             .foregroundColor(.secondary)
@@ -74,9 +74,9 @@ struct ExportSheetView: View {
                             if vm.isExporting {
                                 ProgressView()
                                     .padding(.trailing, 8)
-                                Text("Rendering…")
+                                Text("Export.Rendering")
                             } else {
-                                Label("Export & Share", systemImage: "square.and.arrow.up")
+                                Label("Export.ExportAndShare", systemImage: "square.and.arrow.up")
                                     .fontWeight(.semibold)
                             }
                             Spacer()
@@ -87,7 +87,7 @@ struct ExportSheetView: View {
 
                 // Preview
                 if let exported = vm.exportedImage {
-                    Section("Preview") {
+                    Section("Export.Preview") {
                         Image(uiImage: exported)
                             .resizable()
                             .scaledToFit()
@@ -97,11 +97,11 @@ struct ExportSheetView: View {
                 }
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("Export")
+            .navigationTitle(String(localized: "Toolbar.Export"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) { dismiss() } label: { Text("Close") }
+                    Button(role: .cancel) { dismiss() } label: { Text("Common.Close") }
                 }
             }
         }

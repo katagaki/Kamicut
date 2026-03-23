@@ -22,7 +22,7 @@ struct LayerManagerView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Layers")
+            .navigationTitle(String(localized: "Layers.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -68,7 +68,7 @@ struct LayerManagerView: View {
             Button(role: .destructive) {
                 vm.removeLayer(id: layer.id)
             } label: {
-                Label("Delete", systemImage: "trash")
+                Label("Common.Delete", systemImage: "trash")
             }
         }
     }

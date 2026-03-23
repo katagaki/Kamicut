@@ -28,7 +28,7 @@ struct ContentView: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
-            .navigationTitle("Kamicut")
+            .navigationTitle(String(localized: "App.Name"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

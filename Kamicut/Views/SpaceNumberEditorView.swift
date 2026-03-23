@@ -9,33 +9,33 @@ struct SpaceNumberEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Space / Booth Number") {
-                    TextField("e.g. 東A-01a", text: $spaceNumber.text)
+                Section("SpaceNumber.BoothNumber") {
+                    TextField(String(localized: "SpaceNumber.Placeholder"), text: $spaceNumber.text)
                         .autocorrectionDisabled()
                 }
 
-                Section("Position") {
-                    Picker("Position", selection: $spaceNumber.position) {
+                Section("Common.Position") {
+                    Picker("Common.Position", selection: $spaceNumber.position) {
                         ForEach(SpaceNumberPosition.allCases, id: \.self) { pos in
-                            Text(pos.rawValue).tag(pos)
+                            Text(pos.localizedName).tag(pos)
                         }
                     }
                     .pickerStyle(.inline)
                     .labelsHidden()
                 }
 
-                Section("Style") {
-                    FontPickerRow(selectedFontName: $spaceNumber.fontName, label: "Font")
+                Section("SpaceNumber.Style") {
+                    FontPickerRow(selectedFontName: $spaceNumber.fontName, label: String(localized: "Common.Font"))
                     HStack {
-                        Text("Size")
+                        Text("Common.Size")
                         Spacer()
                         Stepper("\(Int(spaceNumber.fontSize)) pt", value: $spaceNumber.fontSize, in: 6...72, step: 1)
                     }
-                    ColorPickerRow(title: "Color", color: $spaceNumber.color)
+                    ColorPickerRow(title: String(localized: "Common.Color"), color: $spaceNumber.color)
                 }
             }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("Space Number")
+            .navigationTitle(String(localized: "SpaceNumber.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

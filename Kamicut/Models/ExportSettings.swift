@@ -13,6 +13,12 @@ enum ExportFormat: String, Codable, CaseIterable, Identifiable {
         case .jpg: return "jpg"
         }
     }
+    var localizedName: String {
+        switch self {
+        case .png: return String(localized: "Export.Format.Png")
+        case .jpg: return String(localized: "Export.Format.Jpeg")
+        }
+    }
 }
 
 // MARK: - Export Color Mode
@@ -22,6 +28,12 @@ enum ExportColorMode: String, Codable, CaseIterable, Identifiable {
     case blackAndWhite = "Black & White"
 
     var id: String { rawValue }
+    var localizedName: String {
+        switch self {
+        case .color: return String(localized: "Export.ColorMode.Color")
+        case .blackAndWhite: return String(localized: "Export.ColorMode.BlackAndWhite")
+        }
+    }
 }
 
 // MARK: - Export Resolution
@@ -35,10 +47,10 @@ enum ExportResolution: Int, Codable, CaseIterable, Identifiable {
     var id: Int { rawValue }
     var label: String {
         switch self {
-        case .low: return "150 dpi (screen)"
-        case .medium: return "300 dpi (print)"
-        case .high: return "350 dpi (high print)"
-        case .ultra: return "600 dpi (ultra)"
+        case .low: return String(localized: "Export.Resolution.Low")
+        case .medium: return String(localized: "Export.Resolution.Medium")
+        case .high: return String(localized: "Export.Resolution.High")
+        case .ultra: return String(localized: "Export.Resolution.Ultra")
         }
     }
 }

@@ -72,7 +72,7 @@ final class EditorState {
 
     func addTextElement() -> UUID {
         var element = TextElement()
-        element.content = "Text"
+        element.content = String(localized: "DefaultText.Content")
         element.position = CGPoint(x: 0.5, y: 0.5)
         document.layers.append(.text(element))
         selectedTextID = element.id

@@ -16,14 +16,14 @@ struct ToolbarPanelView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 0) {
-                toolbarButton(icon: "rectangle.on.rectangle", label: "Template") {
+                toolbarButton(icon: "rectangle.on.rectangle", label: String(localized: "Toolbar.Template")) {
                     vm.showTemplatePicker = true
                 }
 
                 Divider().frame(height: 28)
 
                 PhotosPicker(selection: $bgPickerItem, matching: .images) {
-                    toolbarButtonLabel(icon: "photo", label: "Background")
+                    toolbarButtonLabel(icon: "photo", label: String(localized: "Toolbar.Background"))
                 }
                 .buttonStyle(.plain)
                 .frame(width: buttonSize, height: 48)
@@ -33,21 +33,21 @@ struct ToolbarPanelView: View {
 
                 toolbarButton(
                     icon: vm.bleedOption == .full ? "rectangle.inset.filled" : "rectangle",
-                    label: vm.bleedOption == .full ? "Bleed: On" : "Bleed: Off"
+                    label: vm.bleedOption == .full ? String(localized: "Toolbar.BleedOn") : String(localized: "Toolbar.BleedOff")
                 ) {
                     vm.document.bleedOption = vm.bleedOption == .full ? .none : .full
                 }
 
                 Divider().frame(height: 28)
 
-                toolbarButton(icon: "number.square", label: "Space #") {
+                toolbarButton(icon: "number.square", label: String(localized: "Toolbar.SpaceNumber")) {
                     vm.showSpaceNumberEditor = true
                 }
 
                 Divider().frame(height: 28)
 
                 PhotosPicker(selection: $overlayPickerItem, matching: .images) {
-                    toolbarButtonLabel(icon: "photo.stack", label: "Image")
+                    toolbarButtonLabel(icon: "photo.stack", label: String(localized: "Toolbar.Image"))
                 }
                 .buttonStyle(.plain)
                 .frame(width: buttonSize, height: 48)
@@ -55,19 +55,19 @@ struct ToolbarPanelView: View {
                     Task { await loadImage(item: item, asBackground: false) }
                 }
 
-                toolbarButton(icon: "textformat", label: "Text") {
+                toolbarButton(icon: "textformat", label: String(localized: "Toolbar.Text")) {
                     let _ = vm.addTextElement()
                 }
 
                 Divider().frame(height: 28)
 
-                toolbarButton(icon: "square.3.layers.3d", label: "Layers") {
+                toolbarButton(icon: "square.3.layers.3d", label: String(localized: "Toolbar.Layers")) {
                     vm.showLayerManager = true
                 }
 
                 Divider().frame(height: 28)
 
-                toolbarButton(icon: "square.and.arrow.up", label: "Export") {
+                toolbarButton(icon: "square.and.arrow.up", label: String(localized: "Toolbar.Export")) {
                     vm.showExportSheet = true
                 }
             }

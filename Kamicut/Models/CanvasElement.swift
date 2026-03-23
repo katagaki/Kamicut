@@ -71,8 +71,8 @@ enum CanvasLayer: Identifiable, Codable {
 
     var label: String {
         switch self {
-        case .image: return "Image"
-        case .text(let el): return el.content.isEmpty ? "Text" : String(el.content.prefix(20))
+        case .image: return String(localized: "Layers.Image")
+        case .text(let el): return el.content.isEmpty ? String(localized: "Layers.Text") : String(el.content.prefix(20))
         }
     }
 
@@ -95,6 +95,19 @@ enum SpaceNumberPosition: String, Codable, CaseIterable {
     case imageTopRight = "Image (top-right)"
     case imageBottomLeft = "Image (bottom-left)"
     case imageBottomRight = "Image (bottom-right)"
+
+    var localizedName: String {
+        switch self {
+        case .topLeftBox: return String(localized: "SpaceNumber.Position.TopLeftBox")
+        case .textArea: return String(localized: "SpaceNumber.Position.TextArea")
+        case .textAreaLeading: return String(localized: "SpaceNumber.Position.TextAreaLeading")
+        case .textAreaTrailing: return String(localized: "SpaceNumber.Position.TextAreaTrailing")
+        case .imageTopLeft: return String(localized: "SpaceNumber.Position.ImageTopLeft")
+        case .imageTopRight: return String(localized: "SpaceNumber.Position.ImageTopRight")
+        case .imageBottomLeft: return String(localized: "SpaceNumber.Position.ImageBottomLeft")
+        case .imageBottomRight: return String(localized: "SpaceNumber.Position.ImageBottomRight")
+        }
+    }
 }
 
 struct SpaceNumberInfo: Codable {
@@ -110,6 +123,13 @@ struct SpaceNumberInfo: Codable {
 enum BleedOption: String, Codable, CaseIterable {
     case none = "No Bleed"
     case full = "Full Bleed"
+
+    var localizedName: String {
+        switch self {
+        case .none: return String(localized: "Bleed.None")
+        case .full: return String(localized: "Bleed.Full")
+        }
+    }
 }
 
 // MARK: - CodableColor helper
