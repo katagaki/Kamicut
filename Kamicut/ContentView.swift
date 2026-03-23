@@ -43,25 +43,25 @@ struct ContentView: View {
         // Sheets
         .sheet(isPresented: $vm.showTemplatePicker) {
             TemplatePickerView(vm: vm)
-                .presentationDetents([.height(200), .medium, .large])
+                .presentationDetents([.height(100), .medium, .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showExportSheet) {
             ExportSheetView(vm: vm)
-                .presentationDetents([.height(200), .medium, .large])
+                .presentationDetents([.height(100), .medium, .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showSpaceNumberEditor) {
             SpaceNumberEditorView(spaceNumber: $vm.document.spaceNumber)
-                .presentationDetents([.height(200), .medium, .large])
+                .presentationDetents([.height(100), .medium, .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showLayerManager) {
             LayerManagerView(vm: vm)
-                .presentationDetents([.height(200), .medium, .large])
+                .presentationDetents([.height(100), .medium, .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
@@ -70,7 +70,7 @@ struct ContentView: View {
             set: { if !$0 { vm.selectedTextID = nil } }
         )) {
             SelectedElementInspectorView(vm: vm)
-                .presentationDetents([.height(200), .medium, .large])
+                .presentationDetents([.height(100), .medium, .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
