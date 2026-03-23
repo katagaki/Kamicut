@@ -6,6 +6,13 @@ struct ContentView: View {
     @State private var vm = EditorState()
     @State private var canvasScale: CGFloat = 1.0
     @GestureState private var pinchScale: CGFloat = 1.0
+    @State private var sheetDetent: PresentationDetent = .height(200)
+    @State private var canvasBottomPadding: CGFloat = 0
+
+    private var isAnySheetActive: Bool {
+        vm.showTemplatePicker || vm.showExportSheet || vm.showSpaceNumberEditor ||
+        vm.showLayerManager || vm.selectedTextID != nil
+    }
 
     var body: some View {
         NavigationStack {
@@ -47,28 +54,45 @@ struct ContentView: View {
                 }
             }
         }
+        .onChange(of: sheetDetent) { _, newDetent in
+            withAnimation(.spring(duration: 0.3)) {
+                canvasBottomPadding = (isAnySheetActive && newDetent == .height(200)) ? 200 : 0
+            }
+        }
+        .onChange(of: isAnySheetActive) { _, isActive in
+            if isActive {
+                sheetDetent = .height(200)
+                withAnimation(.spring(duration: 0.3)) {
+                    canvasBottomPadding = 200
+                }
+            } else {
+                withAnimation(.spring(duration: 0.3)) {
+                    canvasBottomPadding = 0
+                }
+            }
+        }
         // Sheets
         .sheet(isPresented: $vm.showTemplatePicker) {
             TemplatePickerView(vm: vm)
-                .presentationDetents([.height(100), .medium, .large])
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showExportSheet) {
             ExportSheetView(vm: vm)
-                .presentationDetents([.height(100), .medium, .large])
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showSpaceNumberEditor) {
             SpaceNumberEditorView(spaceNumber: $vm.document.spaceNumber)
-                .presentationDetents([.height(100), .medium, .large])
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showLayerManager) {
             LayerManagerView(vm: vm)
-                .presentationDetents([.height(100), .medium, .large])
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
@@ -77,13 +101,13 @@ struct ContentView: View {
             set: { if !$0 { vm.selectedTextID = nil } }
         )) {
             SelectedElementInspectorView(vm: vm)
-                .presentationDetents([.height(100), .medium, .large])
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $vm.showSavedCutsList) {
             SavedCutsListView(vm: vm)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
         }
     }
 
@@ -95,7 +119,7 @@ struct ContentView: View {
 
         GeometryReader { previewGeo in
             let availableW = previewGeo.size.width - 32
-            let availableH = previewGeo.size.height - 32
+            let availableH = previewGeo.size.height - 32 - canvasBottomPadding
             let fitScale = min(availableW / template.canvasSize.width,
                                availableH / template.canvasSize.height)
             let effectiveScale = fitScale * canvasScale * pinchScale
@@ -110,10 +134,12 @@ struct ContentView: View {
                     EditorCanvasView(vm: vm)
                         .scaleEffect(effectiveScale)
                         .frame(width: max(scaledW, previewGeo.size.width),
-                               height: max(scaledH, previewGeo.size.height))
+                               height: max(scaledH, previewGeo.size.height - canvasBottomPadding))
                         .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
                 }
                 .scrollDismissesKeyboard(.interactively)
+                .frame(height: previewGeo.size.height - canvasBottomPadding)
+                .offset(y: -canvasBottomPadding / 2)
             }
             .gesture(
                 MagnifyGesture()
