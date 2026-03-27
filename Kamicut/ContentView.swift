@@ -21,17 +21,13 @@ struct ContentView: View {
                 canvasPreview
                     .ignoresSafeArea()
 
-                // Bottom controls
-                VStack(spacing: 8) {
+                // Element toolbar (shows when element selected)
+                VStack {
                     Spacer()
-
-                    // Element toolbar (shows when element selected)
                     ElementToolbarView(vm: vm)
                         .animation(.smooth.speed(2.0), value: vm.selectedImageID)
                         .animation(.smooth.speed(2.0), value: vm.selectedTextID)
-
-                    // Toolbar
-                    ToolbarPanelView(vm: vm)
+                        .padding(.bottom, 8)
                 }
             }
             .ignoresSafeArea(.keyboard)
@@ -52,6 +48,7 @@ struct ContentView: View {
                         Image(systemName: "doc.badge.plus")
                     }
                 }
+                ToolbarPanelView(vm: vm)
             }
         }
         .onChange(of: sheetDetent) { _, newDetent in
