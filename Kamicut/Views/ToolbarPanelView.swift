@@ -10,8 +10,22 @@ struct ToolbarPanelView: ToolbarContent {
     @State private var bgPickerItem: PhotosPickerItem? = nil
     @State private var overlayPickerItem: PhotosPickerItem? = nil
 
+    private var bleedBinding: Binding<Bool> {
+        Binding(
+            get: { vm.bleedOption == .full },
+            set: { vm.document.bleedOption = $0 ? .full : .none }
+        )
+    }
+
+    private var backgroundColorBinding: Binding<Color> {
+        Binding(
+            get: { vm.document.backgroundColor?.color ?? .white },
+            set: { vm.document.backgroundColor = CodableColor(color: $0) }
+        )
+    }
+
     var body: some ToolbarContent {
-        // Template configuration group
+        // Template
         ToolbarItem(placement: .bottomBar) {
             Button {
                 vm.showTemplatePicker = true
@@ -20,17 +34,8 @@ struct ToolbarPanelView: ToolbarContent {
             }
         }
         ToolbarSpacer(.fixed)
-        ToolbarItem(placement: .bottomBar) {
-            Button {
-                vm.document.bleedOption = vm.bleedOption == .full ? .none : .full
-            } label: {
-                Label(
-                    vm.bleedOption == .full ? String(localized: "Toolbar.BleedOn") : String(localized: "Toolbar.BleedOff"),
-                    systemImage: vm.bleedOption == .full ? "rectangle.inset.filled" : "rectangle"
-                )
-            }
-        }
-        ToolbarSpacer(.fixed)
+
+        // Space Number
         ToolbarItem(placement: .bottomBar) {
             Button {
                 vm.showSpaceNumberEditor = true
@@ -38,12 +43,31 @@ struct ToolbarPanelView: ToolbarContent {
                 Label(String(localized: "Toolbar.SpaceNumber"), systemImage: "number.square")
             }
         }
-
         ToolbarSpacer(.fixed)
 
-        // Content addition group
+        // Background Menu
         ToolbarItem(placement: .bottomBar) {
-            PhotosPicker(selection: $bgPickerItem, matching: .images) {
+            Menu {
+                Section(String(localized: "Toolbar.Background.ImageHeader")) {
+                    PhotosPicker(selection: $bgPickerItem, matching: .images) {
+                        Label(String(localized: "Toolbar.Background.SelectImage"), systemImage: "photo.on.rectangle")
+                    }
+                    Toggle(isOn: bleedBinding) {
+                        Label(String(localized: "Toolbar.Background.Bleed"), systemImage: "rectangle.inset.filled")
+                    }
+                }
+
+                Section(String(localized: "Toolbar.Background.ColorHeader")) {
+                    ColorPicker(selection: backgroundColorBinding, supportsOpacity: false) {
+                        Label(String(localized: "Toolbar.Background.SetColor"), systemImage: "paintbrush.fill")
+                    }
+                    Button(role: .destructive) {
+                        vm.removeBackgroundColor()
+                    } label: {
+                        Label(String(localized: "Toolbar.Background.UnsetColor"), systemImage: "xmark.circle")
+                    }
+                }
+            } label: {
                 Label(String(localized: "Toolbar.Background"), systemImage: "photo")
             }
             .onChange(of: bgPickerItem) { _, item in
@@ -51,27 +75,36 @@ struct ToolbarPanelView: ToolbarContent {
             }
         }
         ToolbarSpacer(.fixed)
+
+        // Add (+) Menu
         ToolbarItem(placement: .bottomBar) {
-            PhotosPicker(selection: $overlayPickerItem, matching: .images) {
-                Label(String(localized: "Toolbar.Image"), systemImage: "photo.stack")
+            Menu {
+                PhotosPicker(selection: $overlayPickerItem, matching: .images) {
+                    Label(String(localized: "Toolbar.Add.Image"), systemImage: "photo.stack")
+                }
+                Button {
+                    let _ = vm.addTextElement()
+                } label: {
+                    Label(String(localized: "Toolbar.Add.Text"), systemImage: "textformat")
+                }
+                Button {
+                    // TODO: Shape support
+                } label: {
+                    Label(String(localized: "Toolbar.Add.Shape"), systemImage: "square.on.circle")
+                }
+                .disabled(true)
+            } label: {
+                Label(String(localized: "Toolbar.Add"), systemImage: "plus")
             }
             .onChange(of: overlayPickerItem) { _, item in
                 Task { await loadImage(item: item, asBackground: false) }
-            }
-        }
-        ToolbarSpacer(.fixed)
-        ToolbarItem(placement: .bottomBar) {
-            Button {
-                let _ = vm.addTextElement()
-            } label: {
-                Label(String(localized: "Toolbar.Text"), systemImage: "textformat")
             }
         }
 
         // Flexible spacer — pushes layers/export to the trailing edge
         ToolbarSpacer(.flexible)
 
-        // Management group
+        // Layers
         ToolbarItem(placement: .bottomBar) {
             Button {
                 vm.showLayerManager = true
@@ -80,6 +113,8 @@ struct ToolbarPanelView: ToolbarContent {
             }
         }
         ToolbarSpacer(.fixed)
+
+        // Export
         ToolbarItem(placement: .bottomBar) {
             Button {
                 vm.showExportSheet = true

@@ -7,6 +7,7 @@ struct EditorDocument: Codable {
     var id: UUID = UUID()
     var template: CircleCutTemplate = .templateA
     var bleedOption: BleedOption = .none
+    var backgroundColor: CodableColor?
     var backgroundImage: ImageElement?
     var layers: [CanvasLayer] = []
     var spaceNumber: SpaceNumberInfo = SpaceNumberInfo()

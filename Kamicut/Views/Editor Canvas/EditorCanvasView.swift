@@ -74,7 +74,7 @@ struct EditorCanvasView: View {
 
     private var canvasBackground: some View {
         Rectangle()
-            .fill(Color.white)
+            .fill(vm.document.backgroundColor?.color ?? Color.white)
             .frame(width: canvasSize.width, height: canvasSize.height)
     }
 
