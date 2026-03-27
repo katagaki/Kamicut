@@ -5,7 +5,7 @@ import SwiftData
 struct KamicutApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ProjectsListView()
         }
         .modelContainer(for: SavedCut.self)
     }

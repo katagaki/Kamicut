@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Content View (Main Editor)
 
 struct ContentView: View {
-    @State private var vm = EditorState()
+    @Bindable var vm: EditorState
     @State private var canvasScale: CGFloat = 1.0
     @GestureState private var pinchScale: CGFloat = 1.0
     @State private var sheetDetent: PresentationDetent = .height(200)
@@ -15,41 +15,39 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Canvas background spans entire screen
-                canvasPreview
-                    .ignoresSafeArea()
+        ZStack {
+            // Canvas background spans entire screen
+            canvasPreview
+                .ignoresSafeArea()
 
-                // Element toolbar (shows when element selected)
-                VStack {
-                    Spacer()
-                    ElementToolbarView(vm: vm)
-                        .animation(.smooth.speed(2.0), value: vm.selectedImageID)
-                        .animation(.smooth.speed(2.0), value: vm.selectedTextID)
-                        .padding(.bottom, 8)
+            // Element toolbar (shows when element selected)
+            VStack {
+                Spacer()
+                ElementToolbarView(vm: vm)
+                    .animation(.smooth.speed(2.0), value: vm.selectedImageID)
+                    .animation(.smooth.speed(2.0), value: vm.selectedTextID)
+                    .padding(.bottom, 8)
+            }
+        }
+        .ignoresSafeArea(.keyboard)
+        .navigationTitle(String(localized: "App.Name"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    vm.showTemplatePicker = true
+                } label: {
+                    Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
                 }
             }
-            .ignoresSafeArea(.keyboard)
-            .navigationTitle(String(localized: "App.Name"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        vm.showSavedCutsList = true
-                    } label: {
-                        Image(systemName: "folder")
-                    }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    vm.showSpaceNumberEditor = true
+                } label: {
+                    Label(String(localized: "Toolbar.SpaceNumber"), systemImage: "number.square")
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        vm.reset()
-                    } label: {
-                        Image(systemName: "doc.badge.plus")
-                    }
-                }
-                ToolbarPanelView(vm: vm)
             }
+            ToolbarPanelView(vm: vm)
         }
         .onChange(of: sheetDetent) { _, newDetent in
             withAnimation(.spring(duration: 0.3)) {
@@ -150,4 +148,3 @@ struct ContentView: View {
         }
     }
 }
-

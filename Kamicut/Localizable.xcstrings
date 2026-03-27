@@ -58,6 +58,23 @@
         }
       }
     },
+    "App.SourceCode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source Code"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ソースコード"
+          }
+        }
+      }
+    },
     "Bleed.Full" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -768,6 +785,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保存済みカット"
+          }
+        }
+      }
+    },
+    "Projects.Empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトがありません"
+          }
+        }
+      }
+    },
+    "Projects.EmptyDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap + to create your first project."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "＋をタップして最初のプロジェクトを作成しましょう。"
           }
         }
       }
