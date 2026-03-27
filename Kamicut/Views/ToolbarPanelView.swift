@@ -11,10 +11,9 @@ struct ToolbarPanelView: View {
     @State private var bgPickerItem: PhotosPickerItem? = nil
     @State private var overlayPickerItem: PhotosPickerItem? = nil
 
-    private let buttonSize: CGFloat = 64
-
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        VStack(spacing: 0) {
+            // Row 1: Template setup actions
             HStack(spacing: 0) {
                 toolbarButton(icon: "rectangle.on.rectangle", label: String(localized: "Toolbar.Template")) {
                     vm.showTemplatePicker = true
@@ -26,10 +25,12 @@ struct ToolbarPanelView: View {
                     toolbarButtonLabel(icon: "photo", label: String(localized: "Toolbar.Background"))
                 }
                 .buttonStyle(.plain)
-                .frame(width: buttonSize, height: 48)
+                .frame(maxWidth: .infinity)
                 .onChange(of: bgPickerItem) { _, item in
                     Task { await loadImage(item: item, asBackground: true) }
                 }
+
+                Divider().frame(height: 28)
 
                 toolbarButton(
                     icon: vm.bleedOption == .full ? "rectangle.inset.filled" : "rectangle",
@@ -43,17 +44,22 @@ struct ToolbarPanelView: View {
                 toolbarButton(icon: "number.square", label: String(localized: "Toolbar.SpaceNumber")) {
                     vm.showSpaceNumberEditor = true
                 }
+            }
 
-                Divider().frame(height: 28)
+            Divider()
 
+            // Row 2: Content and management actions
+            HStack(spacing: 0) {
                 PhotosPicker(selection: $overlayPickerItem, matching: .images) {
                     toolbarButtonLabel(icon: "photo.stack", label: String(localized: "Toolbar.Image"))
                 }
                 .buttonStyle(.plain)
-                .frame(width: buttonSize, height: 48)
+                .frame(maxWidth: .infinity)
                 .onChange(of: overlayPickerItem) { _, item in
                     Task { await loadImage(item: item, asBackground: false) }
                 }
+
+                Divider().frame(height: 28)
 
                 toolbarButton(icon: "textformat", label: String(localized: "Toolbar.Text")) {
                     let _ = vm.addTextElement()
@@ -71,12 +77,9 @@ struct ToolbarPanelView: View {
                     vm.showExportSheet = true
                 }
             }
-            .padding(.horizontal, 8)
         }
-        .scrollDismissesKeyboard(.interactively)
-        .frame(height: 56)
-        .clipShape(Capsule())
-        .glassEffect(.regular.interactive(), in: .capsule)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .glassEffect(.regular.interactive(), in: RoundedRectangle(cornerRadius: 20))
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
     }
@@ -91,7 +94,8 @@ struct ToolbarPanelView: View {
             Text(label)
                 .font(.system(size: 10))
         }
-        .frame(width: 64, height: 48)
+        .frame(maxWidth: .infinity)
+        .frame(height: 48)
         .contentShape(Rectangle())
     }
 
@@ -100,7 +104,6 @@ struct ToolbarPanelView: View {
             toolbarButtonLabel(icon: icon, label: label)
         }
         .buttonStyle(.plain)
-        .frame(width: buttonSize, height: 48)
     }
 
     private func loadImage(item: PhotosPickerItem?, asBackground: Bool) async {
