@@ -109,6 +109,57 @@
         }
       }
     },
+    "Document.CircleInfo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circle Info"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークル情報"
+          }
+        }
+      }
+    },
+    "Document.CircleName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circle Name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークル名"
+          }
+        }
+      }
+    },
+    "Document.Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドキュメント"
+          }
+        }
+      }
+    },
     "Common.Cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2319,19 +2370,19 @@
         }
       }
     },
-    "Toolbar.Project" : {
+    "Toolbar.Document" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Project"
+            "value" : "Document"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "プロジェクト"
+            "value" : "ドキュメント"
           }
         }
       }

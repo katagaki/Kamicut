@@ -28,7 +28,7 @@ struct ToolbarPanelView: ToolbarContent {
             Button {
                 vm.showProjectSettings = true
             } label: {
-                Label(String(localized: "Toolbar.Project"), systemImage: "doc.text")
+                Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
             }
             Button {
                 vm.showLayerManager = true
@@ -63,7 +63,7 @@ struct ToolbarPanelView: ToolbarContent {
                 Button {
                     vm.showProjectSettings = true
                 } label: {
-                    Label(String(localized: "Toolbar.Project"), systemImage: "doc.text")
+                    Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
                 }
 
                 // Layers

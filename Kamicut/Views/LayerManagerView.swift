@@ -15,135 +15,40 @@ struct LayerManagerView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Fixed layers: top to bottom rendering order (topmost first)
+                // Fixed layers (visual indicators only, settings live in Document view)
 
-                // Space Number (topmost fixed layer)
                 Section {
-                    DisclosureGroup {
-                        TextField(String(localized: "SpaceNumber.Placeholder"), text: $vm.document.spaceNumber.text)
-                            .autocorrectionDisabled()
-                        Picker(String(localized: "Common.Position"), selection: $vm.document.spaceNumber.position) {
-                            ForEach(SpaceNumberPosition.allCases, id: \.self) { pos in
-                                Text(pos.localizedName).tag(pos)
-                            }
-                        }
-                        FontPickerRow(selectedFontName: $vm.document.spaceNumber.fontName, label: String(localized: "Common.Font"))
-                        HStack {
-                            Text("Common.Size")
-                            Spacer()
-                            Stepper("\(Int(vm.document.spaceNumber.fontSize)) pt", value: $vm.document.spaceNumber.fontSize, in: 6...72, step: 1)
-                        }
-                        ColorPickerRow(title: String(localized: "Common.Color"), color: $vm.document.spaceNumber.color)
-                    } label: {
-                        fixedLayerLabel(
-                            systemImage: "number.square",
-                            label: String(localized: "Layers.SpaceNumber"),
-                            enabled: !vm.document.spaceNumber.text.isEmpty
-                        )
-                    }
-                }
+                    fixedLayerLabel(
+                        systemImage: "number.square",
+                        label: String(localized: "Layers.SpaceNumber"),
+                        enabled: !vm.document.spaceNumber.text.isEmpty
+                    )
 
-                // Top Left Box
-                Section {
-                    DisclosureGroup {
-                        Toggle(String(localized: "Layers.TopLeftBox.Enabled"), isOn: $vm.document.template.topLeftBoxEnabled)
-                        if vm.document.template.topLeftBoxEnabled {
-                            HStack {
-                                Text("Common.Width")
-                                Spacer()
-                                TextField("Common.Width", value: $vm.document.template.topLeftBoxSize.width, format: FloatingPointFormatStyle<CGFloat>())
-                                    .keyboardType(.decimalPad)
-                                    .multilineTextAlignment(.trailing)
-                                    .frame(width: 80)
-                                Text("Common.Px")
-                            }
-                            HStack {
-                                Text("Common.Height")
-                                Spacer()
-                                TextField("Common.Height", value: $vm.document.template.topLeftBoxSize.height, format: FloatingPointFormatStyle<CGFloat>())
-                                    .keyboardType(.decimalPad)
-                                    .multilineTextAlignment(.trailing)
-                                    .frame(width: 80)
-                                Text("Common.Px")
-                            }
-                        }
-                    } label: {
+                    if vm.document.template.topLeftBoxEnabled {
                         fixedLayerLabel(
                             systemImage: "square.tophalf.filled",
                             label: String(localized: "Layers.TopLeftBox"),
-                            enabled: vm.document.template.topLeftBoxEnabled
+                            enabled: true
                         )
                     }
-                }
 
-                // Outer Outline
-                Section {
-                    DisclosureGroup {
-                        HStack {
-                            Text(String(localized: "Layers.Thickness"))
-                            Spacer()
-                            TextField(String(localized: "Layers.Thickness"), value: $vm.document.template.outerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                            Text("Common.Px")
-                        }
-                    } label: {
-                        fixedLayerLabel(
-                            systemImage: "square",
-                            label: String(localized: "Layers.OuterOutline"),
-                            enabled: vm.document.template.outerBorderThickness > 0
-                        )
-                    }
-                }
+                    fixedLayerLabel(
+                        systemImage: "square",
+                        label: String(localized: "Layers.OuterOutline"),
+                        enabled: vm.document.template.outerBorderThickness > 0
+                    )
 
-                // Inner Outline
-                Section {
-                    DisclosureGroup {
-                        HStack {
-                            Text(String(localized: "Layers.Thickness"))
-                            Spacer()
-                            TextField(String(localized: "Layers.Thickness"), value: $vm.document.template.innerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                            Text("Common.Px")
-                        }
-                    } label: {
-                        fixedLayerLabel(
-                            systemImage: "square.dashed",
-                            label: String(localized: "Layers.InnerOutline"),
-                            enabled: vm.document.template.innerBorderThickness > 0
-                        )
-                    }
-                }
+                    fixedLayerLabel(
+                        systemImage: "square.dashed",
+                        label: String(localized: "Layers.InnerOutline"),
+                        enabled: vm.document.template.innerBorderThickness > 0
+                    )
 
-                // Text Area
-                Section {
-                    DisclosureGroup {
-                        Toggle(String(localized: "Layers.TextArea.Enabled"), isOn: $vm.document.template.textAreaEnabled)
-                        if vm.document.template.textAreaEnabled {
-                            Picker(String(localized: "Common.Position"), selection: $vm.document.template.textAreaPosition) {
-                                ForEach(TextAreaPosition.allCases, id: \.self) { pos in
-                                    Text(pos.localizedName).tag(pos)
-                                }
-                            }
-                            HStack {
-                                Text("Common.Height")
-                                Spacer()
-                                TextField("Common.Height", value: $vm.document.template.textAreaHeight, format: FloatingPointFormatStyle<CGFloat>())
-                                    .keyboardType(.decimalPad)
-                                    .multilineTextAlignment(.trailing)
-                                    .frame(width: 80)
-                                Text("Common.Px")
-                            }
-                            Toggle(String(localized: "Layers.TextArea.Transparent"), isOn: $vm.document.template.textAreaTransparent)
-                        }
-                    } label: {
+                    if vm.document.template.textAreaEnabled {
                         fixedLayerLabel(
                             systemImage: "text.below.photo",
                             label: String(localized: "Layers.TextArea"),
-                            enabled: vm.document.template.textAreaEnabled
+                            enabled: true
                         )
                     }
                 }

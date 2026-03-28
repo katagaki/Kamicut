@@ -5,6 +5,7 @@ import Foundation
 /// Top-level model representing the full state of a circle cut document.
 struct EditorDocument: Codable {
     var id: UUID = UUID()
+    var circleName: String = ""
     var template: CircleCutTemplate = .templateA
     var bleedOption: BleedOption = .none
     var backgroundColor: CodableColor?

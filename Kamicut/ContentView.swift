@@ -11,7 +11,7 @@ struct ContentView: View {
 
     private var isAnySheetActive: Bool {
         vm.showTemplatePicker || vm.showProjectSettings || vm.showExportSheet ||
-        vm.showSpaceNumberEditor || vm.showLayerManager || vm.showBackgroundSettings ||
+        vm.showLayerManager || vm.showBackgroundSettings ||
         vm.selectedTextID != nil || vm.selectedShapeID != nil
     }
 
@@ -28,7 +28,7 @@ struct ContentView: View {
                     .animation(.smooth.speed(2.0), value: vm.selectedImageID)
                     .animation(.smooth.speed(2.0), value: vm.selectedTextID)
                     .animation(.smooth.speed(2.0), value: vm.selectedShapeID)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 8 + canvasBottomPadding)
             }
         }
         .ignoresSafeArea(.keyboard)
@@ -36,19 +36,10 @@ struct ContentView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button {
-                        vm.showTemplatePicker = true
-                    } label: {
-                        Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
-                    }
-                    Button {
-                        vm.showSpaceNumberEditor = true
-                    } label: {
-                        Label(String(localized: "Toolbar.SpaceNumber"), systemImage: "number.square")
-                    }
+                Button {
+                    vm.showTemplatePicker = true
                 } label: {
-                    Image(systemName: "ellipsis")
+                    Image(systemName: "rectangle.on.rectangle")
                 }
             }
             ToolbarPanelView(vm: vm)
@@ -85,12 +76,6 @@ struct ContentView: View {
         }
         .sheet(isPresented: $vm.showExportSheet) {
             ExportSheetView(vm: vm)
-                .presentationDetents([.height(200), .large], selection: $sheetDetent)
-                .presentationBackgroundInteraction(.enabled)
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: $vm.showSpaceNumberEditor) {
-            SpaceNumberEditorView(spaceNumber: $vm.document.spaceNumber)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
