@@ -25,6 +25,7 @@ final class EditorState {
     // MARK: UI State
 
     var showTemplatePicker: Bool = false
+    var showProjectSettings: Bool = false
     var showExportSheet: Bool = false
     var showSpaceNumberEditor: Bool = false
     var showLayerManager: Bool = false

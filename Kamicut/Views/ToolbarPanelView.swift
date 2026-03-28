@@ -18,27 +18,22 @@ struct ToolbarPanelView: ToolbarContent {
         }
     }
 
-    // MARK: - iOS 26+ (native ToolbarItem + ToolbarSpacer)
+    // MARK: - iOS 26+ (native ToolbarItemGroup + ToolbarSpacer)
 
     @available(iOS 26, *)
     @ToolbarContentBuilder
     private var ios26Toolbar: some ToolbarContent {
-        // Template + Layers + Background
+        // Project + Layers
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
-                vm.showTemplatePicker = true
+                vm.showProjectSettings = true
             } label: {
-                Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
+                Label(String(localized: "Toolbar.Project"), systemImage: "doc.text")
             }
             Button {
                 vm.showLayerManager = true
             } label: {
                 Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
-            }
-            Button {
-                vm.showBackgroundSettings = true
-            } label: {
-                Label(String(localized: "Toolbar.Background"), systemImage: "photo.artframe")
             }
         }
 
@@ -64,11 +59,11 @@ struct ToolbarPanelView: ToolbarContent {
     private var legacyToolbar: some ToolbarContent {
         ToolbarItem(placement: .bottomBar) {
             HStack {
-                // Template
+                // Project
                 Button {
-                    vm.showTemplatePicker = true
+                    vm.showProjectSettings = true
                 } label: {
-                    Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
+                    Label(String(localized: "Toolbar.Project"), systemImage: "doc.text")
                 }
 
                 // Layers
@@ -76,13 +71,6 @@ struct ToolbarPanelView: ToolbarContent {
                     vm.showLayerManager = true
                 } label: {
                     Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
-                }
-
-                // Background
-                Button {
-                    vm.showBackgroundSettings = true
-                } label: {
-                    Label(String(localized: "Toolbar.Background"), systemImage: "photo.artframe")
                 }
 
                 Spacer()

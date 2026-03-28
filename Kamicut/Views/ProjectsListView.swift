@@ -23,8 +23,34 @@ struct ProjectsListView: View {
                             NavigationLink(value: cut) {
                                 ProjectRowView(cut: cut)
                             }
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    deleteCut(cut)
+                                } label: {
+                                    Label("Common.Delete", systemImage: "trash")
+                                }
+                            }
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    duplicateCut(cut)
+                                } label: {
+                                    Label(String(localized: "Projects.Duplicate"), systemImage: "plus.square.on.square")
+                                }
+                                .tint(.blue)
+                            }
+                            .contextMenu {
+                                Button {
+                                    duplicateCut(cut)
+                                } label: {
+                                    Label(String(localized: "Projects.Duplicate"), systemImage: "plus.square.on.square")
+                                }
+                                Button(role: .destructive) {
+                                    deleteCut(cut)
+                                } label: {
+                                    Label("Common.Delete", systemImage: "trash")
+                                }
+                            }
                         }
-                        .onDelete(perform: deleteCuts)
                     }
                     .listStyle(.insetGrouped)
                 }
@@ -61,9 +87,23 @@ struct ProjectsListView: View {
         }
     }
 
-    private func deleteCuts(at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(savedCuts[index])
+    // MARK: - Actions
+
+    private func deleteCut(_ cut: SavedCut) {
+        modelContext.delete(cut)
+    }
+
+    private func duplicateCut(_ cut: SavedCut) {
+        do {
+            let document = try cut.loadDocument()
+            let duplicate = try SavedCut(
+                name: String(localized: "Projects.DuplicateSuffix \(cut.name)"),
+                document: document
+            )
+            duplicate.thumbnailData = cut.thumbnailData
+            modelContext.insert(duplicate)
+        } catch {
+            // Encoding/decoding error — unlikely
         }
     }
 }
@@ -78,7 +118,7 @@ private struct ProjectRowView: View {
             if let thumbData = cut.thumbnailData, let img = UIImage(data: thumbData) {
                 Image(uiImage: img)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 56, height: 56)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             } else {
@@ -126,18 +166,37 @@ struct EditorDestination: View {
     }
 
     private func autoSave() {
+        // Generate thumbnail
+        let renderer = CircleCutRenderer()
+        let thumbnailImage: UIImage? = {
+            // Render synchronously on main thread for onDisappear
+            let semaphore = DispatchSemaphore(value: 0)
+            var result: UIImage?
+            Task { @MainActor in
+                result = await renderer.render(document: vm.document)
+                semaphore.signal()
+            }
+            semaphore.wait()
+            return result
+        }()
+        let thumbnailData = thumbnailImage?
+            .preparingThumbnail(of: CGSize(width: 112, height: 112))?
+            .jpegData(compressionQuality: 0.7)
+
         do {
             if let existingID = vm.currentSavedCutID {
                 let predicate = #Predicate<SavedCut> { $0.id == existingID }
                 let descriptor = FetchDescriptor<SavedCut>(predicate: predicate)
                 if let existing = try modelContext.fetch(descriptor).first {
                     try existing.updateDocument(vm.document)
+                    existing.thumbnailData = thumbnailData
                 }
             } else if !vm.document.layers.isEmpty || vm.document.backgroundImage != nil {
                 let name = vm.currentSavedCutName.isEmpty
                     ? vm.document.template.localizedDisplayName
                     : vm.currentSavedCutName
                 let newCut = try SavedCut(name: name, document: vm.document)
+                newCut.thumbnailData = thumbnailData
                 modelContext.insert(newCut)
                 vm.currentSavedCutID = newCut.id
                 vm.currentSavedCutName = newCut.name

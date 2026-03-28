@@ -10,8 +10,8 @@ struct ContentView: View {
     @State private var canvasBottomPadding: CGFloat = 0
 
     private var isAnySheetActive: Bool {
-        vm.showTemplatePicker || vm.showExportSheet || vm.showSpaceNumberEditor ||
-        vm.showLayerManager || vm.showBackgroundSettings ||
+        vm.showTemplatePicker || vm.showProjectSettings || vm.showExportSheet ||
+        vm.showSpaceNumberEditor || vm.showLayerManager || vm.showBackgroundSettings ||
         vm.selectedTextID != nil || vm.selectedShapeID != nil
     }
 
@@ -36,10 +36,19 @@ struct ContentView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    vm.showSpaceNumberEditor = true
+                Menu {
+                    Button {
+                        vm.showTemplatePicker = true
+                    } label: {
+                        Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
+                    }
+                    Button {
+                        vm.showSpaceNumberEditor = true
+                    } label: {
+                        Label(String(localized: "Toolbar.SpaceNumber"), systemImage: "number.square")
+                    }
                 } label: {
-                    Label(String(localized: "Toolbar.SpaceNumber"), systemImage: "number.square")
+                    Image(systemName: "ellipsis")
                 }
             }
             ToolbarPanelView(vm: vm)
@@ -64,6 +73,12 @@ struct ContentView: View {
         // Sheets
         .sheet(isPresented: $vm.showTemplatePicker) {
             TemplatePickerView(vm: vm)
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
+        }
+        .sheet(isPresented: $vm.showProjectSettings) {
+            ProjectSettingsView(vm: vm)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
