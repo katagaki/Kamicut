@@ -17,6 +17,8 @@ struct ElementToolbarView: View {
                     Image(systemName: "rotate.left")
                 }
 
+                Divider().frame(height: 24)
+
                 Button {
                     mutateLayer(at: layerIdx) { .rotate(15) }
                 } label: {
