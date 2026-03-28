@@ -10,7 +10,7 @@ struct ElementToolbarView: View {
     var body: some View {
         if let selectedID = vm.selectedImageID ?? vm.selectedTextID,
            let layerIdx = vm.document.layers.firstIndex(where: { $0.id == selectedID }) {
-            HStack(spacing: 12) {
+            HStack(spacing: 16) {
                 Button {
                     mutateLayer(at: layerIdx) { .rotate(-15) }
                 } label: {
@@ -23,7 +23,7 @@ struct ElementToolbarView: View {
                     Image(systemName: "rotate.right")
                 }
 
-                Divider().frame(height: 16)
+                Divider().frame(height: 24)
 
                 Button {
                     mutateLayer(at: layerIdx) { .scale(-0.1) }
@@ -37,7 +37,7 @@ struct ElementToolbarView: View {
                     Image(systemName: "plus.magnifyingglass")
                 }
 
-                Divider().frame(height: 16)
+                Divider().frame(height: 24)
 
                 Button(role: .destructive) {
                     withAnimation(.smooth.speed(2.0)) {
@@ -48,10 +48,10 @@ struct ElementToolbarView: View {
                         .tint(.red)
                 }
             }
-            .font(.system(size: 16))
+            .font(.system(size: 20))
             .tint(.primary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
             .glassEffect(.regular.interactive(), in: .capsule)
             .transition(.scale.combined(with: .opacity))
         }

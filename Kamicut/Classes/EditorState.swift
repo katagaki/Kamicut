@@ -28,6 +28,7 @@ final class EditorState {
     var showSpaceNumberEditor: Bool = false
     var showLayerManager: Bool = false
     var showSavedCutsList: Bool = false
+    var showBackgroundSettings: Bool = false
 
     // MARK: Export State
 

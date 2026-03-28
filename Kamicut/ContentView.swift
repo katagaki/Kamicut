@@ -11,7 +11,7 @@ struct ContentView: View {
 
     private var isAnySheetActive: Bool {
         vm.showTemplatePicker || vm.showExportSheet || vm.showSpaceNumberEditor ||
-        vm.showLayerManager || vm.selectedTextID != nil
+        vm.showLayerManager || vm.showBackgroundSettings || vm.selectedTextID != nil
     }
 
     var body: some View {
@@ -87,6 +87,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $vm.showLayerManager) {
             LayerManagerView(vm: vm)
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
+        }
+        .sheet(isPresented: $vm.showBackgroundSettings) {
+            BackgroundSettingsView(vm: vm)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
