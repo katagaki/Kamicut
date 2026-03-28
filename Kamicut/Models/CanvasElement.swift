@@ -208,9 +208,9 @@ struct CodableColor: Codable, Hashable {
     var alpha: Double
 
     init(color: UIColor) {
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        color.getRed(&r, green: &g, blue: &b, alpha: &a)
-        red = Double(r); green = Double(g); blue = Double(b); alpha = Double(a)
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        self.red = Double(red); self.green = Double(green); self.blue = Double(blue); self.alpha = Double(alpha)
     }
 
     init(color: Color) {

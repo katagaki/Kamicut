@@ -10,8 +10,8 @@ struct OverlayImageView: View {
     @GestureState private var pinchScale: CGFloat = 1.0
     @GestureState private var gestureRotation: Angle = .zero
     @State private var rotationActivated: Bool = false
-    @State private var resizeStartScale: CGFloat? = nil
-    @State private var resizeStartPosition: CGPoint? = nil
+    @State private var resizeStartScale: CGFloat?
+    @State private var resizeStartPosition: CGPoint?
 
     /// Rotation threshold in degrees before rotation kicks in.
     private let rotationThreshold: Double = 10
@@ -25,14 +25,14 @@ struct OverlayImageView: View {
         )
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
         let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
-        let h = baseSize * element.scale * pinchScale
-        let w = h * aspectRatio
+        let height = baseSize * element.scale * pinchScale
+        let width = height * aspectRatio
         let activeRotation = rotationActivated ? gestureRotation.degrees : 0
 
         let totalRotation = element.rotation + activeRotation
         let radians = totalRotation * .pi / 180
-        let boundingW = abs(w * cos(radians)) + abs(h * sin(radians))
-        let boundingH = abs(w * sin(radians)) + abs(h * cos(radians))
+        let boundingW = abs(width * cos(radians)) + abs(height * sin(radians))
+        let boundingH = abs(width * sin(radians)) + abs(height * cos(radians))
 
         Group {
             if let img = element.uiImage {
@@ -40,7 +40,7 @@ struct OverlayImageView: View {
                     Image(uiImage: img)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: w, height: h)
+                        .frame(width: width, height: height)
                         .rotationEffect(.degrees(totalRotation))
 
                     if isSelected {

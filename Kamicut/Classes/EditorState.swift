@@ -15,13 +15,13 @@ final class EditorState {
 
     // MARK: Selection State
 
-    var selectedImageID: UUID? = nil
-    var selectedTextID: UUID? = nil
-    var selectedShapeID: UUID? = nil
+    var selectedImageID: UUID?
+    var selectedTextID: UUID?
+    var selectedShapeID: UUID?
 
     // MARK: Saved Cut Tracking
 
-    var currentSavedCutID: UUID? = nil
+    var currentSavedCutID: UUID?
     var currentSavedCutName: String = ""
 
     // MARK: UI State
@@ -42,7 +42,7 @@ final class EditorState {
 
     // MARK: Export State
 
-    var exportedImage: UIImage? = nil
+    var exportedImage: UIImage?
     var isExporting: Bool = false
 
     // MARK: - Template
@@ -140,6 +140,12 @@ final class EditorState {
         if selectedShapeID == id { selectedShapeID = nil }
     }
 
+    var selectedLayerLabel: String {
+        let id = selectedTextID ?? selectedShapeID ?? selectedImageID
+        guard let id, let layer = document.layers.first(where: { $0.id == id }) else { return "" }
+        return layer.label
+    }
+
     func selectLayer(id: UUID) {
         guard let layer = document.layers.first(where: { $0.id == id }) else { return }
         selectedImageID = nil
@@ -178,28 +184,28 @@ final class EditorState {
     var canvasMM: CGSize { document.template.canvasSize }
 
     func imageAreaMM() -> CGRect {
-        let t = document.template
-        let textH = t.textAreaEnabled ? t.textAreaHeight : 0
-        let imageY = (t.textAreaEnabled && t.textAreaPosition == .top) ? textH : 0.0
-        return CGRect(x: 0, y: imageY, width: t.canvasSize.width, height: t.canvasSize.height - textH)
+        let template = document.template
+        let textH = template.textAreaEnabled ? template.textAreaHeight : 0
+        let imageY = (template.textAreaEnabled && template.textAreaPosition == .top) ? textH : 0.0
+        return CGRect(x: 0, y: imageY, width: template.canvasSize.width, height: template.canvasSize.height - textH)
     }
 
     func textAreaMM() -> CGRect? {
-        let t = document.template
-        guard t.textAreaEnabled else { return nil }
-        let textY = t.textAreaPosition == .top ? 0.0 : t.canvasSize.height - t.textAreaHeight
+        let template = document.template
+        guard template.textAreaEnabled else { return nil }
+        let textY = template.textAreaPosition == .top ? 0.0 : template.canvasSize.height - template.textAreaHeight
         return CGRect(
             x: 0,
             y: textY,
-            width: t.canvasSize.width,
-            height: t.textAreaHeight
+            width: template.canvasSize.width,
+            height: template.textAreaHeight
         )
     }
 
     func checkboxAreaMM() -> CGRect? {
-        let t = document.template
-        guard t.checkboxAreaEnabled else { return nil }
-        return CGRect(origin: .zero, size: t.checkboxAreaSize)
+        let template = document.template
+        guard template.checkboxAreaEnabled else { return nil }
+        return CGRect(origin: .zero, size: template.checkboxAreaSize)
     }
 
     // MARK: - Export

@@ -8,8 +8,8 @@ struct ShapeElementView: View {
 
     @GestureState private var dragOffset: CGSize = .zero
     @GestureState private var pinchScale: CGFloat = 1.0
-    @State private var resizeStartSize: CGSize? = nil
-    @State private var resizeStartPosition: CGPoint? = nil
+    @State private var resizeStartSize: CGSize?
+    @State private var resizeStartPosition: CGPoint?
 
     private let handleSize: CGFloat = 10
     private let handleHitSize: CGFloat = 44
@@ -23,17 +23,17 @@ struct ShapeElementView: View {
         let rawW = element.size.width * canvasSize.width * element.scale * pinchScale
         let rawH = element.size.height * canvasSize.height * element.scale * pinchScale
         let side = min(rawW, rawH)
-        let w = element.shapeKind.aspectLocked ? side : rawW
-        let h = element.shapeKind.aspectLocked ? side : rawH
+        let width = element.shapeKind.aspectLocked ? side : rawW
+        let height = element.shapeKind.aspectLocked ? side : rawH
 
         // Compute the axis-aligned bounding box of the rotated shape
         let radians = element.rotation * .pi / 180
-        let boundingW = abs(w * cos(radians)) + abs(h * sin(radians))
-        let boundingH = abs(w * sin(radians)) + abs(h * cos(radians))
+        let boundingW = abs(width * cos(radians)) + abs(height * sin(radians))
+        let boundingH = abs(width * sin(radians)) + abs(height * cos(radians))
 
         ZStack {
             shapeView
-                .frame(width: w, height: h)
+                .frame(width: width, height: height)
                 .rotationEffect(.degrees(element.rotation))
 
             if isSelected {
@@ -233,17 +233,17 @@ enum ResizeHandle: CaseIterable {
     }
 
     func position(in size: CGSize) -> CGPoint {
-        let w = size.width
-        let h = size.height
+        let width = size.width
+        let height = size.height
         switch self {
         case .topLeft: return CGPoint(x: 0, y: 0)
-        case .top: return CGPoint(x: w / 2, y: 0)
-        case .topRight: return CGPoint(x: w, y: 0)
-        case .left: return CGPoint(x: 0, y: h / 2)
-        case .right: return CGPoint(x: w, y: h / 2)
-        case .bottomLeft: return CGPoint(x: 0, y: h)
-        case .bottom: return CGPoint(x: w / 2, y: h)
-        case .bottomRight: return CGPoint(x: w, y: h)
+        case .top: return CGPoint(x: width / 2, y: 0)
+        case .topRight: return CGPoint(x: width, y: 0)
+        case .left: return CGPoint(x: 0, y: height / 2)
+        case .right: return CGPoint(x: width, y: height / 2)
+        case .bottomLeft: return CGPoint(x: 0, y: height)
+        case .bottom: return CGPoint(x: width / 2, y: height)
+        case .bottomRight: return CGPoint(x: width, y: height)
         }
     }
 }
@@ -254,12 +254,12 @@ struct TriangleShape: InsettableShape {
     var insetAmount: CGFloat = 0
 
     func path(in rect: CGRect) -> Path {
-        let r = rect.insetBy(dx: insetAmount, dy: insetAmount)
-        return Path { p in
-            p.move(to: CGPoint(x: r.midX, y: r.minY))
-            p.addLine(to: CGPoint(x: r.maxX, y: r.maxY))
-            p.addLine(to: CGPoint(x: r.minX, y: r.maxY))
-            p.closeSubpath()
+        let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
+        return Path { path in
+            path.move(to: CGPoint(x: insetRect.midX, y: insetRect.minY))
+            path.addLine(to: CGPoint(x: insetRect.maxX, y: insetRect.maxY))
+            path.addLine(to: CGPoint(x: insetRect.minX, y: insetRect.maxY))
+            path.closeSubpath()
         }
     }
 
@@ -273,16 +273,16 @@ struct StarShape: InsettableShape {
     var insetAmount: CGFloat = 0
 
     func path(in rect: CGRect) -> Path {
-        let r = rect.insetBy(dx: insetAmount, dy: insetAmount)
+        let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
         let totalPoints = points * 2
         let innerRatio: CGFloat = 0.4
 
         // Compute unit vertices centered at origin with radius 1
         var xs: [CGFloat] = []
         var ys: [CGFloat] = []
-        for i in 0..<totalPoints {
-            let angle = (CGFloat(i) * .pi / CGFloat(points)) - .pi / 2
-            let radius: CGFloat = i.isMultiple(of: 2) ? 1.0 : innerRatio
+        for index in 0..<totalPoints {
+            let angle = (CGFloat(index) * .pi / CGFloat(points)) - .pi / 2
+            let radius: CGFloat = index.isMultiple(of: 2) ? 1.0 : innerRatio
             xs.append(cos(angle) * radius)
             ys.append(sin(angle) * radius)
         }
@@ -290,22 +290,22 @@ struct StarShape: InsettableShape {
         // Normalize to fill rect
         let minX = xs.min()!, maxX = xs.max()!
         let minY = ys.min()!, maxY = ys.max()!
-        let scaleX = r.width / (maxX - minX)
-        let scaleY = r.height / (maxY - minY)
+        let scaleX = insetRect.width / (maxX - minX)
+        let scaleY = insetRect.height / (maxY - minY)
 
-        return Path { p in
-            for i in 0..<totalPoints {
+        return Path { path in
+            for index in 0..<totalPoints {
                 let point = CGPoint(
-                    x: r.minX + (xs[i] - minX) * scaleX,
-                    y: r.minY + (ys[i] - minY) * scaleY
+                    x: insetRect.minX + (xs[index] - minX) * scaleX,
+                    y: insetRect.minY + (ys[index] - minY) * scaleY
                 )
-                if i == 0 {
-                    p.move(to: point)
+                if index == 0 {
+                    path.move(to: point)
                 } else {
-                    p.addLine(to: point)
+                    path.addLine(to: point)
                 }
             }
-            p.closeSubpath()
+            path.closeSubpath()
         }
     }
 
@@ -319,13 +319,13 @@ struct PolygonShape: InsettableShape {
     var insetAmount: CGFloat = 0
 
     func path(in rect: CGRect) -> Path {
-        let r = rect.insetBy(dx: insetAmount, dy: insetAmount)
+        let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
 
         // Compute unit vertices centered at origin with radius 1
         var xs: [CGFloat] = []
         var ys: [CGFloat] = []
-        for i in 0..<sides {
-            let angle = (CGFloat(i) * 2 * .pi / CGFloat(sides)) - .pi / 2
+        for index in 0..<sides {
+            let angle = (CGFloat(index) * 2 * .pi / CGFloat(sides)) - .pi / 2
             xs.append(cos(angle))
             ys.append(sin(angle))
         }
@@ -333,22 +333,22 @@ struct PolygonShape: InsettableShape {
         // Normalize to fill rect
         let minX = xs.min()!, maxX = xs.max()!
         let minY = ys.min()!, maxY = ys.max()!
-        let scaleX = r.width / (maxX - minX)
-        let scaleY = r.height / (maxY - minY)
+        let scaleX = insetRect.width / (maxX - minX)
+        let scaleY = insetRect.height / (maxY - minY)
 
-        return Path { p in
-            for i in 0..<sides {
+        return Path { path in
+            for index in 0..<sides {
                 let point = CGPoint(
-                    x: r.minX + (xs[i] - minX) * scaleX,
-                    y: r.minY + (ys[i] - minY) * scaleY
+                    x: insetRect.minX + (xs[index] - minX) * scaleX,
+                    y: insetRect.minY + (ys[index] - minY) * scaleY
                 )
-                if i == 0 {
-                    p.move(to: point)
+                if index == 0 {
+                    path.move(to: point)
                 } else {
-                    p.addLine(to: point)
+                    path.addLine(to: point)
                 }
             }
-            p.closeSubpath()
+            path.closeSubpath()
         }
     }
 

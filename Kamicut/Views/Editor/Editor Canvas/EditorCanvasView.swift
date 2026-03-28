@@ -213,42 +213,42 @@ struct EditorCanvasView: View {
         switch sn.position {
         case .textArea:
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
-            let r = textAreaContentRect
+            let rect = textAreaContentRect
             return AnyView(
                 Text(sn.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
-                    .frame(width: r.width, height: r.height)
-                    .offset(x: r.minX, y: r.minY)
+                    .frame(width: rect.width, height: rect.height)
+                    .offset(x: rect.minX, y: rect.minY)
                     .allowsHitTesting(false)
             )
 
         case .textAreaLeading:
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
-            let r = textAreaContentRect
+            let rect = textAreaContentRect
             return AnyView(
                 Text(sn.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
                     .padding(.leading, 8)
-                    .frame(width: r.width, height: r.height, alignment: .leading)
-                    .offset(x: r.minX, y: r.minY)
+                    .frame(width: rect.width, height: rect.height, alignment: .leading)
+                    .offset(x: rect.minX, y: rect.minY)
                     .allowsHitTesting(false)
             )
 
         case .textAreaTrailing:
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
-            let r = textAreaContentRect
+            let rect = textAreaContentRect
             return AnyView(
                 Text(sn.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
                     .padding(.trailing, 8)
-                    .frame(width: r.width, height: r.height, alignment: .trailing)
-                    .offset(x: r.minX, y: r.minY)
+                    .frame(width: rect.width, height: rect.height, alignment: .trailing)
+                    .offset(x: rect.minX, y: rect.minY)
                     .allowsHitTesting(false)
             )
 
@@ -314,29 +314,29 @@ struct EditorCanvasView: View {
     // MARK: - Geometry Helpers
 
     private var imageAreaHeight: CGFloat {
-        let t = vm.document.template
-        let border = t.outerBorderThickness
-        if t.textAreaEnabled && !t.textAreaHasTopBorder && t.textAreaPosition == .bottom {
+        let template = vm.document.template
+        let border = template.outerBorderThickness
+        if template.textAreaEnabled && !template.textAreaHasTopBorder && template.textAreaPosition == .bottom {
             // Text area is outside the outer border
-            return canvasSize.height - t.textAreaHeight - border * 2
+            return canvasSize.height - template.textAreaHeight - border * 2
         }
-        let textH = t.textAreaEnabled ? t.textAreaHeight : 0
+        let textH = template.textAreaEnabled ? template.textAreaHeight : 0
         return canvasSize.height - border * 2 - textH
     }
 
     /// The text area rect, positioned after the outer border and to the right of the checkbox area when at top.
     private var textAreaRect: CGRect {
-        let t = vm.document.template
-        let border = t.outerBorderThickness
-        let textH = t.textAreaHeight
-        if t.textAreaPosition == .top {
+        let template = vm.document.template
+        let border = template.outerBorderThickness
+        let textH = template.textAreaHeight
+        if template.textAreaPosition == .top {
             let textY = border
-            if t.checkboxAreaEnabled {
-                let boxTotalW = border + t.checkboxAreaSize.width
+            if template.checkboxAreaEnabled {
+                let boxTotalW = border + template.checkboxAreaSize.width
                 return CGRect(x: boxTotalW, y: textY, width: canvasSize.width - boxTotalW - border, height: textH)
             }
             return CGRect(x: border, y: textY, width: canvasSize.width - border * 2, height: textH)
-        } else if !t.textAreaHasTopBorder {
+        } else if !template.textAreaHasTopBorder {
             // Text area outside the outer border
             let textY = canvasSize.height - textH
             return CGRect(x: 0, y: textY, width: canvasSize.width, height: textH)
@@ -348,22 +348,22 @@ struct EditorCanvasView: View {
 
     /// The text area content rect, excluding the divider border thickness.
     private var textAreaContentRect: CGRect {
-        let t = vm.document.template
-        let r = textAreaRect
-        let innerBorder = t.innerBorderThickness
-        if t.textAreaHasTopBorder {
-            if t.textAreaPosition == .top {
+        let template = vm.document.template
+        let rect = textAreaRect
+        let innerBorder = template.innerBorderThickness
+        if template.textAreaHasTopBorder {
+            if template.textAreaPosition == .top {
                 // Divider is at the bottom of the text area
-                return CGRect(x: r.minX, y: r.minY, width: r.width, height: r.height - innerBorder)
+                return CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height - innerBorder)
             } else {
                 // Divider is at the top of the text area
-                return CGRect(x: r.minX, y: r.minY + innerBorder, width: r.width, height: r.height - innerBorder)
+                return CGRect(x: rect.minX, y: rect.minY + innerBorder, width: rect.width, height: rect.height - innerBorder)
             }
-        } else if !t.textAreaHasTopBorder && t.textAreaPosition == .bottom {
+        } else if !template.textAreaHasTopBorder && template.textAreaPosition == .bottom {
             // Outside border text area (e.g. Manga Report) — inset by its own border
-            let tb = t.textAreaBorderThickness
-            return CGRect(x: r.minX + tb, y: r.minY + tb, width: r.width - tb * 2, height: r.height - tb * 2)
+            let borderThickness = template.textAreaBorderThickness
+            return CGRect(x: rect.minX + borderThickness, y: rect.minY + borderThickness, width: rect.width - borderThickness * 2, height: rect.height - borderThickness * 2)
         }
-        return r
+        return rect
     }
 }

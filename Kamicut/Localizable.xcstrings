@@ -109,57 +109,6 @@
         }
       }
     },
-    "Document.CircleInfo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Circle Info"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サークル情報"
-          }
-        }
-      }
-    },
-    "Document.CircleName" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Circle Name"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サークル名"
-          }
-        }
-      }
-    },
-    "Document.Title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Document"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ドキュメント"
-          }
-        }
-      }
-    },
     "Common.Cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -343,6 +292,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "テキスト"
+          }
+        }
+      }
+    },
+    "Document.CircleInfo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circle Info"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークル情報"
+          }
+        }
+      }
+    },
+    "Document.CircleName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circle Name"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークル名"
+          }
+        }
+      }
+    },
+    "Document.Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドキュメント"
           }
         }
       }
@@ -687,40 +687,6 @@
         }
       }
     },
-    "Layers.Image" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Image"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "画像"
-          }
-        }
-      }
-    },
-    "Layers.Text" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Text"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テキスト"
-          }
-        }
-      }
-    },
     "Layers.Background" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -738,6 +704,40 @@
         }
       }
     },
+    "Layers.CheckboxArea" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkbox Area"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックボックスエリア"
+          }
+        }
+      }
+    },
+    "Layers.CheckboxArea.Enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabled"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有効"
+          }
+        }
+      }
+    },
     "Layers.Elements" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -751,6 +751,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "エレメント"
+          }
+        }
+      }
+    },
+    "Layers.Image" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像"
           }
         }
       }
@@ -802,6 +819,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "スペース番号"
+          }
+        }
+      }
+    },
+    "Layers.Text" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキスト"
           }
         }
       }
@@ -891,36 +925,104 @@
         }
       }
     },
-    "Layers.CheckboxArea" : {
+    "Project.CanvasSize" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Checkbox Area"
+            "value" : "Canvas Size"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "チェックボックスエリア"
+            "value" : "キャンバスサイズ"
           }
         }
       }
     },
-    "Layers.CheckboxArea.Enabled" : {
+    "Project.Title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enabled"
+            "value" : "Project"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "有効"
+            "value" : "プロジェクト"
+          }
+        }
+      }
+    },
+    "Projects.Duplicate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicate"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複製"
+          }
+        }
+      }
+    },
+    "Projects.DuplicateSuffix %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Copy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ コピー"
+          }
+        }
+      }
+    },
+    "Projects.Empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Projects"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロジェクトがありません"
+          }
+        }
+      }
+    },
+    "Projects.EmptyDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap + to create your first project."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "＋をタップして最初のプロジェクトを作成しましょう。"
           }
         }
       }
@@ -1129,23 +1231,6 @@
         }
       }
     },
-    "Shape.Square" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Square"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正方形"
-          }
-        }
-      }
-    },
     "Shape.Rectangle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1159,6 +1244,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "四角形"
+          }
+        }
+      }
+    },
+    "Shape.Square" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Square"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正方形"
           }
         }
       }
@@ -1248,142 +1350,6 @@
         }
       }
     },
-    "Squiggle.Done" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Done"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完了"
-          }
-        }
-      }
-    },
-    "Squiggle.Title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Draw"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "手描き"
-          }
-        }
-      }
-    },
-    "Project.CanvasSize" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Canvas Size"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "キャンバスサイズ"
-          }
-        }
-      }
-    },
-    "Project.Title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Project"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プロジェクト"
-          }
-        }
-      }
-    },
-    "Projects.Duplicate" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Duplicate"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "複製"
-          }
-        }
-      }
-    },
-    "Projects.DuplicateSuffix %@" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ Copy"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ コピー"
-          }
-        }
-      }
-    },
-    "Projects.Empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Projects"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プロジェクトがありません"
-          }
-        }
-      }
-    },
-    "Projects.EmptyDescription" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap + to create your first project."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "＋をタップして最初のプロジェクトを作成しましょう。"
-          }
-        }
-      }
-    },
     "SpaceNumber.BoothNumber" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1414,6 +1380,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "例: 東A-01a"
+          }
+        }
+      }
+    },
+    "SpaceNumber.Position.CheckboxArea" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkbox area"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックボックスエリア"
           }
         }
       }
@@ -1537,23 +1520,6 @@
         }
       }
     },
-    "SpaceNumber.Position.CheckboxArea" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checkbox area"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チェックボックスエリア"
-          }
-        }
-      }
-    },
     "SpaceNumber.Style" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1588,6 +1554,40 @@
         }
       }
     },
+    "Squiggle.Done" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
+    "Squiggle.Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手描き"
+          }
+        }
+      }
+    },
     "Template.Border" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1618,6 +1618,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "キャンバスサイズ (px)"
+          }
+        }
+      }
+    },
+    "Template.CheckboxArea" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checkbox Area (Space Number)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックボックスエリア（スペース番号）"
           }
         }
       }
@@ -1690,23 +1707,6 @@
         }
       }
     },
-    "Template.EnableTextArea" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enable Text Area"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テキストエリアを有効にする"
-          }
-        }
-      }
-    },
     "Template.EnableCheckboxArea" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1720,6 +1720,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "チェックボックスエリアを有効にする"
+          }
+        }
+      }
+    },
+    "Template.EnableTextArea" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Text Area"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストエリアを有効にする"
           }
         }
       }
@@ -1822,23 +1839,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "テキストエリア"
-          }
-        }
-      }
-    },
-    "Template.CheckboxArea" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Checkbox Area (Space Number)"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チェックボックスエリア（スペース番号）"
           }
         }
       }
@@ -2353,6 +2353,23 @@
         }
       }
     },
+    "Toolbar.Document" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドキュメント"
+          }
+        }
+      }
+    },
     "Toolbar.Export" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2383,23 +2400,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画像"
-          }
-        }
-      }
-    },
-    "Toolbar.Document" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Document"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ドキュメント"
           }
         }
       }

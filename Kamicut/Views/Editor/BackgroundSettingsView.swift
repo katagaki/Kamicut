@@ -7,7 +7,7 @@ struct BackgroundSettingsView: View {
     @Bindable var vm: EditorState
 
     @Environment(\.dismiss) private var dismiss
-    @State private var backgroundPickerItem: PhotosPickerItem? = nil
+    @State private var backgroundPickerItem: PhotosPickerItem?
     @State private var backgroundColor: Color = .white
     @State private var hasBackgroundColor: Bool = false
 

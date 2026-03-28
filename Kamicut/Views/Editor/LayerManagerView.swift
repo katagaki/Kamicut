@@ -8,7 +8,7 @@ struct LayerManagerView: View {
     @Environment(\.dismiss) private var dismiss
 
     // Background settings state
-    @State private var backgroundPickerItem: PhotosPickerItem? = nil
+    @State private var backgroundPickerItem: PhotosPickerItem?
     @State private var backgroundColor: Color = .white
     @State private var hasBackgroundColor: Bool = false
 

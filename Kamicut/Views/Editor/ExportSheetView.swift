@@ -54,12 +54,12 @@ struct ExportSheetView: View {
 
                 // Export size info
                 Section {
-                    let w = Int(vm.document.template.canvasSize.width)
-                    let h = Int(vm.document.template.canvasSize.height)
+                    let width = Int(vm.document.template.canvasSize.width)
+                    let height = Int(vm.document.template.canvasSize.height)
                     HStack {
                         Label("Export.OutputSize", systemImage: "ruler")
                         Spacer()
-                        Text("\(w) × \(h) px")
+                        Text("\(width) × \(height) px")
                             .foregroundColor(.secondary)
                     }
                 }

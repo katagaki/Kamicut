@@ -14,7 +14,7 @@ struct SquiggleEditorView: View {
     @State private var strokeColor: Color = .black
     @State private var strokeWidth: CGFloat = 3.0
     @State private var hasStrokes: Bool = false
-    @State private var backgroundSnapshot: UIImage? = nil
+    @State private var backgroundSnapshot: UIImage?
 
     enum SquiggleTool {
         case pencil

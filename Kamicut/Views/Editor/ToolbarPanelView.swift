@@ -7,7 +7,7 @@ import PhotosUI
 struct ToolbarPanelView: ToolbarContent {
     var vm: EditorState
 
-    @State private var overlayPickerItem: PhotosPickerItem? = nil
+    @State private var overlayPickerItem: PhotosPickerItem?
     @State private var showPhotoPicker: Bool = false
 
     var body: some ToolbarContent {
@@ -85,14 +85,14 @@ struct ToolbarPanelView: ToolbarContent {
                 Label(String(localized: "Toolbar.Add.Image"), systemImage: "photo.stack")
             }
             Button {
-                let _ = vm.addTextElement()
+                _ = vm.addTextElement()
             } label: {
                 Label(String(localized: "Toolbar.Add.Text"), systemImage: "textformat")
             }
             Menu {
                 ForEach(ShapeKind.allCases) { kind in
                     Button {
-                        let _ = vm.addShapeElement(kind)
+                        _ = vm.addShapeElement(kind)
                     } label: {
                         Label(kind.localizedName, systemImage: kind.systemImage)
                     }
