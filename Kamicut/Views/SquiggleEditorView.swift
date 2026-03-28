@@ -13,6 +13,7 @@ struct SquiggleEditorView: View {
     @State private var activeTool: SquiggleTool = .pencil
     @State private var strokeColor: Color = .black
     @State private var strokeWidth: CGFloat = 3.0
+    @State private var hasStrokes: Bool = false
 
     enum SquiggleTool {
         case pencil
@@ -26,6 +27,7 @@ struct SquiggleEditorView: View {
                 activeTool: $activeTool,
                 strokeColor: $strokeColor,
                 strokeWidth: $strokeWidth,
+                hasStrokes: $hasStrokes,
                 canvasSize: vm.document.template.canvasSize
             )
             .ignoresSafeArea(.container, edges: .bottom)
@@ -44,7 +46,7 @@ struct SquiggleEditorView: View {
                         confirmDrawing()
                     }
                     .fontWeight(.semibold)
-                    .disabled(canvasView.drawing.strokes.isEmpty)
+                    .disabled(!hasStrokes)
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     toolSelector
@@ -130,7 +132,12 @@ struct SquiggleCanvasRepresentable: UIViewRepresentable {
     @Binding var activeTool: SquiggleEditorView.SquiggleTool
     @Binding var strokeColor: Color
     @Binding var strokeWidth: CGFloat
+    @Binding var hasStrokes: Bool
     let canvasSize: CGSize
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(hasStrokes: $hasStrokes)
+    }
 
     func makeUIView(context: Context) -> PKCanvasView {
         canvasView.backgroundColor = .clear
@@ -140,6 +147,7 @@ struct SquiggleCanvasRepresentable: UIViewRepresentable {
         canvasView.minimumZoomScale = 0.5
         canvasView.maximumZoomScale = 4.0
         canvasView.tool = makeTool()
+        canvasView.delegate = context.coordinator
         return canvasView
     }
 
@@ -153,6 +161,20 @@ struct SquiggleCanvasRepresentable: UIViewRepresentable {
             return PKInkingTool(.pen, color: UIColor(strokeColor), width: strokeWidth)
         case .eraser:
             return PKEraserTool(.bitmap)
+        }
+    }
+
+    // MARK: - Coordinator
+
+    class Coordinator: NSObject, PKCanvasViewDelegate {
+        var hasStrokes: Binding<Bool>
+
+        init(hasStrokes: Binding<Bool>) {
+            self.hasStrokes = hasStrokes
+        }
+
+        func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+            hasStrokes.wrappedValue = !canvasView.drawing.strokes.isEmpty
         }
     }
 }
