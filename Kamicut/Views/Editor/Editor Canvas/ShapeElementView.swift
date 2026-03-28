@@ -107,23 +107,21 @@ struct ShapeElementView: View {
 
         let scale = element.scale
         let rot = element.rotation * .pi / 180
-        let cosR = cos(rot)
-        let sinR = sin(rot)
 
-        // Old half-sizes in pixels
-        let oldHalfW = startSize.width * canvasSize.width * scale / 2
-        let oldHalfH = startSize.height * canvasSize.height * scale / 2
+        // Old element pixel sizes
+        let oldW = startSize.width * canvasSize.width * scale
+        let oldH = startSize.height * canvasSize.height * scale
 
-        // Anchor point: the corner/edge opposite to the handle, in canvas pixel space
-        // For topLeft handle (xFactor=-1, yFactor=-1), the anchor is bottomRight (+halfW, +halfH)
-        // Opposite sign of the handle factors gives us the anchor's local offset
-        let anchorLocalX = -handle.xFactor * oldHalfW
-        let anchorLocalY = -handle.yFactor * oldHalfH
+        // Old bounding box half-sizes (axis-aligned)
+        let oldBBHalfW = (abs(oldW * cos(rot)) + abs(oldH * sin(rot))) / 2
+        let oldBBHalfH = (abs(oldW * sin(rot)) + abs(oldH * cos(rot))) / 2
 
+        // Anchor: the opposite bounding box corner in canvas pixel space
+        // Handles are on the bounding box, so the anchor is axis-aligned
         let startCx = startPos.x * canvasSize.width
         let startCy = startPos.y * canvasSize.height
-        let anchorX = startCx + anchorLocalX * cosR - anchorLocalY * sinR
-        let anchorY = startCy + anchorLocalX * sinR + anchorLocalY * cosR
+        let anchorX = startCx - handle.xFactor * oldBBHalfW
+        let anchorY = startCy - handle.yFactor * oldBBHalfH
 
         // Compute new size from drag translation rotated into local space
         let localDragW = translation.width * cos(-rot) - translation.height * sin(-rot)
@@ -149,15 +147,17 @@ struct ShapeElementView: View {
         let newW = max(minNormalized, startSize.width + dw)
         let newH = max(minNormalized, startSize.height + dh)
 
-        // New half-sizes in pixels
-        let newHalfW = newW * canvasSize.width * scale / 2
-        let newHalfH = newH * canvasSize.height * scale / 2
+        // New element pixel sizes
+        let newPixelW = newW * canvasSize.width * scale
+        let newPixelH = newH * canvasSize.height * scale
 
-        // Recompute center so the anchor point stays fixed
-        let newAnchorLocalX = -handle.xFactor * newHalfW
-        let newAnchorLocalY = -handle.yFactor * newHalfH
-        let newCx = anchorX - newAnchorLocalX * cosR + newAnchorLocalY * sinR
-        let newCy = anchorY - newAnchorLocalX * sinR - newAnchorLocalY * cosR
+        // New bounding box half-sizes
+        let newBBHalfW = (abs(newPixelW * cos(rot)) + abs(newPixelH * sin(rot))) / 2
+        let newBBHalfH = (abs(newPixelW * sin(rot)) + abs(newPixelH * cos(rot))) / 2
+
+        // Solve for new center so the anchor bounding box corner stays fixed
+        let newCx = anchorX + handle.xFactor * newBBHalfW
+        let newCy = anchorY + handle.yFactor * newBBHalfH
 
         element.size = CGSize(width: newW, height: newH)
         element.position = CGPoint(

@@ -134,20 +134,20 @@ struct OverlayImageView: View {
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
         let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
         let rot = element.rotation * .pi / 180
-        let cosR = cos(rot)
-        let sinR = sin(rot)
 
         // Old pixel dimensions
         let oldH = baseSize * startScale
         let oldW = oldH * aspectRatio
 
-        // Anchor point: opposite corner/edge in canvas pixel space
-        let anchorLocalX = -handle.xFactor * oldW / 2
-        let anchorLocalY = -handle.yFactor * oldH / 2
+        // Old bounding box half-sizes (axis-aligned)
+        let oldBBHalfW = (abs(oldW * cos(rot)) + abs(oldH * sin(rot))) / 2
+        let oldBBHalfH = (abs(oldW * sin(rot)) + abs(oldH * cos(rot))) / 2
+
+        // Anchor: opposite bounding box corner in canvas pixel space
         let startCx = startPos.x * canvasSize.width
         let startCy = startPos.y * canvasSize.height
-        let anchorX = startCx + anchorLocalX * cosR - anchorLocalY * sinR
-        let anchorY = startCy + anchorLocalX * sinR + anchorLocalY * cosR
+        let anchorX = startCx - handle.xFactor * oldBBHalfW
+        let anchorY = startCy - handle.yFactor * oldBBHalfH
 
         // Compute new scale from drag translation rotated into local space
         let localDragW = translation.width * cos(-rot) - translation.height * sin(-rot)
@@ -172,11 +172,13 @@ struct OverlayImageView: View {
         let newH = baseSize * newScale
         let newW = newH * aspectRatio
 
-        // Recompute center so the anchor point stays fixed
-        let newAnchorLocalX = -handle.xFactor * newW / 2
-        let newAnchorLocalY = -handle.yFactor * newH / 2
-        let newCx = anchorX - newAnchorLocalX * cosR + newAnchorLocalY * sinR
-        let newCy = anchorY - newAnchorLocalX * sinR - newAnchorLocalY * cosR
+        // New bounding box half-sizes
+        let newBBHalfW = (abs(newW * cos(rot)) + abs(newH * sin(rot))) / 2
+        let newBBHalfH = (abs(newW * sin(rot)) + abs(newH * cos(rot))) / 2
+
+        // Solve for new center so the anchor bounding box corner stays fixed
+        let newCx = anchorX + handle.xFactor * newBBHalfW
+        let newCy = anchorY + handle.yFactor * newBBHalfH
 
         element.scale = newScale
         element.position = CGPoint(
