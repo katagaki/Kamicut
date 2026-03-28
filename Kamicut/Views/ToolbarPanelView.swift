@@ -11,6 +11,56 @@ struct ToolbarPanelView: ToolbarContent {
     @State private var showPhotoPicker: Bool = false
 
     var body: some ToolbarContent {
+        if #available(iOS 26, *) {
+            ios26Toolbar
+        } else {
+            legacyToolbar
+        }
+    }
+
+    // MARK: - iOS 26+ (native ToolbarItem + ToolbarSpacer)
+
+    @available(iOS 26, *)
+    @ToolbarContentBuilder
+    private var ios26Toolbar: some ToolbarContent {
+        // Layers
+        ToolbarItem(placement: .bottomBar) {
+            Button {
+                vm.showLayerManager = true
+            } label: {
+                Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
+            }
+        }
+
+        // Background
+        ToolbarItem(placement: .bottomBar) {
+            Button {
+                vm.showBackgroundSettings = true
+            } label: {
+                Label(String(localized: "Toolbar.Background"), systemImage: "photo.artframe")
+            }
+        }
+
+        ToolbarSpacer(.fixed)
+
+        // Add (+) Menu
+        ToolbarItem(placement: .bottomBar) {
+            addMenu
+        }
+
+        // Flexible spacer — pushes Export to the trailing edge
+        ToolbarSpacer(.flexible)
+
+        // Export
+        ToolbarItem(placement: .bottomBar) {
+            exportButton
+        }
+    }
+
+    // MARK: - iOS 18 fallback (HStack)
+
+    @ToolbarContentBuilder
+    private var legacyToolbar: some ToolbarContent {
         ToolbarItem(placement: .bottomBar) {
             HStack {
                 // Layers
@@ -30,41 +80,49 @@ struct ToolbarPanelView: ToolbarContent {
                 Spacer()
                     .frame(width: 16)
 
-                // Add (+) Menu
-                Menu {
-                    Button {
-                        showPhotoPicker = true
-                    } label: {
-                        Label(String(localized: "Toolbar.Add.Image"), systemImage: "photo.stack")
-                    }
-                    Button {
-                        let _ = vm.addTextElement()
-                    } label: {
-                        Label(String(localized: "Toolbar.Add.Text"), systemImage: "textformat")
-                    }
-                    Button {
-                        // TODO: Shape support
-                    } label: {
-                        Label(String(localized: "Toolbar.Add.Shape"), systemImage: "square.on.circle")
-                    }
-                    .disabled(true)
-                } label: {
-                    Label(String(localized: "Toolbar.Add"), systemImage: "plus")
-                }
-                .photosPicker(isPresented: $showPhotoPicker, selection: $overlayPickerItem, matching: .images)
-                .onChange(of: overlayPickerItem) { _, item in
-                    Task { await loadOverlayImage(item: item) }
-                }
+                addMenu
 
                 Spacer()
 
-                // Export
-                Button {
-                    vm.showExportSheet = true
-                } label: {
-                    Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
-                }
+                exportButton
             }
+        }
+    }
+
+    // MARK: - Shared Controls
+
+    private var addMenu: some View {
+        Menu {
+            Button {
+                showPhotoPicker = true
+            } label: {
+                Label(String(localized: "Toolbar.Add.Image"), systemImage: "photo.stack")
+            }
+            Button {
+                let _ = vm.addTextElement()
+            } label: {
+                Label(String(localized: "Toolbar.Add.Text"), systemImage: "textformat")
+            }
+            Button {
+                // TODO: Shape support
+            } label: {
+                Label(String(localized: "Toolbar.Add.Shape"), systemImage: "square.on.circle")
+            }
+            .disabled(true)
+        } label: {
+            Label(String(localized: "Toolbar.Add"), systemImage: "plus")
+        }
+        .photosPicker(isPresented: $showPhotoPicker, selection: $overlayPickerItem, matching: .images)
+        .onChange(of: overlayPickerItem) { _, item in
+            Task { await loadOverlayImage(item: item) }
+        }
+    }
+
+    private var exportButton: some View {
+        Button {
+            vm.showExportSheet = true
+        } label: {
+            Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
         }
     }
 
