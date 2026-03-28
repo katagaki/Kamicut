@@ -65,7 +65,7 @@ struct SavedCutsListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "Shared.Close")) {
+                    Button(String(localized: "Common.Close")) {
                         dismiss()
                     }
                 }

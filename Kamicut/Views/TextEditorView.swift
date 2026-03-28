@@ -114,7 +114,7 @@ struct FontPickerRow: View {
         .tint(.primary)
         .sheet(isPresented: $showPicker) {
             FontPickerSheet(selectedFontName: $selectedFontName)
-                .presentationDetents([.height(100), .medium, .large])
+                .presentationDetents([.height(200), .large])
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }

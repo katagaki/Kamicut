@@ -48,6 +48,16 @@ final class EditorState {
         set { document.bleedOption = newValue }
     }
 
+    // MARK: - Background Color
+
+    func setBackgroundColor(_ color: Color) {
+        document.backgroundColor = CodableColor(color: color)
+    }
+
+    func removeBackgroundColor() {
+        document.backgroundColor = nil
+    }
+
     // MARK: - Background Image
 
     func setBackgroundImage(_ image: UIImage) {
