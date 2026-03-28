@@ -105,51 +105,64 @@ struct ShapeElementView: View {
     private func applyResize(handle: ResizeHandle, translation: CGSize) {
         guard let startSize = resizeStartSize, let startPos = resizeStartPosition else { return }
 
-        // Rotate screen-space translation into local (unrotated) space
-        let radians = -element.rotation * .pi / 180
-        let localW = translation.width * cos(radians) - translation.height * sin(radians)
-        let localH = translation.width * sin(radians) + translation.height * cos(radians)
+        let scale = element.scale
+        let rot = element.rotation * .pi / 180
+        let cosR = cos(rot)
+        let sinR = sin(rot)
+
+        // Old half-sizes in pixels
+        let oldHalfW = startSize.width * canvasSize.width * scale / 2
+        let oldHalfH = startSize.height * canvasSize.height * scale / 2
+
+        // Anchor point: the corner/edge opposite to the handle, in canvas pixel space
+        // For topLeft handle (xFactor=-1, yFactor=-1), the anchor is bottomRight (+halfW, +halfH)
+        // Opposite sign of the handle factors gives us the anchor's local offset
+        let anchorLocalX = -handle.xFactor * oldHalfW
+        let anchorLocalY = -handle.yFactor * oldHalfH
+
+        let startCx = startPos.x * canvasSize.width
+        let startCy = startPos.y * canvasSize.height
+        let anchorX = startCx + anchorLocalX * cosR - anchorLocalY * sinR
+        let anchorY = startCy + anchorLocalX * sinR + anchorLocalY * cosR
+
+        // Compute new size from drag translation rotated into local space
+        let localDragW = translation.width * cos(-rot) - translation.height * sin(-rot)
+        let localDragH = translation.width * sin(-rot) + translation.height * cos(-rot)
 
         let locked = element.shapeKind.aspectLocked
-        var dx = handle.xFactor * localW
-        var dy = handle.yFactor * localH
+        var dx = handle.xFactor * localDragW
+        var dy = handle.yFactor * localDragH
 
         if locked {
             if handle.isCorner {
                 let avg = (dx + dy) / 2
-                dx = avg
-                dy = avg
+                dx = avg; dy = avg
+            } else if handle.xFactor != 0 {
+                dy = dx
             } else {
-                if handle.xFactor != 0 {
-                    dy = dx
-                } else {
-                    dx = dy
-                }
+                dx = dy
             }
         }
 
-        let scale = element.scale
         let dw = dx / (canvasSize.width * scale)
         let dh = dy / (canvasSize.height * scale)
-
         let newW = max(minNormalized, startSize.width + dw)
         let newH = max(minNormalized, startSize.height + dh)
 
-        // Compute position shift to anchor opposite edge (in pixels)
-        let pixelDW = (newW - startSize.width) * canvasSize.width * scale
-        let pixelDH = (newH - startSize.height) * canvasSize.height * scale
-        let localPixelShiftX = pixelDW * handle.anchorShiftX
-        let localPixelShiftY = pixelDH * handle.anchorShiftY
+        // New half-sizes in pixels
+        let newHalfW = newW * canvasSize.width * scale / 2
+        let newHalfH = newH * canvasSize.height * scale / 2
 
-        // Rotate pixel shift back to canvas space, then normalize
-        let rotBack = element.rotation * .pi / 180
-        let canvasPixelShiftX = localPixelShiftX * cos(rotBack) - localPixelShiftY * sin(rotBack)
-        let canvasPixelShiftY = localPixelShiftX * sin(rotBack) + localPixelShiftY * cos(rotBack)
+        // Recompute center so the anchor point stays fixed
+        let newAnchorLocalX = -handle.xFactor * newHalfW
+        let newAnchorLocalY = -handle.yFactor * newHalfH
+        let newCx = anchorX - newAnchorLocalX * cosR + newAnchorLocalY * sinR
+        let newCy = anchorY - newAnchorLocalX * sinR - newAnchorLocalY * cosR
 
         element.size = CGSize(width: newW, height: newH)
         element.position = CGPoint(
-            x: startPos.x + canvasPixelShiftX / canvasSize.width,
-            y: startPos.y + canvasPixelShiftY / canvasSize.height
+            x: newCx / canvasSize.width,
+            y: newCy / canvasSize.height
         )
     }
 
@@ -220,23 +233,6 @@ enum ResizeHandle: CaseIterable {
         switch self {
         case .topLeft, .top, .topRight: return -1
         case .bottomLeft, .bottom, .bottomRight: return 1
-        case .left, .right: return 0
-        }
-    }
-
-    /// Position shift to keep opposite edge anchored (0.5 = half the size delta)
-    var anchorShiftX: CGFloat {
-        switch self {
-        case .topLeft, .left, .bottomLeft: return -0.5
-        case .topRight, .right, .bottomRight: return 0.5
-        case .top, .bottom: return 0
-        }
-    }
-
-    var anchorShiftY: CGFloat {
-        switch self {
-        case .topLeft, .top, .topRight: return -0.5
-        case .bottomLeft, .bottom, .bottomRight: return 0.5
         case .left, .right: return 0
         }
     }

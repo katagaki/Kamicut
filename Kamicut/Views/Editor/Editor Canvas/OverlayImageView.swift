@@ -131,14 +131,31 @@ struct OverlayImageView: View {
     private func applyImageResize(handle: ResizeHandle, translation: CGSize) {
         guard let startScale = resizeStartScale, let startPos = resizeStartPosition else { return }
 
-        // Rotate screen-space translation into local space
-        let radians = -element.rotation * .pi / 180
-        let localW = translation.width * cos(radians) - translation.height * sin(radians)
-        let localH = translation.width * sin(radians) + translation.height * cos(radians)
+        let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
+        let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
+        let rot = element.rotation * .pi / 180
+        let cosR = cos(rot)
+        let sinR = sin(rot)
+
+        // Old pixel dimensions
+        let oldH = baseSize * startScale
+        let oldW = oldH * aspectRatio
+
+        // Anchor point: opposite corner/edge in canvas pixel space
+        let anchorLocalX = -handle.xFactor * oldW / 2
+        let anchorLocalY = -handle.yFactor * oldH / 2
+        let startCx = startPos.x * canvasSize.width
+        let startCy = startPos.y * canvasSize.height
+        let anchorX = startCx + anchorLocalX * cosR - anchorLocalY * sinR
+        let anchorY = startCy + anchorLocalX * sinR + anchorLocalY * cosR
+
+        // Compute new scale from drag translation rotated into local space
+        let localDragW = translation.width * cos(-rot) - translation.height * sin(-rot)
+        let localDragH = translation.width * sin(-rot) + translation.height * cos(-rot)
 
         // Images always resize uniformly (aspect locked)
-        let dx = handle.xFactor * localW
-        let dy = handle.yFactor * localH
+        let dx = handle.xFactor * localDragW
+        let dy = handle.yFactor * localDragH
         let avg: CGFloat
         if handle.isCorner {
             avg = (dx + dy) / 2
@@ -148,30 +165,23 @@ struct OverlayImageView: View {
             avg = dy
         }
 
-        let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
         let scaleDelta = avg / baseSize
         let newScale = max(0.1, startScale + scaleDelta)
 
-        // Compute position shift to anchor opposite edge
-        let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
-        let startH = baseSize * startScale
-        let startW = startH * aspectRatio
+        // New pixel dimensions
         let newH = baseSize * newScale
         let newW = newH * aspectRatio
-        let dw = newW - startW
-        let dh = newH - startH
 
-        // Compute shift in pixels, rotate, then normalize
-        let localPixelShiftX = dw * handle.anchorShiftX
-        let localPixelShiftY = dh * handle.anchorShiftY
-        let rotBack = element.rotation * .pi / 180
-        let canvasPixelShiftX = localPixelShiftX * cos(rotBack) - localPixelShiftY * sin(rotBack)
-        let canvasPixelShiftY = localPixelShiftX * sin(rotBack) + localPixelShiftY * cos(rotBack)
+        // Recompute center so the anchor point stays fixed
+        let newAnchorLocalX = -handle.xFactor * newW / 2
+        let newAnchorLocalY = -handle.yFactor * newH / 2
+        let newCx = anchorX - newAnchorLocalX * cosR + newAnchorLocalY * sinR
+        let newCy = anchorY - newAnchorLocalX * sinR - newAnchorLocalY * cosR
 
         element.scale = newScale
         element.position = CGPoint(
-            x: startPos.x + canvasPixelShiftX / canvasSize.width,
-            y: startPos.y + canvasPixelShiftY / canvasSize.height
+            x: newCx / canvasSize.width,
+            y: newCy / canvasSize.height
         )
     }
 }
