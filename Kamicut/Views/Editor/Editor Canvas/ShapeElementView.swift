@@ -131,19 +131,14 @@ struct ShapeElementView: View {
         var dx = handle.xFactor * localDragW
         var dy = handle.yFactor * localDragH
 
-        if locked {
-            if handle.isCorner {
-                let avg = (dx + dy) / 2
-                dx = avg; dy = avg
-            } else if handle.xFactor != 0 {
-                dy = dx
-            } else {
-                dx = dy
-            }
+        if locked && handle.isCorner {
+            let avg = (dx + dy) / 2
+            dx = avg; dy = avg
         }
 
-        let dw = dx / (canvasSize.width * scale)
-        let dh = dy / (canvasSize.height * scale)
+        // Edge handles: left/right only change width, top/bottom only change height
+        let dw = handle.xFactor != 0 ? dx / (canvasSize.width * scale) : 0
+        let dh = handle.yFactor != 0 ? dy / (canvasSize.height * scale) : 0
         let newW = max(minNormalized, startSize.width + dw)
         let newH = max(minNormalized, startSize.height + dh)
 
