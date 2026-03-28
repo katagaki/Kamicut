@@ -112,6 +112,7 @@ struct NewProjectTag: Hashable {}
 struct EditorDestination: View {
     let savedCut: SavedCut?
     @State private var vm = EditorState()
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         ContentView(vm: vm)
@@ -119,5 +120,30 @@ struct EditorDestination: View {
                 guard let savedCut, vm.currentSavedCutID == nil else { return }
                 try? vm.loadSavedCut(savedCut)
             }
+            .onDisappear {
+                autoSave()
+            }
+    }
+
+    private func autoSave() {
+        do {
+            if let existingID = vm.currentSavedCutID {
+                let predicate = #Predicate<SavedCut> { $0.id == existingID }
+                let descriptor = FetchDescriptor<SavedCut>(predicate: predicate)
+                if let existing = try modelContext.fetch(descriptor).first {
+                    try existing.updateDocument(vm.document)
+                }
+            } else if !vm.document.layers.isEmpty || vm.document.backgroundImage != nil {
+                let name = vm.currentSavedCutName.isEmpty
+                    ? vm.document.template.localizedDisplayName
+                    : vm.currentSavedCutName
+                let newCut = try SavedCut(name: name, document: vm.document)
+                modelContext.insert(newCut)
+                vm.currentSavedCutID = newCut.id
+                vm.currentSavedCutName = newCut.name
+            }
+        } catch {
+            // Encoding error — unlikely
+        }
     }
 }

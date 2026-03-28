@@ -8,6 +8,7 @@ struct ToolbarPanelView: ToolbarContent {
     var vm: EditorState
 
     @State private var overlayPickerItem: PhotosPickerItem? = nil
+    @State private var showPhotoPicker: Bool = false
 
     var body: some ToolbarContent {
         // Layers
@@ -23,7 +24,9 @@ struct ToolbarPanelView: ToolbarContent {
         // Add (+) Menu
         ToolbarItem(placement: .bottomBar) {
             Menu {
-                PhotosPicker(selection: $overlayPickerItem, matching: .images) {
+                Button {
+                    showPhotoPicker = true
+                } label: {
                     Label(String(localized: "Toolbar.Add.Image"), systemImage: "photo.stack")
                 }
                 Button {
@@ -40,6 +43,7 @@ struct ToolbarPanelView: ToolbarContent {
             } label: {
                 Label(String(localized: "Toolbar.Add"), systemImage: "plus")
             }
+            .photosPicker(isPresented: $showPhotoPicker, selection: $overlayPickerItem, matching: .images)
             .onChange(of: overlayPickerItem) { _, item in
                 Task { await loadOverlayImage(item: item) }
             }
