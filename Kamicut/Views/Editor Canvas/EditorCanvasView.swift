@@ -197,24 +197,6 @@ struct EditorCanvasView: View {
         let color = sn.color.color
 
         switch sn.position {
-        case .topLeftBox:
-            guard template.topLeftBoxEnabled else { return AnyView(EmptyView()) }
-            let border = template.outerBorderThickness
-            let innerBorder = template.innerBorderThickness
-            // Content area is box size minus right and bottom inner borders
-            let contentW = template.topLeftBoxSize.width - innerBorder
-            let contentH = template.topLeftBoxSize.height - innerBorder
-            return AnyView(
-                Text(sn.text)
-                    .font(font)
-                    .foregroundColor(color)
-                    .minimumScaleFactor(0.3)
-                    .lineLimit(2)
-                    .frame(width: contentW, height: contentH)
-                    .offset(x: border, y: border)
-                    .allowsHitTesting(false)
-            )
-
         case .textArea:
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
             let r = textAreaContentRect

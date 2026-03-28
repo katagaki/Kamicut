@@ -170,14 +170,6 @@ final class CircleCutRenderer {
                 }()
 
                 switch sn.position {
-                case .topLeftBox:
-                    if template.topLeftBoxEnabled {
-                        // Content area inside the box, excluding inner borders on right and bottom
-                        let contentW = template.topLeftBoxSize.width - innerBorder
-                        let contentH = template.topLeftBoxSize.height - innerBorder
-                        let contentRect = CGRect(x: border, y: border, width: contentW, height: contentH)
-                        drawSpaceNumber(sn, in: contentRect.insetBy(dx: 4, dy: 4), context: cgCtx)
-                    }
                 case .textArea:
                     if template.textAreaEnabled {
                         drawSpaceNumber(sn, in: textContentRect, context: cgCtx)

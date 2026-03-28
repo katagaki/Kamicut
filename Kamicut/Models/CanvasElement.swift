@@ -146,7 +146,6 @@ enum CanvasLayer: Identifiable, Codable {
 // MARK: - Space Number
 
 enum SpaceNumberPosition: String, Codable, CaseIterable {
-    case topLeftBox = "Top-left box"
     case textArea = "Text area"
     case textAreaLeading = "Text area (leading)"
     case textAreaTrailing = "Text area (trailing)"
@@ -157,7 +156,6 @@ enum SpaceNumberPosition: String, Codable, CaseIterable {
 
     var localizedName: String {
         switch self {
-        case .topLeftBox: return String(localized: "SpaceNumber.Position.TopLeftBox")
         case .textArea: return String(localized: "SpaceNumber.Position.TextArea")
         case .textAreaLeading: return String(localized: "SpaceNumber.Position.TextAreaLeading")
         case .textAreaTrailing: return String(localized: "SpaceNumber.Position.TextAreaTrailing")
@@ -171,7 +169,7 @@ enum SpaceNumberPosition: String, Codable, CaseIterable {
 
 struct SpaceNumberInfo: Codable {
     var text: String = ""
-    var position: SpaceNumberPosition = .topLeftBox
+    var position: SpaceNumberPosition = .textArea
     var fontName: String = "HiraginoSans-W6"
     var fontSize: CGFloat = 10
     var color: CodableColor = CodableColor(color: UIColor.black)
