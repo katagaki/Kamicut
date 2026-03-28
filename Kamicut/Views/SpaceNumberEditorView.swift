@@ -38,8 +38,12 @@ struct SpaceNumberEditorView: View {
             .navigationTitle(String(localized: "SpaceNumber.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm) { dismiss() }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if #available(iOS 26, *) {
+                        Button(role: .close) { dismiss() }
+                    } else {
+                        Button(String(localized: "Common.Close")) { dismiss() }
+                    }
                 }
             }
         }

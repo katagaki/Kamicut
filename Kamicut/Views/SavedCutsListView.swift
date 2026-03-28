@@ -64,9 +64,11 @@ struct SavedCutsListView: View {
             .navigationTitle(String(localized: "SavedCuts.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "Common.Close")) {
-                        dismiss()
+                ToolbarItem(placement: .topBarTrailing) {
+                    if #available(iOS 26, *) {
+                        Button(role: .close) { dismiss() }
+                    } else {
+                        Button(String(localized: "Common.Close")) { dismiss() }
                     }
                 }
             }

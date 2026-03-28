@@ -6,6 +6,7 @@ import PhotosUI
 struct BackgroundSettingsView: View {
     @Bindable var vm: EditorState
 
+    @Environment(\.dismiss) private var dismiss
     @State private var backgroundPickerItem: PhotosPickerItem? = nil
     @State private var backgroundColor: Color = .white
     @State private var hasBackgroundColor: Bool = false
@@ -60,6 +61,15 @@ struct BackgroundSettingsView: View {
             }
             .navigationTitle(String(localized: "Toolbar.Background"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    if #available(iOS 26, *) {
+                        Button(role: .close) { dismiss() }
+                    } else {
+                        Button(String(localized: "Common.Close")) { dismiss() }
+                    }
+                }
+            }
         }
         .onAppear {
             if let existing = vm.document.backgroundColor {
