@@ -135,21 +135,21 @@ struct ShapeElementView: View {
         let newW = max(minNormalized, startSize.width + dw)
         let newH = max(minNormalized, startSize.height + dh)
 
-        // Compute position shift to anchor opposite edge
+        // Compute position shift to anchor opposite edge (in pixels)
         let pixelDW = (newW - startSize.width) * canvasSize.width * scale
         let pixelDH = (newH - startSize.height) * canvasSize.height * scale
-        let localShiftX = (pixelDW / canvasSize.width) * handle.anchorShiftX
-        let localShiftY = (pixelDH / canvasSize.height) * handle.anchorShiftY
+        let localPixelShiftX = pixelDW * handle.anchorShiftX
+        let localPixelShiftY = pixelDH * handle.anchorShiftY
 
-        // Rotate position shift back to canvas space
+        // Rotate pixel shift back to canvas space, then normalize
         let rotBack = element.rotation * .pi / 180
-        let canvasShiftX = localShiftX * cos(rotBack) - localShiftY * sin(rotBack)
-        let canvasShiftY = localShiftX * sin(rotBack) + localShiftY * cos(rotBack)
+        let canvasPixelShiftX = localPixelShiftX * cos(rotBack) - localPixelShiftY * sin(rotBack)
+        let canvasPixelShiftY = localPixelShiftX * sin(rotBack) + localPixelShiftY * cos(rotBack)
 
         element.size = CGSize(width: newW, height: newH)
         element.position = CGPoint(
-            x: startPos.x + canvasShiftX,
-            y: startPos.y + canvasShiftY
+            x: startPos.x + canvasPixelShiftX / canvasSize.width,
+            y: startPos.y + canvasPixelShiftY / canvasSize.height
         )
     }
 

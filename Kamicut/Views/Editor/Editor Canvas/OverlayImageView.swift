@@ -161,16 +161,17 @@ struct OverlayImageView: View {
         let dw = newW - startW
         let dh = newH - startH
 
-        let localShiftX = (dw / canvasSize.width) * handle.anchorShiftX
-        let localShiftY = (dh / canvasSize.height) * handle.anchorShiftY
+        // Compute shift in pixels, rotate, then normalize
+        let localPixelShiftX = dw * handle.anchorShiftX
+        let localPixelShiftY = dh * handle.anchorShiftY
         let rotBack = element.rotation * .pi / 180
-        let canvasShiftX = localShiftX * cos(rotBack) - localShiftY * sin(rotBack)
-        let canvasShiftY = localShiftX * sin(rotBack) + localShiftY * cos(rotBack)
+        let canvasPixelShiftX = localPixelShiftX * cos(rotBack) - localPixelShiftY * sin(rotBack)
+        let canvasPixelShiftY = localPixelShiftX * sin(rotBack) + localPixelShiftY * cos(rotBack)
 
         element.scale = newScale
         element.position = CGPoint(
-            x: startPos.x + canvasShiftX,
-            y: startPos.y + canvasShiftY
+            x: startPos.x + canvasPixelShiftX / canvasSize.width,
+            y: startPos.y + canvasPixelShiftY / canvasSize.height
         )
     }
 }
