@@ -116,8 +116,8 @@ struct SquiggleEditorView: View {
         let drawing = canvasView.drawing
         guard !drawing.strokes.isEmpty else { return }
 
-        let canvasSize = vm.document.template.canvasSize
-        let image = drawing.image(from: CGRect(origin: .zero, size: canvasSize), scale: 1.0)
+        let bounds = drawing.bounds
+        let image = drawing.image(from: bounds, scale: 1.0)
         vm.addOverlayImage(image)
         dismiss()
     }
