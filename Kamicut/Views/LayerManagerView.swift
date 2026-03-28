@@ -1,10 +1,16 @@
 import SwiftUI
+import PhotosUI
 
 // MARK: - Layer Manager View
 
 struct LayerManagerView: View {
     @Bindable var vm: EditorState
     @Environment(\.dismiss) private var dismiss
+
+    // Background settings state
+    @State private var backgroundPickerItem: PhotosPickerItem? = nil
+    @State private var backgroundColor: Color = .white
+    @State private var hasBackgroundColor: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -13,65 +19,132 @@ struct LayerManagerView: View {
 
                 // Space Number (topmost fixed layer)
                 Section {
-                    fixedLayerRow(
-                        systemImage: "number.square",
-                        label: String(localized: "Layers.SpaceNumber"),
-                        enabled: !vm.document.spaceNumber.text.isEmpty
-                    ) {
-                        vm.showSpaceNumberEditor = true
-                        dismiss()
+                    DisclosureGroup {
+                        TextField(String(localized: "SpaceNumber.Placeholder"), text: $vm.document.spaceNumber.text)
+                            .autocorrectionDisabled()
+                        Picker(String(localized: "Common.Position"), selection: $vm.document.spaceNumber.position) {
+                            ForEach(SpaceNumberPosition.allCases, id: \.self) { pos in
+                                Text(pos.localizedName).tag(pos)
+                            }
+                        }
+                        FontPickerRow(selectedFontName: $vm.document.spaceNumber.fontName, label: String(localized: "Common.Font"))
+                        HStack {
+                            Text("Common.Size")
+                            Spacer()
+                            Stepper("\(Int(vm.document.spaceNumber.fontSize)) pt", value: $vm.document.spaceNumber.fontSize, in: 6...72, step: 1)
+                        }
+                        ColorPickerRow(title: String(localized: "Common.Color"), color: $vm.document.spaceNumber.color)
+                    } label: {
+                        fixedLayerLabel(
+                            systemImage: "number.square",
+                            label: String(localized: "Layers.SpaceNumber"),
+                            enabled: !vm.document.spaceNumber.text.isEmpty
+                        )
                     }
                 }
 
                 // Top Left Box
-                if vm.document.template.topLeftBoxEnabled {
-                    Section {
-                        fixedLayerRow(
+                Section {
+                    DisclosureGroup {
+                        Toggle(String(localized: "Layers.TopLeftBox.Enabled"), isOn: $vm.document.template.topLeftBoxEnabled)
+                        if vm.document.template.topLeftBoxEnabled {
+                            HStack {
+                                Text("Common.Width")
+                                Spacer()
+                                TextField("Common.Width", value: $vm.document.template.topLeftBoxSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                                    .keyboardType(.decimalPad)
+                                    .multilineTextAlignment(.trailing)
+                                    .frame(width: 80)
+                                Text("Common.Px")
+                            }
+                            HStack {
+                                Text("Common.Height")
+                                Spacer()
+                                TextField("Common.Height", value: $vm.document.template.topLeftBoxSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                                    .keyboardType(.decimalPad)
+                                    .multilineTextAlignment(.trailing)
+                                    .frame(width: 80)
+                                Text("Common.Px")
+                            }
+                        }
+                    } label: {
+                        fixedLayerLabel(
                             systemImage: "square.tophalf.filled",
                             label: String(localized: "Layers.TopLeftBox"),
-                            enabled: true
-                        ) {
-                            vm.showTemplatePicker = true
-                            dismiss()
-                        }
+                            enabled: vm.document.template.topLeftBoxEnabled
+                        )
                     }
                 }
 
                 // Outer Outline
                 Section {
-                    fixedLayerRow(
-                        systemImage: "square",
-                        label: String(localized: "Layers.OuterOutline"),
-                        enabled: vm.document.template.outerBorderThickness > 0
-                    ) {
-                        vm.showTemplatePicker = true
-                        dismiss()
+                    DisclosureGroup {
+                        HStack {
+                            Text(String(localized: "Layers.Thickness"))
+                            Spacer()
+                            TextField(String(localized: "Layers.Thickness"), value: $vm.document.template.outerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                            Text("Common.Px")
+                        }
+                    } label: {
+                        fixedLayerLabel(
+                            systemImage: "square",
+                            label: String(localized: "Layers.OuterOutline"),
+                            enabled: vm.document.template.outerBorderThickness > 0
+                        )
                     }
                 }
 
                 // Inner Outline
                 Section {
-                    fixedLayerRow(
-                        systemImage: "square.dashed",
-                        label: String(localized: "Layers.InnerOutline"),
-                        enabled: vm.document.template.innerBorderThickness > 0
-                    ) {
-                        vm.showTemplatePicker = true
-                        dismiss()
+                    DisclosureGroup {
+                        HStack {
+                            Text(String(localized: "Layers.Thickness"))
+                            Spacer()
+                            TextField(String(localized: "Layers.Thickness"), value: $vm.document.template.innerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                            Text("Common.Px")
+                        }
+                    } label: {
+                        fixedLayerLabel(
+                            systemImage: "square.dashed",
+                            label: String(localized: "Layers.InnerOutline"),
+                            enabled: vm.document.template.innerBorderThickness > 0
+                        )
                     }
                 }
 
                 // Text Area
-                if vm.document.template.textAreaEnabled {
-                    Section {
-                        fixedLayerRow(
+                Section {
+                    DisclosureGroup {
+                        Toggle(String(localized: "Layers.TextArea.Enabled"), isOn: $vm.document.template.textAreaEnabled)
+                        if vm.document.template.textAreaEnabled {
+                            Picker(String(localized: "Common.Position"), selection: $vm.document.template.textAreaPosition) {
+                                ForEach(TextAreaPosition.allCases, id: \.self) { pos in
+                                    Text(pos.localizedName).tag(pos)
+                                }
+                            }
+                            HStack {
+                                Text("Common.Height")
+                                Spacer()
+                                TextField("Common.Height", value: $vm.document.template.textAreaHeight, format: FloatingPointFormatStyle<CGFloat>())
+                                    .keyboardType(.decimalPad)
+                                    .multilineTextAlignment(.trailing)
+                                    .frame(width: 80)
+                                Text("Common.Px")
+                            }
+                            Toggle(String(localized: "Layers.TextArea.Transparent"), isOn: $vm.document.template.textAreaTransparent)
+                        }
+                    } label: {
+                        fixedLayerLabel(
                             systemImage: "text.below.photo",
                             label: String(localized: "Layers.TextArea"),
-                            enabled: true
-                        ) {
-                            vm.showTemplatePicker = true
-                            dismiss()
-                        }
+                            enabled: vm.document.template.textAreaEnabled
+                        )
                     }
                 }
 
@@ -90,13 +163,51 @@ struct LayerManagerView: View {
 
                 // Background (bottom-most)
                 Section {
-                    fixedLayerRow(
-                        systemImage: "photo.artframe",
-                        label: String(localized: "Layers.Background"),
-                        enabled: vm.document.backgroundColor != nil || vm.document.backgroundImage != nil
-                    ) {
-                        vm.showBackgroundSettings = true
-                        dismiss()
+                    DisclosureGroup {
+                        // Color
+                        Toggle(String(localized: "Toolbar.Background.SetColor"), isOn: $hasBackgroundColor.animation(.smooth.speed(2.0)))
+                            .onChange(of: hasBackgroundColor) { _, enabled in
+                                if enabled {
+                                    vm.setBackgroundColor(backgroundColor)
+                                } else {
+                                    vm.removeBackgroundColor()
+                                }
+                            }
+                        if hasBackgroundColor {
+                            ColorPicker(String(localized: "Common.Color"), selection: $backgroundColor)
+                                .onChange(of: backgroundColor) { _, newColor in
+                                    vm.setBackgroundColor(newColor)
+                                }
+                        }
+
+                        // Image
+                        PhotosPicker(selection: $backgroundPickerItem, matching: .images) {
+                            Label(String(localized: "Toolbar.Background.SelectImage"), systemImage: "photo")
+                        }
+                        .onChange(of: backgroundPickerItem) { _, item in
+                            Task { await loadBackgroundImage(item: item) }
+                        }
+                        if vm.document.backgroundImage != nil {
+                            Button(role: .destructive) {
+                                vm.removeBackgroundImage()
+                            } label: {
+                                Label(String(localized: "Common.Delete"), systemImage: "trash")
+                            }
+                        }
+
+                        // Bleed
+                        Picker(String(localized: "Toolbar.Background.Bleed"), selection: $vm.document.bleedOption) {
+                            ForEach(BleedOption.allCases, id: \.self) { option in
+                                Text(option.localizedName).tag(option)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    } label: {
+                        fixedLayerLabel(
+                            systemImage: "photo.artframe",
+                            label: String(localized: "Layers.Background"),
+                            enabled: vm.document.backgroundColor != nil || vm.document.backgroundImage != nil
+                        )
                     }
                 }
             }
@@ -116,29 +227,26 @@ struct LayerManagerView: View {
                 }
             }
         }
-    }
-
-    // MARK: - Fixed Layer Row
-
-    private func fixedLayerRow(systemImage: String, label: String, enabled: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: systemImage)
-                    .frame(width: 24)
-                    .foregroundStyle(enabled ? .primary : .tertiary)
-
-                Text(label)
-                    .foregroundStyle(enabled ? .primary : .secondary)
-                    .lineLimit(1)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+        .onAppear {
+            if let existing = vm.document.backgroundColor {
+                hasBackgroundColor = true
+                backgroundColor = existing.color
             }
         }
-        .tint(.primary)
+    }
+
+    // MARK: - Fixed Layer Label
+
+    private func fixedLayerLabel(systemImage: String, label: String, enabled: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .frame(width: 24)
+                .foregroundStyle(enabled ? .primary : .tertiary)
+
+            Text(label)
+                .foregroundStyle(enabled ? .primary : .secondary)
+                .lineLimit(1)
+        }
     }
 
     // MARK: - Element Row
@@ -180,5 +288,14 @@ struct LayerManagerView: View {
                 Label("Common.Delete", systemImage: "trash")
             }
         }
+    }
+
+    // MARK: - Helpers
+
+    private func loadBackgroundImage(item: PhotosPickerItem?) async {
+        guard let item else { return }
+        guard let data = try? await item.loadTransferable(type: Data.self),
+              let image = UIImage(data: data) else { return }
+        vm.setBackgroundImage(image)
     }
 }

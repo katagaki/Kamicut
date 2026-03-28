@@ -772,6 +772,57 @@
         }
       }
     },
+    "Layers.TextArea.Enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabled"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有効"
+          }
+        }
+      }
+    },
+    "Layers.TextArea.Transparent" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transparent"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "透明"
+          }
+        }
+      }
+    },
+    "Layers.Thickness" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thickness"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "太さ"
+          }
+        }
+      }
+    },
     "Layers.Title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -802,6 +853,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "左上ボックス"
+          }
+        }
+      }
+    },
+    "Layers.TopLeftBox.Enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabled"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有効"
           }
         }
       }

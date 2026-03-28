@@ -168,17 +168,7 @@ struct EditorDestination: View {
     private func autoSave() {
         // Generate thumbnail
         let renderer = CircleCutRenderer()
-        let thumbnailImage: UIImage? = {
-            // Render synchronously on main thread for onDisappear
-            let semaphore = DispatchSemaphore(value: 0)
-            var result: UIImage?
-            Task { @MainActor in
-                result = await renderer.render(document: vm.document)
-                semaphore.signal()
-            }
-            semaphore.wait()
-            return result
-        }()
+        let thumbnailImage = renderer.render(document: vm.document)
         let thumbnailData = thumbnailImage?
             .preparingThumbnail(of: CGSize(width: 112, height: 112))?
             .jpegData(compressionQuality: 0.7)

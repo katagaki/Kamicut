@@ -194,7 +194,7 @@ final class EditorState {
     func exportImage(renderer: CircleCutRenderer) async -> UIImage? {
         isExporting = true
         defer { isExporting = false }
-        let image = await renderer.render(document: document)
+        let image = renderer.render(document: document)
         exportedImage = image
         return image
     }

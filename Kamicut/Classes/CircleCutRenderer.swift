@@ -7,7 +7,7 @@ import CoreImage.CIFilterBuiltins
 /// Renders the full EditorDocument into a UIImage at the configured resolution.
 final class CircleCutRenderer {
 
-    func render(document: EditorDocument) async -> UIImage? {
+    func render(document: EditorDocument) -> UIImage? {
         let settings = document.exportSettings
         let template = document.template
 
