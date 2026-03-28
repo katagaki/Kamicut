@@ -23,8 +23,13 @@ struct ToolbarPanelView: ToolbarContent {
     @available(iOS 26, *)
     @ToolbarContentBuilder
     private var ios26Toolbar: some ToolbarContent {
-        // Layers + Background
+        // Template + Layers + Background
         ToolbarItemGroup(placement: .bottomBar) {
+            Button {
+                vm.showTemplatePicker = true
+            } label: {
+                Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
+            }
             Button {
                 vm.showLayerManager = true
             } label: {
@@ -59,6 +64,13 @@ struct ToolbarPanelView: ToolbarContent {
     private var legacyToolbar: some ToolbarContent {
         ToolbarItem(placement: .bottomBar) {
             HStack {
+                // Template
+                Button {
+                    vm.showTemplatePicker = true
+                } label: {
+                    Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
+                }
+
                 // Layers
                 Button {
                     vm.showLayerManager = true

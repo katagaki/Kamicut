@@ -35,13 +35,6 @@ struct ContentView: View {
         .navigationTitle(String(localized: "App.Name"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    vm.showTemplatePicker = true
-                } label: {
-                    Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
-                }
-            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     vm.showSpaceNumberEditor = true
