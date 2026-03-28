@@ -15,6 +15,7 @@ final class EditorState {
 
     var selectedImageID: UUID? = nil
     var selectedTextID: UUID? = nil
+    var selectedShapeID: UUID? = nil
 
     // MARK: Saved Cut Tracking
 
@@ -24,10 +25,13 @@ final class EditorState {
     // MARK: UI State
 
     var showTemplatePicker: Bool = false
+    var showProjectSettings: Bool = false
     var showExportSheet: Bool = false
     var showSpaceNumberEditor: Bool = false
     var showLayerManager: Bool = false
     var showSavedCutsList: Bool = false
+    var showBackgroundSettings: Bool = false
+    var showSquiggleEditor: Bool = false
 
     // MARK: Export State
 
@@ -77,6 +81,7 @@ final class EditorState {
         document.layers.append(.image(element))
         selectedImageID = element.id
         selectedTextID = nil
+        selectedShapeID = nil
     }
 
     func removeOverlayImage(id: UUID) {
@@ -93,6 +98,7 @@ final class EditorState {
         document.layers.append(.text(element))
         selectedTextID = element.id
         selectedImageID = nil
+        selectedShapeID = nil
         return element.id
     }
 
@@ -101,23 +107,38 @@ final class EditorState {
         if selectedTextID == id { selectedTextID = nil }
     }
 
+    // MARK: - Shape Elements
+
+    func addShapeElement(_ kind: ShapeKind) -> UUID {
+        let element = ShapeElement(shapeKind: kind)
+        document.layers.append(.shape(element))
+        selectedShapeID = element.id
+        selectedImageID = nil
+        selectedTextID = nil
+        return element.id
+    }
+
     // MARK: - Layer Management
 
     func removeLayer(id: UUID) {
         document.layers.removeAll { $0.id == id }
         if selectedImageID == id { selectedImageID = nil }
         if selectedTextID == id { selectedTextID = nil }
+        if selectedShapeID == id { selectedShapeID = nil }
     }
 
     func selectLayer(id: UUID) {
         guard let layer = document.layers.first(where: { $0.id == id }) else { return }
+        selectedImageID = nil
+        selectedTextID = nil
+        selectedShapeID = nil
         switch layer {
         case .image:
             selectedImageID = id
-            selectedTextID = nil
         case .text:
             selectedTextID = id
-            selectedImageID = nil
+        case .shape:
+            selectedShapeID = id
         }
     }
 
@@ -173,7 +194,7 @@ final class EditorState {
     func exportImage(renderer: CircleCutRenderer) async -> UIImage? {
         isExporting = true
         defer { isExporting = false }
-        let image = await renderer.render(document: document)
+        let image = renderer.render(document: document)
         exportedImage = image
         return image
     }
@@ -186,6 +207,7 @@ final class EditorState {
         self.currentSavedCutName = savedCut.name
         self.selectedImageID = nil
         self.selectedTextID = nil
+        self.selectedShapeID = nil
         self.exportedImage = nil
     }
 
@@ -197,6 +219,7 @@ final class EditorState {
         currentSavedCutName = ""
         selectedImageID = nil
         selectedTextID = nil
+        selectedShapeID = nil
         exportedImage = nil
     }
 }

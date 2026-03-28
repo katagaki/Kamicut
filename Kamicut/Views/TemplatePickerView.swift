@@ -125,14 +125,27 @@ struct TemplatePickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        dismiss()
-                    } label: { Text("Common.Cancel") }
+                    if #available(iOS 26, *) {
+                        Button(role: .cancel) {
+                            dismiss()
+                        }
+                    } else {
+                        Button(String(localized: "Common.Cancel")) {
+                            dismiss()
+                        }
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(role: .confirm) {
-                        vm.document.template = editingTemplate
-                        dismiss()
+                    if #available(iOS 26, *) {
+                        Button(role: .confirm) {
+                            vm.document.template = editingTemplate
+                            dismiss()
+                        }
+                    } else {
+                        Button(String(localized: "Common.Close")) {
+                            vm.document.template = editingTemplate
+                            dismiss()
+                        }
                     }
                 }
             }

@@ -100,8 +100,12 @@ struct ExportSheetView: View {
             .navigationTitle(String(localized: "Toolbar.Export"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) { dismiss() } label: { Text("Common.Close") }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if #available(iOS 26, *) {
+                        Button(role: .close) { dismiss() }
+                    } else {
+                        Button(role: .cancel) { dismiss() } label: { Text("Common.Close") }
+                    }
                 }
             }
         }

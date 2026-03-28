@@ -10,8 +10,9 @@ struct ContentView: View {
     @State private var canvasBottomPadding: CGFloat = 0
 
     private var isAnySheetActive: Bool {
-        vm.showTemplatePicker || vm.showExportSheet || vm.showSpaceNumberEditor ||
-        vm.showLayerManager || vm.selectedTextID != nil
+        vm.showTemplatePicker || vm.showProjectSettings || vm.showExportSheet ||
+        vm.showLayerManager || vm.showBackgroundSettings ||
+        vm.selectedTextID != nil || vm.selectedShapeID != nil
     }
 
     var body: some View {
@@ -26,25 +27,19 @@ struct ContentView: View {
                 ElementToolbarView(vm: vm)
                     .animation(.smooth.speed(2.0), value: vm.selectedImageID)
                     .animation(.smooth.speed(2.0), value: vm.selectedTextID)
-                    .padding(.bottom, 8)
+                    .animation(.smooth.speed(2.0), value: vm.selectedShapeID)
+                    .padding(.bottom, 8 + canvasBottomPadding)
             }
         }
         .ignoresSafeArea(.keyboard)
         .navigationTitle(String(localized: "App.Name"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     vm.showTemplatePicker = true
                 } label: {
-                    Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    vm.showSpaceNumberEditor = true
-                } label: {
-                    Label(String(localized: "Toolbar.SpaceNumber"), systemImage: "number.square")
+                    Image(systemName: "rectangle.on.rectangle")
                 }
             }
             ToolbarPanelView(vm: vm)
@@ -73,20 +68,26 @@ struct ContentView: View {
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
+        .sheet(isPresented: $vm.showProjectSettings) {
+            ProjectSettingsView(vm: vm)
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
+        }
         .sheet(isPresented: $vm.showExportSheet) {
             ExportSheetView(vm: vm)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showSpaceNumberEditor) {
-            SpaceNumberEditorView(spaceNumber: $vm.document.spaceNumber)
+        .sheet(isPresented: $vm.showLayerManager) {
+            LayerManagerView(vm: vm)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showLayerManager) {
-            LayerManagerView(vm: vm)
+        .sheet(isPresented: $vm.showBackgroundSettings) {
+            BackgroundSettingsView(vm: vm)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
@@ -100,9 +101,21 @@ struct ContentView: View {
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
+        .sheet(isPresented: Binding(
+            get: { vm.selectedShapeID != nil },
+            set: { if !$0 { vm.selectedShapeID = nil } }
+        )) {
+            SelectedElementInspectorView(vm: vm)
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
+        }
         .sheet(isPresented: $vm.showSavedCutsList) {
             SavedCutsListView(vm: vm)
                 .presentationDetents([.large])
+        }
+        .fullScreenCover(isPresented: $vm.showSquiggleEditor) {
+            SquiggleEditorView(vm: vm)
         }
     }
 

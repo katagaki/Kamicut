@@ -46,6 +46,19 @@ struct EditorCanvasView: View {
                         isSelected: vm.selectedTextID == textEl.id,
                         onTap: { vm.selectLayer(id: textEl.id) }
                     )
+                case .shape(let shapeEl):
+                    ShapeElementView(
+                        element: Binding(
+                            get: {
+                                if case .shape(let el) = vm.document.layers[safe: index] { return el }
+                                return shapeEl
+                            },
+                            set: { vm.document.layers[index] = .shape($0) }
+                        ),
+                        canvasSize: canvasSize,
+                        isSelected: vm.selectedShapeID == shapeEl.id,
+                        onTap: { vm.selectLayer(id: shapeEl.id) }
+                    )
                 }
             }
 
@@ -67,6 +80,7 @@ struct EditorCanvasView: View {
         .onTapGesture {
             vm.selectedImageID = nil
             vm.selectedTextID = nil
+            vm.selectedShapeID = nil
         }
     }
 
@@ -183,24 +197,6 @@ struct EditorCanvasView: View {
         let color = sn.color.color
 
         switch sn.position {
-        case .topLeftBox:
-            guard template.topLeftBoxEnabled else { return AnyView(EmptyView()) }
-            let border = template.outerBorderThickness
-            let innerBorder = template.innerBorderThickness
-            // Content area is box size minus right and bottom inner borders
-            let contentW = template.topLeftBoxSize.width - innerBorder
-            let contentH = template.topLeftBoxSize.height - innerBorder
-            return AnyView(
-                Text(sn.text)
-                    .font(font)
-                    .foregroundColor(color)
-                    .minimumScaleFactor(0.3)
-                    .lineLimit(2)
-                    .frame(width: contentW, height: contentH)
-                    .offset(x: border, y: border)
-                    .allowsHitTesting(false)
-            )
-
         case .textArea:
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
             let r = textAreaContentRect
