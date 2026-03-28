@@ -1,9 +1,115 @@
 {
   "fill" : {
-    "automatic-gradient" : "srgb:0.15347,0.76083,1.00000,1.00000"
+    "automatic-gradient" : "srgb:0.73850,0.88648,1.00000,1.00000"
   },
   "groups" : [
+    {
+      "blur-material" : 1,
+      "layers" : [
 
+      ],
+      "name" : "Cloud 3",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "blur-material" : 1,
+      "layers" : [
+
+      ],
+      "name" : "Cloud 2",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "fill" : {
+            "automatic-gradient" : "srgb:0.08284,0.36517,0.99976,1.00000"
+          },
+          "image-name" : "Kamicut.008.png",
+          "name" : "Cloud 3"
+        },
+        {
+          "fill" : {
+            "automatic-gradient" : "srgb:0.23039,0.50945,1.00000,1.00000"
+          },
+          "image-name" : "Kamicut.007.png",
+          "name" : "Cloud 2"
+        },
+        {
+          "fill" : {
+            "automatic-gradient" : "srgb:0.30090,0.57721,1.00000,1.00000"
+          },
+          "image-name" : "Kamicut.006.png",
+          "name" : "Cloud 1"
+        }
+      ],
+      "name" : "Cloud 1",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "blur-material" : 1,
+      "layers" : [
+        {
+          "fill" : "automatic",
+          "image-name" : "Kamicut.005.png",
+          "name" : "Cut"
+        }
+      ],
+      "name" : "Cut",
+      "shadow-specializations" : [
+        {
+          "value" : {
+            "kind" : "neutral",
+            "opacity" : 1
+          }
+        },
+        {
+          "appearance" : "dark",
+          "value" : {
+            "kind" : "neutral",
+            "opacity" : 1
+          }
+        }
+      ],
+      "specular" : true,
+      "translucency-specializations" : [
+        {
+          "value" : {
+            "enabled" : true,
+            "value" : 0.5
+          }
+        },
+        {
+          "appearance" : "dark",
+          "value" : {
+            "enabled" : true,
+            "value" : 0.5
+          }
+        }
+      ]
+    }
   ],
   "supported-platforms" : {
     "circles" : [
