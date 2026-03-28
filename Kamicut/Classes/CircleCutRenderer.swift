@@ -78,6 +78,8 @@ final class CircleCutRenderer {
                     }
                 case .text(let textEl):
                     drawTextElement(textEl, canvasSize: canvasSize, context: cgCtx)
+                case .shape(let shapeEl):
+                    drawShapeElement(shapeEl, canvasSize: canvasSize, context: cgCtx)
                 }
             }
 
@@ -284,6 +286,104 @@ final class CircleCutRenderer {
             attrs[.shadow] = shadow
         }
         return attrs
+    }
+
+    private func drawShapeElement(_ element: ShapeElement, canvasSize: CGSize, context: CGContext) {
+        let centerX = element.position.x * canvasSize.width
+        let centerY = element.position.y * canvasSize.height
+        let w = element.size.width * canvasSize.width * element.scale
+        let h = element.size.height * canvasSize.height * element.scale
+        let rect = CGRect(x: -w / 2, y: -h / 2, width: w, height: h)
+
+        context.saveGState()
+        context.translateBy(x: centerX, y: centerY)
+        context.rotate(by: element.rotation * .pi / 180)
+
+        let path: CGPath
+        switch element.shapeKind {
+        case .rectangle:
+            path = CGPath(rect: rect, transform: nil)
+        case .circle:
+            let side = min(w, h)
+            path = CGPath(ellipseIn: CGRect(x: -side / 2, y: -side / 2, width: side, height: side), transform: nil)
+        case .ellipse:
+            path = CGPath(ellipseIn: rect, transform: nil)
+        case .triangle:
+            path = trianglePath(in: rect)
+        case .star:
+            path = starPath(in: rect, points: 5)
+        case .pentagon:
+            path = polygonPath(in: rect, sides: 5)
+        case .hexagon:
+            path = polygonPath(in: rect, sides: 6)
+        }
+
+        context.addPath(path)
+        context.setFillColor(element.fillColor.uiColor.cgColor)
+        context.fillPath()
+
+        if element.strokeWidth > 0 {
+            context.addPath(path)
+            context.setStrokeColor(element.strokeColor.uiColor.cgColor)
+            context.setLineWidth(element.strokeWidth)
+            context.strokePath()
+        }
+
+        context.restoreGState()
+    }
+
+    private func trianglePath(in rect: CGRect) -> CGPath {
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
+    }
+
+    private func starPath(in rect: CGRect, points: Int) -> CGPath {
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let outerRadius = min(rect.width, rect.height) / 2
+        let innerRadius = outerRadius * 0.4
+        let totalPoints = points * 2
+
+        let path = CGMutablePath()
+        for i in 0..<totalPoints {
+            let angle = (CGFloat(i) * .pi / CGFloat(points)) - .pi / 2
+            let radius = i.isMultiple(of: 2) ? outerRadius : innerRadius
+            let point = CGPoint(
+                x: center.x + cos(angle) * radius,
+                y: center.y + sin(angle) * radius
+            )
+            if i == 0 {
+                path.move(to: point)
+            } else {
+                path.addLine(to: point)
+            }
+        }
+        path.closeSubpath()
+        return path
+    }
+
+    private func polygonPath(in rect: CGRect, sides: Int) -> CGPath {
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
+
+        let path = CGMutablePath()
+        for i in 0..<sides {
+            let angle = (CGFloat(i) * 2 * .pi / CGFloat(sides)) - .pi / 2
+            let point = CGPoint(
+                x: center.x + cos(angle) * radius,
+                y: center.y + sin(angle) * radius
+            )
+            if i == 0 {
+                path.move(to: point)
+            } else {
+                path.addLine(to: point)
+            }
+        }
+        path.closeSubpath()
+        return path
     }
 
     private func drawSpaceNumber(_ info: SpaceNumberInfo, in rect: CGRect, context: CGContext, alignment: NSTextAlignment = .center) {

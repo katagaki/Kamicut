@@ -11,7 +11,8 @@ struct ContentView: View {
 
     private var isAnySheetActive: Bool {
         vm.showTemplatePicker || vm.showExportSheet || vm.showSpaceNumberEditor ||
-        vm.showLayerManager || vm.showBackgroundSettings || vm.selectedTextID != nil
+        vm.showLayerManager || vm.showBackgroundSettings ||
+        vm.selectedTextID != nil || vm.selectedShapeID != nil
     }
 
     var body: some View {
@@ -26,6 +27,7 @@ struct ContentView: View {
                 ElementToolbarView(vm: vm)
                     .animation(.smooth.speed(2.0), value: vm.selectedImageID)
                     .animation(.smooth.speed(2.0), value: vm.selectedTextID)
+                    .animation(.smooth.speed(2.0), value: vm.selectedShapeID)
                     .padding(.bottom, 8)
             }
         }
@@ -100,6 +102,15 @@ struct ContentView: View {
         .sheet(isPresented: Binding(
             get: { vm.selectedTextID != nil },
             set: { if !$0 { vm.selectedTextID = nil } }
+        )) {
+            SelectedElementInspectorView(vm: vm)
+                .presentationDetents([.height(200), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
+        }
+        .sheet(isPresented: Binding(
+            get: { vm.selectedShapeID != nil },
+            set: { if !$0 { vm.selectedShapeID = nil } }
         )) {
             SelectedElementInspectorView(vm: vm)
                 .presentationDetents([.height(200), .large], selection: $sheetDetent)

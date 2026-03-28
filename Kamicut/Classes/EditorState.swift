@@ -15,6 +15,7 @@ final class EditorState {
 
     var selectedImageID: UUID? = nil
     var selectedTextID: UUID? = nil
+    var selectedShapeID: UUID? = nil
 
     // MARK: Saved Cut Tracking
 
@@ -78,6 +79,7 @@ final class EditorState {
         document.layers.append(.image(element))
         selectedImageID = element.id
         selectedTextID = nil
+        selectedShapeID = nil
     }
 
     func removeOverlayImage(id: UUID) {
@@ -94,6 +96,7 @@ final class EditorState {
         document.layers.append(.text(element))
         selectedTextID = element.id
         selectedImageID = nil
+        selectedShapeID = nil
         return element.id
     }
 
@@ -102,23 +105,38 @@ final class EditorState {
         if selectedTextID == id { selectedTextID = nil }
     }
 
+    // MARK: - Shape Elements
+
+    func addShapeElement(_ kind: ShapeKind) -> UUID {
+        let element = ShapeElement(shapeKind: kind)
+        document.layers.append(.shape(element))
+        selectedShapeID = element.id
+        selectedImageID = nil
+        selectedTextID = nil
+        return element.id
+    }
+
     // MARK: - Layer Management
 
     func removeLayer(id: UUID) {
         document.layers.removeAll { $0.id == id }
         if selectedImageID == id { selectedImageID = nil }
         if selectedTextID == id { selectedTextID = nil }
+        if selectedShapeID == id { selectedShapeID = nil }
     }
 
     func selectLayer(id: UUID) {
         guard let layer = document.layers.first(where: { $0.id == id }) else { return }
+        selectedImageID = nil
+        selectedTextID = nil
+        selectedShapeID = nil
         switch layer {
         case .image:
             selectedImageID = id
-            selectedTextID = nil
         case .text:
             selectedTextID = id
-            selectedImageID = nil
+        case .shape:
+            selectedShapeID = id
         }
     }
 
@@ -187,6 +205,7 @@ final class EditorState {
         self.currentSavedCutName = savedCut.name
         self.selectedImageID = nil
         self.selectedTextID = nil
+        self.selectedShapeID = nil
         self.exportedImage = nil
     }
 
@@ -198,6 +217,7 @@ final class EditorState {
         currentSavedCutName = ""
         selectedImageID = nil
         selectedTextID = nil
+        selectedShapeID = nil
         exportedImage = nil
     }
 }

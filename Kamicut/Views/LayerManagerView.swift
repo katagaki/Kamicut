@@ -40,6 +40,7 @@ struct LayerManagerView: View {
             switch layer {
             case .image: return vm.selectedImageID == layer.id
             case .text: return vm.selectedTextID == layer.id
+            case .shape: return vm.selectedShapeID == layer.id
             }
         }()
 

@@ -99,12 +99,17 @@ struct ToolbarPanelView: ToolbarContent {
             } label: {
                 Label(String(localized: "Toolbar.Add.Text"), systemImage: "textformat")
             }
-            Button {
-                // TODO: Shape support
+            Menu {
+                ForEach(ShapeKind.allCases) { kind in
+                    Button {
+                        let _ = vm.addShapeElement(kind)
+                    } label: {
+                        Label(kind.localizedName, systemImage: kind.systemImage)
+                    }
+                }
             } label: {
                 Label(String(localized: "Toolbar.Add.Shape"), systemImage: "square.on.circle")
             }
-            .disabled(true)
         } label: {
             Label(String(localized: "Toolbar.Add"), systemImage: "plus")
         }

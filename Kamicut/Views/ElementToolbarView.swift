@@ -8,7 +8,7 @@ struct ElementToolbarView: View {
     @Bindable var vm: EditorState
 
     var body: some View {
-        if let selectedID = vm.selectedImageID ?? vm.selectedTextID,
+        if let selectedID = vm.selectedImageID ?? vm.selectedTextID ?? vm.selectedShapeID,
            let layerIdx = vm.document.layers.firstIndex(where: { $0.id == selectedID }) {
             HStack(spacing: 16) {
                 Button {
@@ -28,13 +28,30 @@ struct ElementToolbarView: View {
                 Button {
                     mutateLayer(at: layerIdx) { .scale(-0.1) }
                 } label: {
-                    Image(systemName: "minus.magnifyingglass")
+                    Image(systemName: "arrow.down.right.and.arrow.up.left")
                 }
 
                 Button {
                     mutateLayer(at: layerIdx) { .scale(0.1) }
                 } label: {
-                    Image(systemName: "plus.magnifyingglass")
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                }
+
+                // Fill & stroke color for shapes
+                if case .shape = vm.document.layers[layerIdx] {
+                    Divider().frame(height: 24)
+
+                    ColorPicker("", selection: shapeColorBinding(at: layerIdx, keyPath: \.fillColor))
+                        .labelsHidden()
+
+                    ColorPicker("", selection: shapeColorBinding(at: layerIdx, keyPath: \.strokeColor))
+                        .labelsHidden()
+                        .overlay(
+                            Circle()
+                                .strokeBorder(.primary, lineWidth: 1.5)
+                                .frame(width: 16, height: 16)
+                                .allowsHitTesting(false)
+                        )
                 }
 
                 Divider().frame(height: 24)
@@ -64,6 +81,23 @@ struct ElementToolbarView: View {
         case scale(CGFloat)
     }
 
+    private func shapeColorBinding(at index: Int, keyPath: WritableKeyPath<ShapeElement, CodableColor>) -> Binding<Color> {
+        Binding<Color>(
+            get: {
+                if case .shape(let el) = vm.document.layers[safe: index] {
+                    return el[keyPath: keyPath].color
+                }
+                return .clear
+            },
+            set: { newColor in
+                if case .shape(var el) = vm.document.layers[safe: index] {
+                    el[keyPath: keyPath] = CodableColor(color: newColor)
+                    vm.document.layers[index] = .shape(el)
+                }
+            }
+        )
+    }
+
     private func mutateLayer(at index: Int, _ mutation: () -> LayerMutation) {
         guard index < vm.document.layers.count else { return }
         switch mutation() {
@@ -75,6 +109,9 @@ struct ElementToolbarView: View {
             case .text(var el):
                 el.rotation += degrees
                 vm.document.layers[index] = .text(el)
+            case .shape(var el):
+                el.rotation += degrees
+                vm.document.layers[index] = .shape(el)
             }
         case .scale(let delta):
             switch vm.document.layers[index] {
@@ -84,6 +121,9 @@ struct ElementToolbarView: View {
             case .text(var el):
                 el.fontSize = max(4, el.fontSize + delta * 10)
                 vm.document.layers[index] = .text(el)
+            case .shape(var el):
+                el.scale = max(0.1, el.scale + delta)
+                vm.document.layers[index] = .shape(el)
             }
         }
     }

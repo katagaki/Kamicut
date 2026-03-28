@@ -5,6 +5,7 @@ import SwiftUI
 enum CanvasElementType: String, Codable {
     case image
     case text
+    case shape
 }
 
 // MARK: - Image Element
@@ -56,16 +57,72 @@ struct TextElement: Identifiable, Codable {
     var rotation: CGFloat = 0.0
 }
 
+// MARK: - Shape Element
+
+enum ShapeKind: String, Codable, CaseIterable, Identifiable {
+    case rectangle
+    case circle
+    case ellipse
+    case triangle
+    case star
+    case pentagon
+    case hexagon
+
+    var id: String { rawValue }
+
+    var localizedName: String {
+        switch self {
+        case .rectangle: return String(localized: "Shape.Rectangle")
+        case .circle: return String(localized: "Shape.Circle")
+        case .ellipse: return String(localized: "Shape.Ellipse")
+        case .triangle: return String(localized: "Shape.Triangle")
+        case .star: return String(localized: "Shape.Star")
+        case .pentagon: return String(localized: "Shape.Pentagon")
+        case .hexagon: return String(localized: "Shape.Hexagon")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .rectangle: return "rectangle.fill"
+        case .circle: return "circle.fill"
+        case .ellipse: return "oval.fill"
+        case .triangle: return "triangle.fill"
+        case .star: return "star.fill"
+        case .pentagon: return "pentagon.fill"
+        case .hexagon: return "hexagon.fill"
+        }
+    }
+}
+
+struct ShapeElement: Identifiable, Codable {
+    var id: UUID = UUID()
+    var shapeKind: ShapeKind = .rectangle
+    /// Position as fraction of canvas (0–1)
+    var position: CGPoint = CGPoint(x: 0.5, y: 0.5)
+    /// Scale multiplier
+    var scale: CGFloat = 1.0
+    /// Rotation in degrees
+    var rotation: CGFloat = 0.0
+    /// Size as fraction of canvas (0–1)
+    var size: CGSize = CGSize(width: 0.2, height: 0.2)
+    var fillColor: CodableColor = CodableColor(color: UIColor.black)
+    var strokeColor: CodableColor = CodableColor(color: UIColor.clear)
+    var strokeWidth: CGFloat = 0.0
+}
+
 // MARK: - Canvas Layer
 
 enum CanvasLayer: Identifiable, Codable {
     case image(ImageElement)
     case text(TextElement)
+    case shape(ShapeElement)
 
     var id: UUID {
         switch self {
         case .image(let el): return el.id
         case .text(let el): return el.id
+        case .shape(let el): return el.id
         }
     }
 
@@ -73,6 +130,7 @@ enum CanvasLayer: Identifiable, Codable {
         switch self {
         case .image: return String(localized: "Layers.Image")
         case .text(let el): return el.content.isEmpty ? String(localized: "Layers.Text") : String(el.content.prefix(20))
+        case .shape(let el): return el.shapeKind.localizedName
         }
     }
 
@@ -80,6 +138,7 @@ enum CanvasLayer: Identifiable, Codable {
         switch self {
         case .image: return "photo"
         case .text: return "textformat"
+        case .shape(let el): return el.shapeKind.systemImage
         }
     }
 }

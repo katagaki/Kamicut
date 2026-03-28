@@ -46,6 +46,19 @@ struct EditorCanvasView: View {
                         isSelected: vm.selectedTextID == textEl.id,
                         onTap: { vm.selectLayer(id: textEl.id) }
                     )
+                case .shape(let shapeEl):
+                    ShapeElementView(
+                        element: Binding(
+                            get: {
+                                if case .shape(let el) = vm.document.layers[safe: index] { return el }
+                                return shapeEl
+                            },
+                            set: { vm.document.layers[index] = .shape($0) }
+                        ),
+                        canvasSize: canvasSize,
+                        isSelected: vm.selectedShapeID == shapeEl.id,
+                        onTap: { vm.selectLayer(id: shapeEl.id) }
+                    )
                 }
             }
 
@@ -67,6 +80,7 @@ struct EditorCanvasView: View {
         .onTapGesture {
             vm.selectedImageID = nil
             vm.selectedTextID = nil
+            vm.selectedShapeID = nil
         }
     }
 
