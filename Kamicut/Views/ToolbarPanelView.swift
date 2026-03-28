@@ -110,6 +110,11 @@ struct ToolbarPanelView: ToolbarContent {
             } label: {
                 Label(String(localized: "Toolbar.Add.Shape"), systemImage: "square.on.circle")
             }
+            Button {
+                vm.showSquiggleEditor = true
+            } label: {
+                Label(String(localized: "Toolbar.Add.Squiggle"), systemImage: "scribble.variable")
+            }
         } label: {
             Label(String(localized: "Toolbar.Add"), systemImage: "plus")
         }

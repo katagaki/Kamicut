@@ -121,6 +121,9 @@ struct ContentView: View {
             SavedCutsListView(vm: vm)
                 .presentationDetents([.large])
         }
+        .fullScreenCover(isPresented: $vm.showSquiggleEditor) {
+            SquiggleEditorView(vm: vm)
+        }
     }
 
     // MARK: - Canvas Preview

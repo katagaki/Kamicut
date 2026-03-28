@@ -30,6 +30,7 @@ final class EditorState {
     var showLayerManager: Bool = false
     var showSavedCutsList: Bool = false
     var showBackgroundSettings: Bool = false
+    var showSquiggleEditor: Bool = false
 
     // MARK: Export State
 

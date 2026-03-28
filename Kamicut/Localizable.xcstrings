@@ -993,6 +993,40 @@
         }
       }
     },
+    "Squiggle.Done" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        }
+      }
+    },
+    "Squiggle.Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手描き"
+          }
+        }
+      }
+    },
     "Projects.Empty" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1805,6 +1839,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "シェイプ"
+          }
+        }
+      }
+    },
+    "Toolbar.Add.Squiggle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Squiggle"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手描き"
           }
         }
       }
