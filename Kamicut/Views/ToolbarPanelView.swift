@@ -23,17 +23,13 @@ struct ToolbarPanelView: ToolbarContent {
     @available(iOS 26, *)
     @ToolbarContentBuilder
     private var ios26Toolbar: some ToolbarContent {
-        // Layers
-        ToolbarItem(placement: .bottomBar) {
+        // Layers + Background
+        ToolbarItemGroup(placement: .bottomBar) {
             Button {
                 vm.showLayerManager = true
             } label: {
                 Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
             }
-        }
-
-        // Background
-        ToolbarItem(placement: .bottomBar) {
             Button {
                 vm.showBackgroundSettings = true
             } label: {
@@ -44,7 +40,7 @@ struct ToolbarPanelView: ToolbarContent {
         ToolbarSpacer(.fixed)
 
         // Add (+) Menu
-        ToolbarItem(placement: .bottomBar) {
+        ToolbarItemGroup(placement: .bottomBar) {
             addMenu
         }
 
@@ -52,7 +48,7 @@ struct ToolbarPanelView: ToolbarContent {
         ToolbarSpacer(.flexible)
 
         // Export
-        ToolbarItem(placement: .bottomBar) {
+        ToolbarItemGroup(placement: .bottomBar) {
             exportButton
         }
     }
