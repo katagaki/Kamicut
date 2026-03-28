@@ -43,7 +43,7 @@ struct ProjectsListView: View {
                             Label(String(localized: "App.SourceCode"), systemImage: "chevron.left.forwardslash.chevron.right")
                         }
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Image(systemName: "ellipsis")
                     }
                 }
 
