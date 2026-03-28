@@ -56,14 +56,14 @@ struct ProjectSettingsView: View {
                     }
                 }
 
-                // Top Left Box
-                Section(String(localized: "Layers.TopLeftBox")) {
-                    Toggle(String(localized: "Layers.TopLeftBox.Enabled"), isOn: $vm.document.template.topLeftBoxEnabled)
-                    if vm.document.template.topLeftBoxEnabled {
+                // Checkbox Area
+                Section(String(localized: "Layers.CheckboxArea")) {
+                    Toggle(String(localized: "Layers.CheckboxArea.Enabled"), isOn: $vm.document.template.checkboxAreaEnabled)
+                    if vm.document.template.checkboxAreaEnabled {
                         HStack {
                             Text("Common.Width")
                             Spacer()
-                            TextField("Common.Width", value: $vm.document.template.topLeftBoxSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Width", value: $vm.document.template.checkboxAreaSize.width, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
@@ -72,7 +72,7 @@ struct ProjectSettingsView: View {
                         HStack {
                             Text("Common.Height")
                             Spacer()
-                            TextField("Common.Height", value: $vm.document.template.topLeftBoxSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Height", value: $vm.document.template.checkboxAreaSize.height, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)

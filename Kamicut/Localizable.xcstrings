@@ -891,24 +891,24 @@
         }
       }
     },
-    "Layers.TopLeftBox" : {
+    "Layers.CheckboxArea" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Top Left Box"
+            "value" : "Checkbox Area"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左上ボックス"
+            "value" : "チェックボックスエリア"
           }
         }
       }
     },
-    "Layers.TopLeftBox.Enabled" : {
+    "Layers.CheckboxArea.Enabled" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1125,6 +1125,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "五角形"
+          }
+        }
+      }
+    },
+    "Shape.Square" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Square"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正方形"
           }
         }
       }
@@ -1520,19 +1537,19 @@
         }
       }
     },
-    "SpaceNumber.Position.TopLeftBox" : {
+    "SpaceNumber.Position.CheckboxArea" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Top-left box"
+            "value" : "Checkbox area"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左上ボックス"
+            "value" : "チェックボックスエリア"
           }
         }
       }
@@ -1690,19 +1707,19 @@
         }
       }
     },
-    "Template.EnableTopLeftBox" : {
+    "Template.EnableCheckboxArea" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enable Top-Left Box"
+            "value" : "Enable Checkbox Area"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左上ボックスを有効にする"
+            "value" : "チェックボックスエリアを有効にする"
           }
         }
       }
@@ -1809,19 +1826,19 @@
         }
       }
     },
-    "Template.TopLeftBox" : {
+    "Template.CheckboxArea" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Top-Left Box (Space Number)"
+            "value" : "Checkbox Area (Space Number)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左上ボックス（スペース番号）"
+            "value" : "チェックボックスエリア（スペース番号）"
           }
         }
       }

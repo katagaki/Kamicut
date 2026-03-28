@@ -19,54 +19,58 @@ struct EditorCanvasView: View {
 
             // Layers (images and text in unified z-order)
             ForEach(Array(vm.document.layers.enumerated()), id: \.element.id) { index, layer in
-                switch layer {
-                case .image(let imageEl):
-                    OverlayImageView(
-                        element: Binding(
-                            get: {
-                                if case .image(let el) = vm.document.layers[safe: index] { return el }
-                                return imageEl
-                            },
-                            set: { vm.document.layers[index] = .image($0) }
-                        ),
-                        canvasSize: canvasSize,
-                        isSelected: vm.selectedImageID == imageEl.id,
-                        onTap: { vm.selectLayer(id: imageEl.id) }
-                    )
-                case .text(let textEl):
-                    TextElementView(
-                        element: Binding(
-                            get: {
-                                if case .text(let el) = vm.document.layers[safe: index] { return el }
-                                return textEl
-                            },
-                            set: { vm.document.layers[index] = .text($0) }
-                        ),
-                        canvasSize: canvasSize,
-                        isSelected: vm.selectedTextID == textEl.id,
-                        onTap: { vm.selectLayer(id: textEl.id) }
-                    )
-                case .shape(let shapeEl):
-                    ShapeElementView(
-                        element: Binding(
-                            get: {
-                                if case .shape(let el) = vm.document.layers[safe: index] { return el }
-                                return shapeEl
-                            },
-                            set: { vm.document.layers[index] = .shape($0) }
-                        ),
-                        canvasSize: canvasSize,
-                        isSelected: vm.selectedShapeID == shapeEl.id,
-                        onTap: { vm.selectLayer(id: shapeEl.id) }
-                    )
+                let isSelected = isLayerSelected(layer)
+                Group {
+                    switch layer {
+                    case .image(let imageEl):
+                        OverlayImageView(
+                            element: Binding(
+                                get: {
+                                    if case .image(let el) = vm.document.layers[safe: index] { return el }
+                                    return imageEl
+                                },
+                                set: { vm.document.layers[index] = .image($0) }
+                            ),
+                            canvasSize: canvasSize,
+                            isSelected: isSelected,
+                            onTap: { vm.selectLayer(id: imageEl.id) }
+                        )
+                    case .text(let textEl):
+                        TextElementView(
+                            element: Binding(
+                                get: {
+                                    if case .text(let el) = vm.document.layers[safe: index] { return el }
+                                    return textEl
+                                },
+                                set: { vm.document.layers[index] = .text($0) }
+                            ),
+                            canvasSize: canvasSize,
+                            isSelected: isSelected,
+                            onTap: { vm.selectLayer(id: textEl.id) }
+                        )
+                    case .shape(let shapeEl):
+                        ShapeElementView(
+                            element: Binding(
+                                get: {
+                                    if case .shape(let el) = vm.document.layers[safe: index] { return el }
+                                    return shapeEl
+                                },
+                                set: { vm.document.layers[index] = .shape($0) }
+                            ),
+                            canvasSize: canvasSize,
+                            isSelected: isSelected,
+                            onTap: { vm.selectLayer(id: shapeEl.id) }
+                        )
+                    }
                 }
+                .zIndex(isSelected ? 1 : 0)
             }
 
             // Text area
             textAreaOverlay
 
-            // Top-left box
-            topLeftBoxOverlay
+            // Checkbox area
+            checkboxAreaOverlay
 
             // Border
             canvasBorder
@@ -81,6 +85,16 @@ struct EditorCanvasView: View {
             vm.selectedImageID = nil
             vm.selectedTextID = nil
             vm.selectedShapeID = nil
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func isLayerSelected(_ layer: CanvasLayer) -> Bool {
+        switch layer {
+        case .image(let el): return vm.selectedImageID == el.id
+        case .text(let el): return vm.selectedTextID == el.id
+        case .shape(let el): return vm.selectedShapeID == el.id
         }
     }
 
@@ -126,8 +140,8 @@ struct EditorCanvasView: View {
         let textW: CGFloat
         if template.textAreaPosition == .top {
             textY = border
-            if template.topLeftBoxEnabled {
-                let boxTotalW = border + template.topLeftBoxSize.width
+            if template.checkboxAreaEnabled {
+                let boxTotalW = border + template.checkboxAreaSize.width
                 textX = boxTotalW
                 textW = canvasSize.width - boxTotalW - border
             } else {
@@ -161,13 +175,13 @@ struct EditorCanvasView: View {
         )
     }
 
-    private var topLeftBoxOverlay: some View {
+    private var checkboxAreaOverlay: some View {
         let template = vm.document.template
-        guard template.topLeftBoxEnabled else { return AnyView(EmptyView()) }
+        guard template.checkboxAreaEnabled else { return AnyView(EmptyView()) }
         let border = template.outerBorderThickness
         let innerBorder = template.innerBorderThickness
-        let boxW = template.topLeftBoxSize.width
-        let boxH = template.topLeftBoxSize.height
+        let boxW = template.checkboxAreaSize.width
+        let boxH = template.checkboxAreaSize.height
         return AnyView(
             ZStack(alignment: .topLeading) {
                 Rectangle()
@@ -310,15 +324,15 @@ struct EditorCanvasView: View {
         return canvasSize.height - border * 2 - textH
     }
 
-    /// The text area rect, positioned after the outer border and to the right of the top-left box when at top.
+    /// The text area rect, positioned after the outer border and to the right of the checkbox area when at top.
     private var textAreaRect: CGRect {
         let t = vm.document.template
         let border = t.outerBorderThickness
         let textH = t.textAreaHeight
         if t.textAreaPosition == .top {
             let textY = border
-            if t.topLeftBoxEnabled {
-                let boxTotalW = border + t.topLeftBoxSize.width
+            if t.checkboxAreaEnabled {
+                let boxTotalW = border + t.checkboxAreaSize.width
                 return CGRect(x: boxTotalW, y: textY, width: canvasSize.width - boxTotalW - border, height: textH)
             }
             return CGRect(x: border, y: textY, width: canvasSize.width - border * 2, height: textH)

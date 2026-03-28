@@ -14,6 +14,7 @@ struct SquiggleEditorView: View {
     @State private var strokeColor: Color = .black
     @State private var strokeWidth: CGFloat = 3.0
     @State private var hasStrokes: Bool = false
+    @State private var backgroundSnapshot: UIImage? = nil
 
     enum SquiggleTool {
         case pencil
@@ -22,24 +23,53 @@ struct SquiggleEditorView: View {
 
     var body: some View {
         NavigationStack {
-            SquiggleCanvasRepresentable(
-                canvasView: $canvasView,
-                activeTool: $activeTool,
-                strokeColor: $strokeColor,
-                strokeWidth: $strokeWidth,
-                hasStrokes: $hasStrokes,
-                canvasSize: vm.document.template.canvasSize
-            )
+            ZStack {
+                // Background: snapshot of the current canvas
+                if let snapshot = backgroundSnapshot {
+                    Image(uiImage: snapshot)
+                        .resizable()
+                        .scaledToFit()
+                        .opacity(0.3)
+                        .allowsHitTesting(false)
+                }
+
+                SquiggleCanvasRepresentable(
+                    canvasView: $canvasView,
+                    activeTool: $activeTool,
+                    strokeColor: $strokeColor,
+                    strokeWidth: $strokeWidth,
+                    hasStrokes: $hasStrokes,
+                    canvasSize: vm.document.template.canvasSize
+                )
+            }
             .ignoresSafeArea(.container, edges: .bottom)
+            .onAppear {
+                let renderer = CircleCutRenderer()
+                backgroundSnapshot = renderer.render(document: vm.document)
+            }
             .navigationTitle(String(localized: "Squiggle.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItemGroup(placement: .topBarLeading) {
                     if #available(iOS 26, *) {
                         Button(role: .cancel) { dismiss() }
                     } else {
                         Button(String(localized: "Common.Cancel")) { dismiss() }
                     }
+
+                    Button {
+                        canvasView.undoManager?.undo()
+                    } label: {
+                        Image(systemName: "arrow.uturn.backward")
+                    }
+                    .disabled(!(canvasView.undoManager?.canUndo ?? false))
+
+                    Button {
+                        canvasView.undoManager?.redo()
+                    } label: {
+                        Image(systemName: "arrow.uturn.forward")
+                    }
+                    .disabled(!(canvasView.undoManager?.canRedo ?? false))
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     if #available(iOS 26, *) {
@@ -100,22 +130,6 @@ struct SquiggleEditorView: View {
                     .frame(width: 100)
             }
 
-            Spacer()
-
-            // Undo / Redo
-            Button {
-                canvasView.undoManager?.undo()
-            } label: {
-                Image(systemName: "arrow.uturn.backward")
-            }
-            .disabled(!(canvasView.undoManager?.canUndo ?? false))
-
-            Button {
-                canvasView.undoManager?.redo()
-            } label: {
-                Image(systemName: "arrow.uturn.forward")
-            }
-            .disabled(!(canvasView.undoManager?.canRedo ?? false))
         }
     }
 

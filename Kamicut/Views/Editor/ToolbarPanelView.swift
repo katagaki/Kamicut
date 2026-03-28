@@ -37,20 +37,13 @@ struct ToolbarPanelView: ToolbarContent {
             }
         }
 
-        ToolbarSpacer(.fixed)
+        ToolbarSpacer(.flexible, placement: .bottomBar)
 
         // Add (+) Menu
         ToolbarItemGroup(placement: .bottomBar) {
             addMenu
         }
 
-        // Flexible spacer — pushes Export to the trailing edge
-        ToolbarSpacer(.flexible)
-
-        // Export
-        ToolbarItemGroup(placement: .bottomBar) {
-            exportButton
-        }
     }
 
     // MARK: - iOS 18 fallback (HStack)
@@ -78,9 +71,6 @@ struct ToolbarPanelView: ToolbarContent {
 
                 addMenu
 
-                Spacer()
-
-                exportButton
             }
         }
     }
@@ -121,14 +111,6 @@ struct ToolbarPanelView: ToolbarContent {
         .photosPicker(isPresented: $showPhotoPicker, selection: $overlayPickerItem, matching: .images)
         .onChange(of: overlayPickerItem) { _, item in
             Task { await loadOverlayImage(item: item) }
-        }
-    }
-
-    private var exportButton: some View {
-        Button {
-            vm.showExportSheet = true
-        } label: {
-            Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
         }
     }
 

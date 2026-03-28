@@ -73,7 +73,7 @@ struct ProjectsListView: View {
                     }
                 }
 
-                ToolbarSpacer(.flexible)
+                ToolbarSpacer(.flexible, placement: .bottomBar)
                 ToolbarItem(placement: .bottomBar) {
                     Button {
                         path.append(NewProjectTag())
@@ -104,95 +104,6 @@ struct ProjectsListView: View {
             modelContext.insert(duplicate)
         } catch {
             // Encoding/decoding error — unlikely
-        }
-    }
-}
-
-// MARK: - Project Row
-
-private struct ProjectRowView: View {
-    let cut: SavedCut
-
-    var body: some View {
-        HStack(spacing: 12) {
-            if let thumbData = cut.thumbnailData, let img = UIImage(data: thumbData) {
-                Image(uiImage: img)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 56, height: 56)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            } else {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.secondary.opacity(0.15))
-                    .frame(width: 56, height: 56)
-                    .overlay {
-                        Image(systemName: "doc.richtext")
-                            .foregroundStyle(.secondary)
-                    }
-            }
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(cut.name)
-                    .font(.headline)
-                Text(cut.updatedAt, style: .relative)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.vertical, 4)
-    }
-}
-
-// MARK: - Navigation Tags
-
-struct NewProjectTag: Hashable {}
-
-// MARK: - Editor Destination
-
-struct EditorDestination: View {
-    let savedCut: SavedCut?
-    @State private var vm = EditorState()
-    @Environment(\.modelContext) private var modelContext
-
-    var body: some View {
-        ContentView(vm: vm)
-            .onAppear {
-                guard let savedCut, vm.currentSavedCutID == nil else { return }
-                try? vm.loadSavedCut(savedCut)
-            }
-            .onDisappear {
-                autoSave()
-            }
-    }
-
-    private func autoSave() {
-        // Generate thumbnail
-        let renderer = CircleCutRenderer()
-        let thumbnailImage = renderer.render(document: vm.document)
-        let thumbnailData = thumbnailImage?
-            .preparingThumbnail(of: CGSize(width: 112, height: 112))?
-            .jpegData(compressionQuality: 0.7)
-
-        do {
-            if let existingID = vm.currentSavedCutID {
-                let predicate = #Predicate<SavedCut> { $0.id == existingID }
-                let descriptor = FetchDescriptor<SavedCut>(predicate: predicate)
-                if let existing = try modelContext.fetch(descriptor).first {
-                    try existing.updateDocument(vm.document)
-                    existing.thumbnailData = thumbnailData
-                }
-            } else if !vm.document.layers.isEmpty || vm.document.backgroundImage != nil {
-                let name = vm.currentSavedCutName.isEmpty
-                    ? vm.document.template.localizedDisplayName
-                    : vm.currentSavedCutName
-                let newCut = try SavedCut(name: name, document: vm.document)
-                newCut.thumbnailData = thumbnailData
-                modelContext.insert(newCut)
-                vm.currentSavedCutID = newCut.id
-                vm.currentSavedCutName = newCut.name
-            }
-        } catch {
-            // Encoding error — unlikely
         }
     }
 }

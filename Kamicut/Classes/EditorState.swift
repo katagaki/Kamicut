@@ -9,7 +9,9 @@ final class EditorState {
 
     // MARK: Document State
 
-    var document: EditorDocument = EditorDocument()
+    var document: EditorDocument = EditorDocument() {
+        didSet { documentRevision += 1 }
+    }
 
     // MARK: Selection State
 
@@ -32,6 +34,11 @@ final class EditorState {
     var showSavedCutsList: Bool = false
     var showBackgroundSettings: Bool = false
     var showSquiggleEditor: Bool = false
+
+    // MARK: Auto-Save Tracking
+
+    /// Incremented on every document mutation to drive debounced auto-save.
+    var documentRevision: Int = 0
 
     // MARK: Export State
 
@@ -110,7 +117,13 @@ final class EditorState {
     // MARK: - Shape Elements
 
     func addShapeElement(_ kind: ShapeKind) -> UUID {
-        let element = ShapeElement(shapeKind: kind)
+        // Default to a visually square shape on the canvas
+        let canvas = document.template.canvasSize
+        let sideInPoints: CGFloat = min(canvas.width, canvas.height) * 0.2
+        let normalizedW = sideInPoints / canvas.width
+        let normalizedH = sideInPoints / canvas.height
+        var element = ShapeElement(shapeKind: kind)
+        element.size = CGSize(width: normalizedW, height: normalizedH)
         document.layers.append(.shape(element))
         selectedShapeID = element.id
         selectedImageID = nil
@@ -183,10 +196,10 @@ final class EditorState {
         )
     }
 
-    func topLeftBoxMM() -> CGRect? {
+    func checkboxAreaMM() -> CGRect? {
         let t = document.template
-        guard t.topLeftBoxEnabled else { return nil }
-        return CGRect(origin: .zero, size: t.topLeftBoxSize)
+        guard t.checkboxAreaEnabled else { return nil }
+        return CGRect(origin: .zero, size: t.checkboxAreaSize)
     }
 
     // MARK: - Export

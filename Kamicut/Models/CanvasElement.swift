@@ -60,6 +60,7 @@ struct TextElement: Identifiable, Codable {
 // MARK: - Shape Element
 
 enum ShapeKind: String, Codable, CaseIterable, Identifiable {
+    case square
     case rectangle
     case circle
     case ellipse
@@ -72,6 +73,7 @@ enum ShapeKind: String, Codable, CaseIterable, Identifiable {
 
     var localizedName: String {
         switch self {
+        case .square: return String(localized: "Shape.Square")
         case .rectangle: return String(localized: "Shape.Rectangle")
         case .circle: return String(localized: "Shape.Circle")
         case .ellipse: return String(localized: "Shape.Ellipse")
@@ -84,6 +86,7 @@ enum ShapeKind: String, Codable, CaseIterable, Identifiable {
 
     var systemImage: String {
         switch self {
+        case .square: return "square.fill"
         case .rectangle: return "rectangle.fill"
         case .circle: return "circle.fill"
         case .ellipse: return "oval.fill"
@@ -91,6 +94,13 @@ enum ShapeKind: String, Codable, CaseIterable, Identifiable {
         case .star: return "star.fill"
         case .pentagon: return "pentagon.fill"
         case .hexagon: return "hexagon.fill"
+        }
+    }
+
+    var aspectLocked: Bool {
+        switch self {
+        case .square, .circle: return true
+        default: return false
         }
     }
 }
@@ -107,8 +117,8 @@ struct ShapeElement: Identifiable, Codable {
     /// Size as fraction of canvas (0–1)
     var size: CGSize = CGSize(width: 0.2, height: 0.2)
     var fillColor: CodableColor = CodableColor(color: UIColor.black)
-    var strokeColor: CodableColor = CodableColor(color: UIColor.clear)
-    var strokeWidth: CGFloat = 0.0
+    var strokeColor: CodableColor = CodableColor(color: UIColor.black)
+    var strokeWidth: CGFloat = 2.0
 }
 
 // MARK: - Canvas Layer

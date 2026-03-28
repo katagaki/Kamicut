@@ -93,10 +93,10 @@ final class CircleCutRenderer {
                 cgCtx.fill(textAreaRect)
             }
 
-            // Top-left box (positioned at inner edge of outer border)
-            if template.topLeftBoxEnabled {
-                let boxW = template.topLeftBoxSize.width
-                let boxH = template.topLeftBoxSize.height
+            // Checkbox area (positioned at inner edge of outer border)
+            if template.checkboxAreaEnabled {
+                let boxW = template.checkboxAreaSize.width
+                let boxH = template.checkboxAreaSize.height
                 let boxRect = CGRect(x: border, y: border, width: boxW, height: boxH)
                 let innerBorder = template.innerBorderThickness
 
@@ -147,7 +147,7 @@ final class CircleCutRenderer {
             if !document.spaceNumber.text.isEmpty {
                 let sn = document.spaceNumber
                 let innerBorder = template.innerBorderThickness
-                // Text content rect excludes the top-left box area and divider border
+                // Text content rect excludes the checkbox area and divider border
                 let textContentRect: CGRect = {
                     var r = textAreaRect
                     // Exclude divider border
@@ -161,9 +161,9 @@ final class CircleCutRenderer {
                         let tb = template.textAreaBorderThickness
                         r = CGRect(x: r.minX + tb, y: r.minY + tb, width: r.width - tb * 2, height: r.height - tb * 2)
                     }
-                    // Exclude top-left box area
-                    if textAreaAtTop && template.topLeftBoxEnabled {
-                        let boxRight = border + template.topLeftBoxSize.width
+                    // Exclude checkbox area
+                    if textAreaAtTop && template.checkboxAreaEnabled {
+                        let boxRight = border + template.checkboxAreaSize.width
                         r = CGRect(x: boxRight, y: r.minY, width: r.maxX - boxRight, height: r.height)
                     }
                     return r
@@ -293,7 +293,7 @@ final class CircleCutRenderer {
 
         let path: CGPath
         switch element.shapeKind {
-        case .rectangle:
+        case .square, .rectangle:
             path = CGPath(rect: rect, transform: nil)
         case .circle:
             let side = min(w, h)
@@ -334,18 +334,28 @@ final class CircleCutRenderer {
     }
 
     private func starPath(in rect: CGRect, points: Int) -> CGPath {
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-        let outerRadius = min(rect.width, rect.height) / 2
-        let innerRadius = outerRadius * 0.4
         let totalPoints = points * 2
+        let innerRatio: CGFloat = 0.4
+
+        var xs: [CGFloat] = []
+        var ys: [CGFloat] = []
+        for i in 0..<totalPoints {
+            let angle = (CGFloat(i) * .pi / CGFloat(points)) - .pi / 2
+            let radius: CGFloat = i.isMultiple(of: 2) ? 1.0 : innerRatio
+            xs.append(cos(angle) * radius)
+            ys.append(sin(angle) * radius)
+        }
+
+        let minX = xs.min()!, maxX = xs.max()!
+        let minY = ys.min()!, maxY = ys.max()!
+        let scaleX = rect.width / (maxX - minX)
+        let scaleY = rect.height / (maxY - minY)
 
         let path = CGMutablePath()
         for i in 0..<totalPoints {
-            let angle = (CGFloat(i) * .pi / CGFloat(points)) - .pi / 2
-            let radius = i.isMultiple(of: 2) ? outerRadius : innerRadius
             let point = CGPoint(
-                x: center.x + cos(angle) * radius,
-                y: center.y + sin(angle) * radius
+                x: rect.minX + (xs[i] - minX) * scaleX,
+                y: rect.minY + (ys[i] - minY) * scaleY
             )
             if i == 0 {
                 path.move(to: point)
@@ -358,15 +368,24 @@ final class CircleCutRenderer {
     }
 
     private func polygonPath(in rect: CGRect, sides: Int) -> CGPath {
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-        let radius = min(rect.width, rect.height) / 2
+        var xs: [CGFloat] = []
+        var ys: [CGFloat] = []
+        for i in 0..<sides {
+            let angle = (CGFloat(i) * 2 * .pi / CGFloat(sides)) - .pi / 2
+            xs.append(cos(angle))
+            ys.append(sin(angle))
+        }
+
+        let minX = xs.min()!, maxX = xs.max()!
+        let minY = ys.min()!, maxY = ys.max()!
+        let scaleX = rect.width / (maxX - minX)
+        let scaleY = rect.height / (maxY - minY)
 
         let path = CGMutablePath()
         for i in 0..<sides {
-            let angle = (CGFloat(i) * 2 * .pi / CGFloat(sides)) - .pi / 2
             let point = CGPoint(
-                x: center.x + cos(angle) * radius,
-                y: center.y + sin(angle) * radius
+                x: rect.minX + (xs[i] - minX) * scaleX,
+                y: rect.minY + (ys[i] - minY) * scaleY
             )
             if i == 0 {
                 path.move(to: point)

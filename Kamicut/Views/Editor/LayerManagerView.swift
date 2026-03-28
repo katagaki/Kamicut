@@ -15,44 +15,6 @@ struct LayerManagerView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Fixed layers (visual indicators only, settings live in Document view)
-
-                Section {
-                    fixedLayerLabel(
-                        systemImage: "number.square",
-                        label: String(localized: "Layers.SpaceNumber"),
-                        enabled: !vm.document.spaceNumber.text.isEmpty
-                    )
-
-                    if vm.document.template.topLeftBoxEnabled {
-                        fixedLayerLabel(
-                            systemImage: "square.tophalf.filled",
-                            label: String(localized: "Layers.TopLeftBox"),
-                            enabled: true
-                        )
-                    }
-
-                    fixedLayerLabel(
-                        systemImage: "square",
-                        label: String(localized: "Layers.OuterOutline"),
-                        enabled: vm.document.template.outerBorderThickness > 0
-                    )
-
-                    fixedLayerLabel(
-                        systemImage: "square.dashed",
-                        label: String(localized: "Layers.InnerOutline"),
-                        enabled: vm.document.template.innerBorderThickness > 0
-                    )
-
-                    if vm.document.template.textAreaEnabled {
-                        fixedLayerLabel(
-                            systemImage: "text.below.photo",
-                            label: String(localized: "Layers.TextArea"),
-                            enabled: true
-                        )
-                    }
-                }
-
                 // User layers (reorderable)
                 Section(String(localized: "Layers.Elements")) {
                     ForEach(Array(vm.document.layers.enumerated().reversed()), id: \.element.id) { index, layer in
@@ -111,7 +73,7 @@ struct LayerManagerView: View {
                         fixedLayerLabel(
                             systemImage: "photo.artframe",
                             label: String(localized: "Layers.Background"),
-                            enabled: vm.document.backgroundColor != nil || vm.document.backgroundImage != nil
+                            enabled: true
                         )
                     }
                 }

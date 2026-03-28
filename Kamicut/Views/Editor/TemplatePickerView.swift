@@ -90,14 +90,14 @@ struct TemplatePickerView: View {
                     }
                 }
 
-                // Top-Left Box
-                Section("Template.TopLeftBox") {
-                    Toggle("Template.EnableTopLeftBox", isOn: $editingTemplate.topLeftBoxEnabled)
-                    if editingTemplate.topLeftBoxEnabled {
+                // Checkbox Area
+                Section("Template.CheckboxArea") {
+                    Toggle("Template.EnableCheckboxArea", isOn: $editingTemplate.checkboxAreaEnabled)
+                    if editingTemplate.checkboxAreaEnabled {
                         HStack {
                             Text("Common.Width")
                             Spacer()
-                            TextField("Common.Width", value: $editingTemplate.topLeftBoxSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Width", value: $editingTemplate.checkboxAreaSize.width, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
@@ -106,7 +106,7 @@ struct TemplatePickerView: View {
                         HStack {
                             Text("Common.Height")
                             Spacer()
-                            TextField("Common.Height", value: $editingTemplate.topLeftBoxSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField("Common.Height", value: $editingTemplate.checkboxAreaSize.height, format: FloatingPointFormatStyle<CGFloat>())
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)

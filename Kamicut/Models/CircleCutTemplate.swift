@@ -28,9 +28,9 @@ struct CircleCutTemplate: Identifiable, Hashable, Codable {
     var outerBorderThickness: CGFloat
     var innerBorderThickness: CGFloat
 
-    // Top-left box (space number area)
-    var topLeftBoxEnabled: Bool
-    var topLeftBoxSize: CGSize
+    // Checkbox area (space number area)
+    var checkboxAreaEnabled: Bool
+    var checkboxAreaSize: CGSize
 
     // Text area
     var textAreaEnabled: Bool
@@ -75,8 +75,8 @@ extension CircleCutTemplate {
         canvasSize: CGSize(width: 635, height: 903),
         outerBorderThickness: 22,
         innerBorderThickness: 17,
-        topLeftBoxEnabled: true,
-        topLeftBoxSize: CGSize(width: 143, height: 143),
+        checkboxAreaEnabled: true,
+        checkboxAreaSize: CGSize(width: 143, height: 143),
         textAreaEnabled: true,
         textAreaHeight: 143,
         textAreaPosition: .top,
@@ -93,8 +93,8 @@ extension CircleCutTemplate {
         canvasSize: CGSize(width: 635, height: 903),
         outerBorderThickness: 22,
         innerBorderThickness: 17,
-        topLeftBoxEnabled: true,
-        topLeftBoxSize: CGSize(width: 143, height: 143),
+        checkboxAreaEnabled: true,
+        checkboxAreaSize: CGSize(width: 143, height: 143),
         textAreaEnabled: false,
         textAreaHeight: 0,
         textAreaPosition: .top,
@@ -111,8 +111,8 @@ extension CircleCutTemplate {
         canvasSize: CGSize(width: 850, height: 1275),
         outerBorderThickness: 24,
         innerBorderThickness: 24,
-        topLeftBoxEnabled: false,
-        topLeftBoxSize: CGSize(width: 143, height: 143),
+        checkboxAreaEnabled: false,
+        checkboxAreaSize: CGSize(width: 143, height: 143),
         textAreaEnabled: true,
         textAreaHeight: 114,
         textAreaPosition: .bottom,
@@ -129,8 +129,8 @@ extension CircleCutTemplate {
         canvasSize: CGSize(width: 638, height: 945),
         outerBorderThickness: 24,
         innerBorderThickness: 7,
-        topLeftBoxEnabled: true,
-        topLeftBoxSize: CGSize(width: 163, height: 163),
+        checkboxAreaEnabled: true,
+        checkboxAreaSize: CGSize(width: 163, height: 163),
         textAreaEnabled: true,
         textAreaHeight: 163,
         textAreaPosition: .top,
@@ -146,8 +146,8 @@ extension CircleCutTemplate {
         canvasSize: CGSize(width: 635, height: 903),
         outerBorderThickness: 22,
         innerBorderThickness: 17,
-        topLeftBoxEnabled: true,
-        topLeftBoxSize: CGSize(width: 143, height: 143),
+        checkboxAreaEnabled: true,
+        checkboxAreaSize: CGSize(width: 143, height: 143),
         textAreaEnabled: true,
         textAreaHeight: 143,
         textAreaPosition: .top,

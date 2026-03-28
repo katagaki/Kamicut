@@ -39,23 +39,6 @@ struct ElementToolbarView: View {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                 }
 
-                // Fill & stroke color for shapes
-                if case .shape = vm.document.layers[layerIdx] {
-                    Divider().frame(height: 24)
-
-                    ColorPicker("", selection: shapeColorBinding(at: layerIdx, keyPath: \.fillColor))
-                        .labelsHidden()
-
-                    ColorPicker("", selection: shapeColorBinding(at: layerIdx, keyPath: \.strokeColor))
-                        .labelsHidden()
-                        .overlay(
-                            Circle()
-                                .strokeBorder(.primary, lineWidth: 1.5)
-                                .frame(width: 16, height: 16)
-                                .allowsHitTesting(false)
-                        )
-                }
-
                 Divider().frame(height: 24)
 
                 Button(role: .destructive) {
@@ -81,23 +64,6 @@ struct ElementToolbarView: View {
     private enum LayerMutation {
         case rotate(CGFloat)
         case scale(CGFloat)
-    }
-
-    private func shapeColorBinding(at index: Int, keyPath: WritableKeyPath<ShapeElement, CodableColor>) -> Binding<Color> {
-        Binding<Color>(
-            get: {
-                if case .shape(let el) = vm.document.layers[safe: index] {
-                    return el[keyPath: keyPath].color
-                }
-                return .clear
-            },
-            set: { newColor in
-                if case .shape(var el) = vm.document.layers[safe: index] {
-                    el[keyPath: keyPath] = CodableColor(color: newColor)
-                    vm.document.layers[index] = .shape(el)
-                }
-            }
-        )
     }
 
     private func mutateLayer(at index: Int, _ mutation: () -> LayerMutation) {
