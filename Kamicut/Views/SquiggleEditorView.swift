@@ -42,11 +42,18 @@ struct SquiggleEditorView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(String(localized: "Squiggle.Done")) {
-                        confirmDrawing()
+                    if #available(iOS 26, *) {
+                        Button(role: .confirm) {
+                            confirmDrawing()
+                        }
+                        .disabled(!hasStrokes)
+                    } else {
+                        Button(String(localized: "Squiggle.Done")) {
+                            confirmDrawing()
+                        }
+                        .fontWeight(.semibold)
+                        .disabled(!hasStrokes)
                     }
-                    .fontWeight(.semibold)
-                    .disabled(!hasStrokes)
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     toolSelector
