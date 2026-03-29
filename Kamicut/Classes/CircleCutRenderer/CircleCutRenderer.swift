@@ -91,16 +91,34 @@ final class CircleCutRenderer {
     }
 
     private func drawImageArea(document: EditorDocument, layout: CanvasLayout, canvasSize: CGSize, context: CGContext) {
-        if document.bleedOption == .none {
-            context.saveGState()
-            context.clip(to: layout.imageAreaRect)
-        }
+        let template = document.template
+        let transparentTextArea = template.textAreaEnabled && template.textAreaTransparent
 
+        // Draw background image clipped to imageAreaRect only
         if let background = document.backgroundImage, let uiImg = background.uiImage {
+            context.saveGState()
+            if document.bleedOption == .none {
+                context.clip(to: layout.imageAreaRect)
+            }
             let bgRect = document.bleedOption == .full
                 ? CGRect(origin: .zero, size: canvasSize)
                 : layout.imageAreaRect
             drawImage(uiImg, in: bgRect, context: context, element: background, canvasSize: canvasSize)
+            context.restoreGState()
+        }
+
+        // Draw layers clipped to imageAreaRect + textAreaRect when transparent
+        if document.bleedOption == .none {
+            context.saveGState()
+            if transparentTextArea {
+                let path = CGMutablePath()
+                path.addRect(layout.imageAreaRect)
+                path.addRect(layout.textAreaRect)
+                context.addPath(path)
+                context.clip(using: .winding)
+            } else {
+                context.clip(to: layout.imageAreaRect)
+            }
         }
 
         for layer in document.layers {

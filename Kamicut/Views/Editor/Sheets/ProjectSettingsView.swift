@@ -71,6 +71,40 @@ struct ProjectSettingsView: View {
                     }
                 }
 
+                // Outer Outline
+                Section(String(localized: "Layers.OuterOutline")) {
+                    HStack {
+                        Text(String(localized: "Layers.Thickness"))
+                        Spacer()
+                        TextField(
+                            String(localized: "Layers.Thickness"),
+                            value: $editor.document.template.outerBorderThickness,
+                            format: FloatingPointFormatStyle<CGFloat>()
+                        )
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 80)
+                        Text("Common.Px")
+                    }
+                }
+
+                // Inner Outline
+                Section(String(localized: "Layers.InnerOutline")) {
+                    HStack {
+                        Text(String(localized: "Layers.Thickness"))
+                        Spacer()
+                        TextField(
+                            String(localized: "Layers.Thickness"),
+                            value: $editor.document.template.innerBorderThickness,
+                            format: FloatingPointFormatStyle<CGFloat>()
+                        )
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 80)
+                        Text("Common.Px")
+                    }
+                }
+
                 // Checkbox Area
                 Section(String(localized: "Layers.CheckboxArea")) {
                     Toggle(
@@ -104,40 +138,6 @@ struct ProjectSettingsView: View {
                                 .frame(width: 80)
                             Text("Common.Px")
                         }
-                    }
-                }
-
-                // Outer Outline
-                Section(String(localized: "Layers.OuterOutline")) {
-                    HStack {
-                        Text(String(localized: "Layers.Thickness"))
-                        Spacer()
-                        TextField(
-                            String(localized: "Layers.Thickness"),
-                            value: $editor.document.template.outerBorderThickness,
-                            format: FloatingPointFormatStyle<CGFloat>()
-                        )
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("Common.Px")
-                    }
-                }
-
-                // Inner Outline
-                Section(String(localized: "Layers.InnerOutline")) {
-                    HStack {
-                        Text(String(localized: "Layers.Thickness"))
-                        Spacer()
-                        TextField(
-                            String(localized: "Layers.Thickness"),
-                            value: $editor.document.template.innerBorderThickness,
-                            format: FloatingPointFormatStyle<CGFloat>()
-                        )
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 80)
-                        Text("Common.Px")
                     }
                 }
 
