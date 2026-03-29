@@ -28,6 +28,15 @@ extension CircleCutRenderer {
         context.saveGState()
         context.translateBy(x: centerX, y: centerY)
         context.rotate(by: element.rotation * .pi / 180)
+
+        if element.shadow.enabled {
+            context.setShadow(
+                offset: CGSize(width: element.shadow.offsetX, height: element.shadow.offsetY),
+                blur: element.shadow.radius,
+                color: element.shadow.color.uiColor.cgColor
+            )
+        }
+
         uiImage.draw(in: CGRect(x: -width / 2, y: -height / 2, width: width, height: height))
         context.restoreGState()
     }

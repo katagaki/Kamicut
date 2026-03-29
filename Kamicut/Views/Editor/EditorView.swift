@@ -13,30 +13,12 @@ struct EditorView: View {
     private var isAnySheetActive: Bool {
         editor.showTemplatePicker || editor.showProjectSettings || editor.showExportSheet ||
         editor.showLayerManager || editor.showBackgroundSettings ||
-        editor.selectedTextID != nil || editor.selectedShapeID != nil
+        editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil
     }
 
     var body: some View {
-        ZStack {
-            // Canvas background spans entire screen
-            canvasPreview
-                .ignoresSafeArea()
-
-            // Element toolbar (shows when element selected)
-            GeometryReader { geo in
-                VStack(alignment: .center) {
-                    Spacer()
-                    ElementToolbarView(editor: editor)
-                        .animation(.smooth.speed(2.0), value: editor.selectedImageID)
-                        .animation(.smooth.speed(2.0), value: editor.selectedTextID)
-                        .animation(.smooth.speed(2.0), value: editor.selectedShapeID)
-                        .padding(.bottom, canvasBottomPadding > 0
-                                 ? canvasBottomPadding - geo.safeAreaInsets.bottom / 2 + 8
-                            : 8)
-                }
-                .frame(maxWidth: .infinity)
-            }
-        }
+        canvasPreview
+            .ignoresSafeArea()
         .ignoresSafeArea(.keyboard)
         .navigationTitle(String(localized: "App.Name"))
         .navigationBarTitleDisplayMode(.inline)
@@ -80,6 +62,9 @@ struct EditorView: View {
         .onChange(of: editor.selectedShapeID) { _, _ in
             if editor.selectedShapeID != nil { sheetDetent = .height(300) }
         }
+        .onChange(of: editor.selectedImageID) { _, _ in
+            if editor.selectedImageID != nil { sheetDetent = .height(300) }
+        }
         // Sheets
         .sheet(isPresented: $editor.showTemplatePicker) {
             TemplatePickerView(editor: editor)
@@ -110,11 +95,11 @@ struct EditorView: View {
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: Binding(
-            get: { editor.selectedTextID != nil || editor.selectedShapeID != nil },
-            set: { if !$0 { editor.selectedTextID = nil; editor.selectedShapeID = nil } }
+            get: { editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil },
+            set: { if !$0 { editor.selectedTextID = nil; editor.selectedShapeID = nil; editor.selectedImageID = nil } }
         )) {
             SelectedElementInspectorView(editor: editor)
-                .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }

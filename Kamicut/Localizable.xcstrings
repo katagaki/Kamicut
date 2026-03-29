@@ -10,6 +10,9 @@
     "%.1f pt" : {
       "shouldTranslate" : false
     },
+    "%.1f×" : {
+
+    },
     "%lld pt" : {
       "shouldTranslate" : false
     },
@@ -710,6 +713,57 @@
         }
       }
     },
+    "Image.Scale" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拡大縮小"
+          }
+        }
+      }
+    },
+    "Inspector.DeleteConfirmation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete this element?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この要素を削除してもよろしいですか？"
+          }
+        }
+      }
+    },
+    "Inspector.DeleteElement" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Element"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要素を削除"
+          }
+        }
+      }
+    },
     "Layers.Background" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1016,23 +1070,6 @@
         }
       }
     },
-    "Projects.Rename" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rename"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "名前を変更"
-          }
-        }
-      }
-    },
     "Projects.Empty" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1097,6 +1134,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新規プロジェクト"
+          }
+        }
+      }
+    },
+    "Projects.Rename" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変更"
+          }
+        }
+      }
+    },
+    "Projects.Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circle Cuts"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークルカット"
           }
         }
       }

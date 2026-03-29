@@ -42,6 +42,14 @@ struct OverlayImageView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: width, height: height)
+                        .shadow(
+                            color: element.shadow.enabled
+                                ? element.shadow.color.color.opacity(Double(element.shadow.color.alpha))
+                                : .clear,
+                            radius: element.shadow.enabled ? element.shadow.radius : 0,
+                            x: element.shadow.enabled ? element.shadow.offsetX : 0,
+                            y: element.shadow.enabled ? element.shadow.offsetY : 0
+                        )
                         .rotationEffect(.degrees(totalRotation))
 
                     if isSelected {

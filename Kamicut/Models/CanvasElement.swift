@@ -21,6 +21,7 @@ struct ImageElement: Identifiable, Codable {
     var rotation: CGFloat = 0.0
     /// Whether this is the main background image
     var isBackground: Bool = false
+    var shadow: TextShadowStyle = TextShadowStyle()
 
     var uiImage: UIImage? {
         UIImage(data: imageData)

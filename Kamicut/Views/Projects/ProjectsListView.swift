@@ -60,7 +60,7 @@ struct ProjectsListView: View {
                 )
                 .ignoresSafeArea()
             }
-            .navigationTitle(String(localized: "App.Name"))
+            .navigationTitle(String(localized: "Projects.Title"))
             .navigationDestination(for: SavedCut.self) { cut in
                 EditorDestination(savedCut: cut)
             }
