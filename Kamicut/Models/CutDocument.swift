@@ -13,14 +13,26 @@ extension UTType {
 /// Used with DocumentGroup to provide the system document browser.
 final class CutDocument: ReferenceFileDocument, @unchecked Sendable {
 
-    @MainActor var editorState: EditorState
+    /// The parsed document, stored nonisolated for init, then consumed by editorState.
+    private var _initialDocument: EditorDocument?
+
+    /// Must be accessed on MainActor. Lazily created from _initialDocument if needed.
+    @MainActor lazy var editorState: EditorState = {
+        let state = EditorState()
+        if let doc = _initialDocument {
+            state.document = doc
+            state.documentRevision = 0
+            _initialDocument = nil
+        }
+        return state
+    }()
 
     static var readableContentTypes: [UTType] { [.circleCut] }
     static var writableContentTypes: [UTType] { [.circleCut] }
 
     @MainActor
     init() {
-        self.editorState = EditorState()
+        self._initialDocument = nil
     }
 
     /// Read an existing .cut package from disk.
@@ -29,8 +41,6 @@ final class CutDocument: ReferenceFileDocument, @unchecked Sendable {
               fileWrapper.isDirectory else {
             throw CocoaError(.fileReadCorruptFile)
         }
-
-        let editorState = EditorState()
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -113,10 +123,7 @@ final class CutDocument: ReferenceFileDocument, @unchecked Sendable {
         doc.spaceNumber = meta.spaceNumber
         doc.exportSettings = meta.exportSettings
 
-        editorState.document = doc
-        editorState.documentRevision = 0
-
-        self.editorState = editorState
+        self._initialDocument = doc
     }
 
     /// Produce a FileWrapper representing the .cut package.
