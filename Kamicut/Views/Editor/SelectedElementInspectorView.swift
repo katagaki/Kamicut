@@ -6,18 +6,28 @@ import SwiftUI
 /// Only appears when a text or shape element is selected.
 struct SelectedElementInspectorView: View {
     @Bindable var editor: EditorState
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        if let id = editor.selectedTextID,
-           let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
-           case .text = editor.document.layers[layerIdx] {
-            textInspector(layerIdx: layerIdx)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-        } else if let id = editor.selectedShapeID,
-                  let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
-                  case .shape = editor.document.layers[layerIdx] {
-            shapeInspector(layerIdx: layerIdx)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+        NavigationStack {
+            Group {
+                if let id = editor.selectedTextID,
+                   let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+                   case .text = editor.document.layers[layerIdx] {
+                    textInspector(layerIdx: layerIdx)
+                } else if let id = editor.selectedShapeID,
+                          let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+                          case .shape = editor.document.layers[layerIdx] {
+                    shapeInspector(layerIdx: layerIdx)
+                }
+            }
+            .navigationTitle(editor.selectedLayerLabel)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .confirm) { dismiss() }
+                }
+            }
         }
     }
 
@@ -32,15 +42,12 @@ struct SelectedElementInspectorView: View {
             set: { editor.document.layers[layerIdx] = .text($0) }
         )
 
-        return VStack(spacing: 0) {
-            Divider()
-
-            Form {
-                TextPropertiesSections(element: textBinding)
-            }
-            .formStyle(.grouped)
-            .scrollDismissesKeyboard(.interactively)
+        return Form {
+            TextPropertiesSections(element: textBinding)
         }
+        .formStyle(.grouped)
+        .listSectionSpacing(.compact)
+        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Shape Inspector
@@ -54,15 +61,12 @@ struct SelectedElementInspectorView: View {
             set: { editor.document.layers[layerIdx] = .shape($0) }
         )
 
-        return VStack(spacing: 0) {
-            Divider()
-
-            Form {
-                ShapePropertiesSections(element: shapeBinding)
-            }
-            .formStyle(.grouped)
-            .scrollDismissesKeyboard(.interactively)
+        return Form {
+            ShapePropertiesSections(element: shapeBinding)
         }
+        .formStyle(.grouped)
+        .listSectionSpacing(.compact)
+        .scrollDismissesKeyboard(.interactively)
     }
 }
 

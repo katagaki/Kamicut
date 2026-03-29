@@ -7,18 +7,12 @@ struct SavedCutsListView: View {
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \SavedCut.updatedAt, order: .reverse) private var savedCuts: [SavedCut]
 
-    @State private var newCutName: String = ""
-    @State private var showingSaveAlert: Bool = false
-
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     Button {
-                        newCutName = editor.currentSavedCutName.isEmpty
-                            ? editor.document.template.localizedDisplayName
-                            : editor.currentSavedCutName
-                        showingSaveAlert = true
+                        saveCurrent()
                     } label: {
                         Label(String(localized: "SavedCuts.SaveCurrent"), systemImage: "square.and.arrow.down")
                     }
@@ -72,27 +66,23 @@ struct SavedCutsListView: View {
                     }
                 }
             }
-            .alert(String(localized: "SavedCuts.SaveAlert.Title"), isPresented: $showingSaveAlert) {
-                TextField(String(localized: "SavedCuts.SaveAlert.Placeholder"), text: $newCutName)
-                Button(String(localized: "SavedCuts.SaveAlert.Save")) {
-                    saveCurrent()
-                }
-                Button(String(localized: "SavedCuts.SaveAlert.Cancel"), role: .cancel) { }
-            }
         }
     }
 
     // MARK: - Actions
 
     private func saveCurrent() {
+        let name = editor.document.circleName.isEmpty
+            ? String(localized: "Projects.Untitled")
+            : editor.document.circleName
         do {
             if let existingID = editor.currentSavedCutID,
                let existing = savedCuts.first(where: { $0.id == existingID }) {
                 try existing.updateDocument(editor.document)
-                existing.name = newCutName
-                editor.currentSavedCutName = newCutName
+                existing.name = name
+                editor.currentSavedCutName = name
             } else {
-                let newCut = try SavedCut(name: newCutName, document: editor.document)
+                let newCut = try SavedCut(name: name, document: editor.document)
                 modelContext.insert(newCut)
                 editor.currentSavedCutID = newCut.id
                 editor.currentSavedCutName = newCut.name

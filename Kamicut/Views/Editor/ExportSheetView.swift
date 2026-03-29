@@ -11,6 +11,52 @@ struct ExportSheetView: View {
     var body: some View {
         NavigationStack {
             Form {
+                // Preview
+                Section {
+                    HStack {
+                        Spacer()
+                        if let exported = editor.exportedImage {
+                            Image(uiImage: exported)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxHeight: 200)
+                                .cornerRadius(4)
+                        } else {
+                            let preview = renderer.render(document: editor.document)
+                            if let preview {
+                                Image(uiImage: preview)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxHeight: 200)
+                                    .cornerRadius(4)
+                            }
+                        }
+                        Spacer()
+                    }
+                    .listRowBackground(Color.clear)
+                }
+
+                // Export button
+                Section {
+                    Button {
+                        Task { await doExport() }
+                    } label: {
+                        HStack {
+                            Spacer()
+                            if editor.isExporting {
+                                ProgressView()
+                                    .padding(.trailing, 8)
+                                Text("Export.Rendering")
+                            } else {
+                                Label("Export.Export", systemImage: "square.and.arrow.up")
+                                    .fontWeight(.semibold)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .disabled(editor.isExporting)
+                }
+
                 // Format
                 Section("Export.Format") {
                     Picker("Export.FileFormat", selection: $editor.document.exportSettings.format) {
@@ -51,51 +97,9 @@ struct ExportSheetView: View {
                     .pickerStyle(.inline)
                     .labelsHidden()
                 }
-
-                // Export size info
-                Section {
-                    let width = Int(editor.document.template.canvasSize.width)
-                    let height = Int(editor.document.template.canvasSize.height)
-                    HStack {
-                        Label("Export.OutputSize", systemImage: "ruler")
-                        Spacer()
-                        Text("\(width) × \(height) px")
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                // Export button
-                Section {
-                    Button {
-                        Task { await doExport() }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            if editor.isExporting {
-                                ProgressView()
-                                    .padding(.trailing, 8)
-                                Text("Export.Rendering")
-                            } else {
-                                Label("Export.ExportAndShare", systemImage: "square.and.arrow.up")
-                                    .fontWeight(.semibold)
-                            }
-                            Spacer()
-                        }
-                    }
-                    .disabled(editor.isExporting)
-                }
-
-                // Preview
-                if let exported = editor.exportedImage {
-                    Section("Export.Preview") {
-                        Image(uiImage: exported)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 200)
-                            .cornerRadius(4)
-                    }
-                }
             }
+            .listSectionSpacing(.compact)
+            .environment(\.defaultMinListRowHeight, 0)
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(String(localized: "Toolbar.Export"))
             .navigationBarTitleDisplayMode(.inline)

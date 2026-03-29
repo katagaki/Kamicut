@@ -176,16 +176,13 @@ struct ProjectSettingsView: View {
                     }
                 }
             }
+            .listSectionSpacing(.compact)
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(String(localized: "Document.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    if #available(iOS 26, *) {
-                        Button(role: .close) { dismiss() }
-                    } else {
-                        Button(String(localized: "Common.Close")) { dismiss() }
-                    }
+                    Button(role: .confirm) { dismiss() }
                 }
             }
         }

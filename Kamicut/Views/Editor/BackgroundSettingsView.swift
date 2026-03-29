@@ -62,6 +62,7 @@ struct BackgroundSettingsView: View {
                     .pickerStyle(.segmented)
                 }
             }
+            .listSectionSpacing(.compact)
             .navigationTitle(String(localized: "Toolbar.Background"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

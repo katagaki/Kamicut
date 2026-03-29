@@ -96,6 +96,7 @@ struct SquiggleEditorView: View {
 
     private var toolSelector: some View {
         HStack(spacing: 20) {
+            Spacer(minLength: 0)
             // Pencil
             Button {
                 activeTool = .pencil
@@ -130,6 +131,7 @@ struct SquiggleEditorView: View {
                     .frame(width: 100)
             }
 
+            Spacer(minLength: 0)
         }
     }
 
@@ -140,7 +142,11 @@ struct SquiggleEditorView: View {
         guard !drawing.strokes.isEmpty else { return }
 
         let bounds = drawing.bounds
-        let image = drawing.image(from: bounds, scale: 1.0)
+        let lightTraits = UITraitCollection(userInterfaceStyle: .light)
+        var image: UIImage!
+        lightTraits.performAsCurrent {
+            image = drawing.image(from: bounds, scale: 1.0)
+        }
         editor.addOverlayImage(image)
         dismiss()
     }
@@ -161,6 +167,7 @@ struct SquiggleCanvasRepresentable: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> PKCanvasView {
+        canvasView.overrideUserInterfaceStyle = .light
         canvasView.backgroundColor = .clear
         canvasView.isOpaque = false
         canvasView.drawingPolicy = .anyInput
@@ -179,7 +186,9 @@ struct SquiggleCanvasRepresentable: UIViewRepresentable {
     private func makeTool() -> PKTool {
         switch activeTool {
         case .pencil:
-            return PKInkingTool(.pen, color: UIColor(strokeColor), width: strokeWidth)
+            let lightTraits = UITraitCollection(userInterfaceStyle: .light)
+            let resolvedColor = UIColor(strokeColor).resolvedColor(with: lightTraits)
+            return PKInkingTool(.pen, color: resolvedColor, width: strokeWidth)
         case .eraser:
             return PKEraserTool(.bitmap)
         }

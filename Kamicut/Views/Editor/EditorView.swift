@@ -87,19 +87,10 @@ struct EditorView: View {
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $editor.showProjectSettings) {
-            NavigationStack {
-                ProjectSettingsView(editor: editor)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button(role: .confirm) {
-                                editor.showProjectSettings = false
-                            }
-                        }
-                    }
-            }
-            .presentationDetents([.height(300), .large], selection: $sheetDetent)
-            .presentationBackgroundInteraction(.enabled)
-            .presentationContentInteraction(.scrolls)
+            ProjectSettingsView(editor: editor)
+                .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $editor.showExportSheet) {
             ExportSheetView(editor: editor)
@@ -107,74 +98,25 @@ struct EditorView: View {
                 .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $editor.showLayerManager) {
-            NavigationStack {
-                LayerManagerView(editor: editor)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button(role: .confirm) {
-                                editor.showLayerManager = false
-                            }
-                        }
-                    }
-            }
-            .presentationDetents([.height(300), .large], selection: $sheetDetent)
-            .presentationBackgroundInteraction(.enabled)
-            .presentationContentInteraction(.scrolls)
+            LayerManagerView(editor: editor)
+                .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $editor.showBackgroundSettings) {
-            NavigationStack {
-                BackgroundSettingsView(editor: editor)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button(role: .confirm) {
-                                editor.showBackgroundSettings = false
-                            }
-                        }
-                    }
-            }
-            .presentationDetents([.height(300), .large], selection: $sheetDetent)
-            .presentationBackgroundInteraction(.enabled)
-            .presentationContentInteraction(.scrolls)
+            BackgroundSettingsView(editor: editor)
+                .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: Binding(
-            get: { editor.selectedTextID != nil },
-            set: { if !$0 { editor.selectedTextID = nil } }
+            get: { editor.selectedTextID != nil || editor.selectedShapeID != nil },
+            set: { if !$0 { editor.selectedTextID = nil; editor.selectedShapeID = nil } }
         )) {
-            NavigationStack {
-                SelectedElementInspectorView(editor: editor)
-                    .navigationTitle(editor.selectedLayerLabel)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button(role: .confirm) {
-                                editor.selectedTextID = nil
-                            }
-                        }
-                    }
-            }
-            .presentationDetents([.height(300), .large], selection: $sheetDetent)
-            .presentationBackgroundInteraction(.enabled)
-            .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: Binding(
-            get: { editor.selectedShapeID != nil },
-            set: { if !$0 { editor.selectedShapeID = nil } }
-        )) {
-            NavigationStack {
-                SelectedElementInspectorView(editor: editor)
-                    .navigationTitle(editor.selectedLayerLabel)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button(role: .confirm) {
-                                editor.selectedShapeID = nil
-                            }
-                        }
-                    }
-            }
-            .presentationDetents([.height(300), .large], selection: $sheetDetent)
-            .presentationBackgroundInteraction(.enabled)
-            .presentationContentInteraction(.scrolls)
+            SelectedElementInspectorView(editor: editor)
+                .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: $editor.showSavedCutsList) {
             SavedCutsListView(editor: editor)

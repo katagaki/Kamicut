@@ -96,7 +96,10 @@ final class CircleCutRenderer {
         }
 
         if let background = document.backgroundImage, let uiImg = background.uiImage {
-            drawImage(uiImg, in: layout.imageAreaRect, context: context, element: background, canvasSize: canvasSize)
+            let bgRect = document.bleedOption == .full
+                ? CGRect(origin: .zero, size: canvasSize)
+                : layout.imageAreaRect
+            drawImage(uiImg, in: bgRect, context: context, element: background, canvasSize: canvasSize)
         }
 
         for layer in document.layers {

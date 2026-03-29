@@ -1,6 +1,6 @@
 {
   "fill" : {
-    "automatic-gradient" : "srgb:0.73850,0.88648,1.00000,1.00000"
+    "automatic-gradient" : "srgb:0.44509,0.86839,0.75610,1.00000"
   },
   "groups" : [
     {
@@ -37,31 +37,61 @@
       "blur-material" : 0.5,
       "layers" : [
         {
-          "fill" : {
-            "automatic-gradient" : "srgb:0.08284,0.36517,0.99976,1.00000"
-          },
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:0.86917,0.97773,0.99976,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:0.08284,0.99976,0.99212,1.00000"
+              }
+            }
+          ],
           "image-name" : "Kamicut.008.png",
           "name" : "Cloud 3"
         },
         {
-          "fill" : {
-            "automatic-gradient" : "srgb:0.23039,0.50945,1.00000,1.00000"
-          },
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:0.67961,0.91693,1.00000,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:0.23039,1.00000,0.99359,1.00000"
+              }
+            }
+          ],
           "image-name" : "Kamicut.007.png",
           "name" : "Cloud 2"
         },
         {
-          "fill" : {
-            "automatic-gradient" : "srgb:0.30090,0.57721,1.00000,1.00000"
-          },
+          "fill-specializations" : [
+            {
+              "value" : {
+                "automatic-gradient" : "srgb:0.44554,0.75669,0.82548,1.00000"
+              }
+            },
+            {
+              "appearance" : "dark",
+              "value" : {
+                "automatic-gradient" : "srgb:0.12418,0.82548,0.75272,1.00000"
+              }
+            }
+          ],
           "image-name" : "Kamicut.006.png",
           "name" : "Cloud 1"
         }
       ],
       "name" : "Cloud 1",
       "shadow" : {
-        "kind" : "neutral",
-        "opacity" : 0.5
+        "kind" : "layer-color",
+        "opacity" : 1
       },
       "translucency" : {
         "enabled" : true,

@@ -4,9 +4,11 @@ import SwiftData
 // MARK: - Projects List View
 
 struct ProjectsListView: View {
-    @Query(sort: \SavedCut.updatedAt, order: .reverse) private var savedCuts: [SavedCut]
+    @Query(sort: \SavedCut.name) private var savedCuts: [SavedCut]
     @Environment(\.modelContext) private var modelContext
     @State private var path = NavigationPath()
+    @State private var showNewProjectAlert = false
+    @State private var newCircleName = ""
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -18,49 +20,62 @@ struct ProjectsListView: View {
                         Text(String(localized: "Projects.EmptyDescription"))
                     }
                 } else {
-                    List {
-                        ForEach(savedCuts) { cut in
-                            NavigationLink(value: cut) {
-                                ProjectRowView(cut: cut)
-                            }
-                            .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    deleteCut(cut)
-                                } label: {
-                                    Label("Common.Delete", systemImage: "trash")
+                    ScrollView {
+                        LazyVGrid(
+                            columns: [
+                                GridItem(.flexible(), spacing: 16),
+                                GridItem(.flexible(), spacing: 16),
+                            ],
+                            spacing: 16
+                        ) {
+                            ForEach(savedCuts) { cut in
+                                NavigationLink(value: cut) {
+                                    ProjectCardView(cut: cut)
                                 }
-                            }
-                            .swipeActions(edge: .leading) {
-                                Button {
-                                    duplicateCut(cut)
-                                } label: {
-                                    Label(String(localized: "Projects.Duplicate"), systemImage: "plus.square.on.square")
-                                }
-                                .tint(.blue)
-                            }
-                            .contextMenu {
-                                Button {
-                                    duplicateCut(cut)
-                                } label: {
-                                    Label(String(localized: "Projects.Duplicate"), systemImage: "plus.square.on.square")
-                                }
-                                Button(role: .destructive) {
-                                    deleteCut(cut)
-                                } label: {
-                                    Label("Common.Delete", systemImage: "trash")
+                                .buttonStyle(.plain)
+                                .contextMenu {
+                                    Button {
+                                        duplicateCut(cut)
+                                    } label: {
+                                        Label(String(localized: "Projects.Duplicate"), systemImage: "plus.square.on.square")
+                                    }
+                                    Button(role: .destructive) {
+                                        deleteCut(cut)
+                                    } label: {
+                                        Label("Common.Delete", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
+                        .animation(.smooth.speed(2.0), value: savedCuts.map(\.name))
+                        .padding()
                     }
-                    .listStyle(.insetGrouped)
                 }
+            }
+            .background {
+                LinearGradient(
+                    colors: [Color("BackgroundGradientTopColor"), Color("BackgroundGradientBottomColor")],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
             }
             .navigationTitle(String(localized: "App.Name"))
             .navigationDestination(for: SavedCut.self) { cut in
                 EditorDestination(savedCut: cut)
             }
-            .navigationDestination(for: NewProjectTag.self) { _ in
-                EditorDestination(savedCut: nil)
+            .navigationDestination(for: NewProjectTag.self) { tag in
+                EditorDestination(savedCut: nil, circleName: tag.circleName)
+            }
+            .alert(String(localized: "Projects.NewProject"), isPresented: $showNewProjectAlert) {
+                TextField(String(localized: "Document.CircleName"), text: $newCircleName)
+                Button(String(localized: "Common.Cancel"), role: .cancel) {}
+                Button(String(localized: "Common.Create")) {
+                    path.append(NewProjectTag(circleName: newCircleName))
+                }
+                .disabled(newCircleName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            } message: {
+                Text(String(localized: "Projects.EnterCircleName"))
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -79,7 +94,8 @@ struct ProjectsListView: View {
                 ToolbarSpacer(.flexible, placement: .bottomBar)
                 ToolbarItem(placement: .bottomBar) {
                     Button {
-                        path.append(NewProjectTag())
+                        newCircleName = ""
+                        showNewProjectAlert = true
                     } label: {
                         Image(systemName: "plus")
                     }

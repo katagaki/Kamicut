@@ -96,6 +96,7 @@ struct FontPickerRow: View {
     let label: String
 
     @State private var showPicker = false
+    @State private var fontPickerDetent: PresentationDetent = .large
 
     var body: some View {
         Button {
@@ -114,7 +115,7 @@ struct FontPickerRow: View {
         .tint(.primary)
         .sheet(isPresented: $showPicker) {
             FontPickerSheet(selectedFontName: $selectedFontName)
-                .presentationDetents([.height(200), .large])
+                .presentationDetents([.medium, .large], selection: $fontPickerDetent)
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }

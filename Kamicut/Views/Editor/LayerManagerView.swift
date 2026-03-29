@@ -16,7 +16,7 @@ struct LayerManagerView: View {
         NavigationStack {
             List {
                 // User layers (reorderable)
-                Section(String(localized: "Layers.Elements")) {
+                Section {
                     ForEach(Array(editor.document.layers.enumerated().reversed()), id: \.element.id) { index, layer in
                         elementRow(layer: layer, index: index)
                     }
@@ -25,6 +25,13 @@ struct LayerManagerView: View {
                         let actualSource = IndexSet(source.map { count - 1 - $0 })
                         let actualDestination = count - destination
                         editor.moveLayers(from: actualSource, to: actualDestination)
+                    }
+                } header: {
+                    HStack {
+                        Text(String(localized: "Layers.Elements"))
+                        Spacer()
+                        EditButton()
+                            .textCase(nil)
                     }
                 }
 
@@ -82,18 +89,12 @@ struct LayerManagerView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .listSectionSpacing(.compact)
             .navigationTitle(String(localized: "Layers.Title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    if #available(iOS 26, *) {
-                        Button(role: .close) { dismiss() }
-                    } else {
-                        Button(String(localized: "Common.Close")) { dismiss() }
-                    }
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    EditButton()
+                    Button(role: .confirm) { dismiss() }
                 }
             }
         }

@@ -10,17 +10,6 @@
     "%.1f pt" : {
       "shouldTranslate" : false
     },
-    "%lld × %lld px" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld × %2$lld px"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "%lld pt" : {
       "shouldTranslate" : false
     },
@@ -156,6 +145,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カラー"
+          }
+        }
+      }
+    },
+    "Common.Create" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作成"
           }
         }
       }
@@ -394,6 +400,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "カラー"
+          }
+        }
+      }
+    },
+    "Export.Export" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エクスポート"
           }
         }
       }
@@ -993,6 +1016,23 @@
         }
       }
     },
+    "Projects.Rename" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変更"
+          }
+        }
+      }
+    },
     "Projects.Empty" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1023,6 +1063,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "＋をタップして最初のプロジェクトを作成しましょう。"
+          }
+        }
+      }
+    },
+    "Projects.EnterCircleName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter your circle name. This will be used as the project name."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークル名を入力してください。プロジェクト名として使用されます。"
+          }
+        }
+      }
+    },
+    "Projects.NewProject" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Project"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新規プロジェクト"
+          }
+        }
+      }
+    },
+    "Projects.Untitled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(Untitled)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（無題）"
           }
         }
       }
@@ -2382,7 +2473,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き出し"
+            "value" : "エクスポート"
           }
         }
       }
