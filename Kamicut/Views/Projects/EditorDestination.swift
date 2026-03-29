@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftData
 
 // MARK: - Navigation Tags
 
@@ -10,18 +9,23 @@ struct NewProjectTag: Hashable {
 // MARK: - Editor Destination
 
 struct EditorDestination: View {
-    let savedCut: SavedCut?
+    let cutItem: CutListItem?
     var circleName: String = ""
     @State private var editor = EditorState()
     @State private var autoSaveTask: Task<Void, Never>?
-    @Environment(\.modelContext) private var modelContext
+    private let storageManager = CutStorageManager.shared
 
     var body: some View {
         EditorView(editor: editor)
             .onAppear {
-                if let savedCut, editor.currentSavedCutID == nil {
-                    try? editor.loadSavedCut(savedCut)
-                } else if savedCut == nil && !circleName.isEmpty && editor.document.circleName.isEmpty {
+                if let cutItem, editor.currentPackageURL == nil {
+                    if let doc = try? storageManager.loadDocument(from: cutItem.packageURL) {
+                        editor.document = doc
+                        editor.currentPackageURL = cutItem.packageURL
+                        editor.currentSavedCutName = cutItem.name
+                        editor.documentRevision = 0
+                    }
+                } else if cutItem == nil && !circleName.isEmpty && editor.document.circleName.isEmpty {
                     editor.document.circleName = circleName
                     editor.currentSavedCutName = circleName
                 }
@@ -29,6 +33,7 @@ struct EditorDestination: View {
             .onDisappear {
                 autoSaveTask?.cancel()
                 autoSave()
+                storageManager.loadAllCuts()
             }
             .onChange(of: editor.documentRevision) {
                 autoSaveTask?.cancel()
@@ -62,28 +67,28 @@ struct EditorDestination: View {
         }
 
         do {
-            if let existingID = editor.currentSavedCutID {
-                let predicate = #Predicate<SavedCut> { $0.id == existingID }
-                let descriptor = FetchDescriptor<SavedCut>(predicate: predicate)
-                if let existing = try modelContext.fetch(descriptor).first {
-                    try existing.updateDocument(editor.document)
-                    existing.name = editor.document.circleName.isEmpty
-                        ? String(localized: "Projects.Untitled")
-                        : editor.document.circleName
-                    existing.thumbnailData = thumbnailData
-                }
+            let name = editor.document.circleName.isEmpty
+                ? String(localized: "Projects.Untitled")
+                : editor.document.circleName
+
+            if let existingURL = editor.currentPackageURL {
+                _ = try storageManager.saveDocument(
+                    editor.document,
+                    name: name,
+                    existingPackageURL: existingURL,
+                    thumbnailData: thumbnailData
+                )
             } else if !editor.document.layers.isEmpty || editor.document.backgroundImage != nil {
-                let name = editor.document.circleName.isEmpty
-                    ? String(localized: "Projects.Untitled")
-                    : editor.document.circleName
-                let newCut = try SavedCut(name: name, document: editor.document)
-                newCut.thumbnailData = thumbnailData
-                modelContext.insert(newCut)
-                editor.currentSavedCutID = newCut.id
-                editor.currentSavedCutName = newCut.name
+                let url = try storageManager.saveDocument(
+                    editor.document,
+                    name: name,
+                    thumbnailData: thumbnailData
+                )
+                editor.currentPackageURL = url
+                editor.currentSavedCutName = name
             }
         } catch {
-            // Encoding error — unlikely
+            // Save error — unlikely
         }
     }
 }

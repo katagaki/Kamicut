@@ -21,7 +21,7 @@ final class EditorState {
 
     // MARK: Saved Cut Tracking
 
-    var currentSavedCutID: UUID?
+    var currentPackageURL: URL?
     var currentSavedCutName: String = ""
 
     // MARK: UI State
@@ -218,23 +218,11 @@ final class EditorState {
         return image
     }
 
-    // MARK: - Load Saved Cut
-
-    func loadSavedCut(_ savedCut: SavedCut) throws {
-        self.document = try savedCut.loadDocument()
-        self.currentSavedCutID = savedCut.id
-        self.currentSavedCutName = savedCut.name
-        self.selectedImageID = nil
-        self.selectedTextID = nil
-        self.selectedShapeID = nil
-        self.exportedImage = nil
-    }
-
     // MARK: - Reset
 
     func reset() {
         document = EditorDocument()
-        currentSavedCutID = nil
+        currentPackageURL = nil
         currentSavedCutName = ""
         selectedImageID = nil
         selectedTextID = nil

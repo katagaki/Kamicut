@@ -1,22 +1,20 @@
 import SwiftUI
-import SwiftData
 
 // MARK: - Projects List View
 
 struct ProjectsListView: View {
-    @Query(sort: \SavedCut.name) private var savedCuts: [SavedCut]
-    @Environment(\.modelContext) private var modelContext
+    @State private var storageManager = CutStorageManager.shared
     @State private var path = NavigationPath()
     @State private var showNewProjectAlert = false
     @State private var newCircleName = ""
     @State private var showRenameAlert = false
-    @State private var renamingCut: SavedCut?
+    @State private var renamingCut: CutListItem?
     @State private var renameText = ""
 
     var body: some View {
         NavigationStack(path: $path) {
             Group {
-                if savedCuts.isEmpty {
+                if storageManager.cuts.isEmpty {
                     ContentUnavailableView {
                         Label(String(localized: "Projects.Empty"), systemImage: "doc.richtext")
                     } description: {
@@ -31,7 +29,7 @@ struct ProjectsListView: View {
                             ],
                             spacing: 16
                         ) {
-                            ForEach(savedCuts) { cut in
+                            ForEach(storageManager.cuts) { cut in
                                 NavigationLink(value: cut) {
                                     ProjectCardView(cut: cut)
                                 }
@@ -57,7 +55,7 @@ struct ProjectsListView: View {
                                 }
                             }
                         }
-                        .animation(.smooth.speed(2.0), value: savedCuts.map(\.name))
+                        .animation(.smooth.speed(2.0), value: storageManager.cuts.map(\.name))
                         .padding()
                     }
                 }
@@ -71,11 +69,11 @@ struct ProjectsListView: View {
                 .ignoresSafeArea()
             }
             .navigationTitle(String(localized: "Projects.Title"))
-            .navigationDestination(for: SavedCut.self) { cut in
-                EditorDestination(savedCut: cut)
+            .navigationDestination(for: CutListItem.self) { cut in
+                EditorDestination(cutItem: cut)
             }
             .navigationDestination(for: NewProjectTag.self) { tag in
-                EditorDestination(savedCut: nil, circleName: tag.circleName)
+                EditorDestination(cutItem: nil, circleName: tag.circleName)
             }
             .alert(String(localized: "Projects.NewProject"), isPresented: $showNewProjectAlert) {
                 TextField(String(localized: "Document.CircleName"), text: $newCircleName)
@@ -130,29 +128,24 @@ struct ProjectsListView: View {
         guard let cut = renamingCut else { return }
         let trimmed = renameText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        cut.name = trimmed
-        if var document = try? cut.loadDocument() {
-            document.circleName = trimmed
-            try? cut.updateDocument(document)
-        }
+        try? storageManager.renameCut(at: cut.packageURL, newName: trimmed)
+        storageManager.loadAllCuts()
         renamingCut = nil
     }
 
-    private func deleteCut(_ cut: SavedCut) {
-        modelContext.delete(cut)
+    private func deleteCut(_ cut: CutListItem) {
+        storageManager.deleteCut(at: cut.packageURL)
     }
 
-    private func duplicateCut(_ cut: SavedCut) {
+    private func duplicateCut(_ cut: CutListItem) {
         do {
-            let document = try cut.loadDocument()
-            let duplicate = try SavedCut(
-                name: String(localized: "Projects.DuplicateSuffix \(cut.name)"),
-                document: document
+            _ = try storageManager.duplicateCut(
+                from: cut.packageURL,
+                newName: String(localized: "Projects.DuplicateSuffix \(cut.name)")
             )
-            duplicate.thumbnailData = cut.thumbnailData
-            modelContext.insert(duplicate)
+            storageManager.loadAllCuts()
         } catch {
-            // Encoding/decoding error — unlikely
+            // Unlikely
         }
     }
 }

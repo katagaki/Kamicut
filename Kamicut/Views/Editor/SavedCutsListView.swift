@@ -1,11 +1,9 @@
 import SwiftUI
-import SwiftData
 
 struct SavedCutsListView: View {
     @Bindable var editor: EditorState
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Query(sort: \SavedCut.updatedAt, order: .reverse) private var savedCuts: [SavedCut]
+    private let storageManager = CutStorageManager.shared
 
     var body: some View {
         NavigationStack {
@@ -18,9 +16,9 @@ struct SavedCutsListView: View {
                     }
                 }
 
-                if !savedCuts.isEmpty {
+                if !storageManager.cuts.isEmpty {
                     Section(String(localized: "SavedCuts.Title")) {
-                        ForEach(savedCuts) { cut in
+                        ForEach(storageManager.cuts) { cut in
                             Button {
                                 loadCut(cut)
                             } label: {
@@ -76,25 +74,37 @@ struct SavedCutsListView: View {
             ? String(localized: "Projects.Untitled")
             : editor.document.circleName
         do {
-            if let existingID = editor.currentSavedCutID,
-               let existing = savedCuts.first(where: { $0.id == existingID }) {
-                try existing.updateDocument(editor.document)
-                existing.name = name
+            if let existingURL = editor.currentPackageURL {
+                _ = try storageManager.saveDocument(
+                    editor.document,
+                    name: name,
+                    existingPackageURL: existingURL
+                )
                 editor.currentSavedCutName = name
             } else {
-                let newCut = try SavedCut(name: name, document: editor.document)
-                modelContext.insert(newCut)
-                editor.currentSavedCutID = newCut.id
-                editor.currentSavedCutName = newCut.name
+                let url = try storageManager.saveDocument(
+                    editor.document,
+                    name: name
+                )
+                editor.currentPackageURL = url
+                editor.currentSavedCutName = name
             }
+            storageManager.loadAllCuts()
         } catch {
-            // Encoding error — unlikely given existing Codable conformance
+            // Encoding error — unlikely
         }
     }
 
-    private func loadCut(_ cut: SavedCut) {
+    private func loadCut(_ cut: CutListItem) {
         do {
-            try editor.loadSavedCut(cut)
+            let document = try storageManager.loadDocument(from: cut.packageURL)
+            editor.document = document
+            editor.currentPackageURL = cut.packageURL
+            editor.currentSavedCutName = cut.name
+            editor.selectedImageID = nil
+            editor.selectedTextID = nil
+            editor.selectedShapeID = nil
+            editor.exportedImage = nil
             dismiss()
         } catch {
             // Decoding error
@@ -102,13 +112,14 @@ struct SavedCutsListView: View {
     }
 
     private func deleteCuts(at offsets: IndexSet) {
+        let cutsList = storageManager.cuts
         for index in offsets {
-            let cut = savedCuts[index]
-            if editor.currentSavedCutID == cut.id {
-                editor.currentSavedCutID = nil
+            let cut = cutsList[index]
+            if editor.currentPackageURL == cut.packageURL {
+                editor.currentPackageURL = nil
                 editor.currentSavedCutName = ""
             }
-            modelContext.delete(cut)
+            storageManager.deleteCut(at: cut.packageURL)
         }
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Project Row
 
 struct ProjectRowView: View {
-    let cut: SavedCut
+    let cut: CutListItem
 
     var body: some View {
         HStack(spacing: 12) {

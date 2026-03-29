@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Project Card
 
 struct ProjectCardView: View {
-    let cut: SavedCut
+    let cut: CutListItem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
