@@ -18,11 +18,16 @@ struct CanvasTextView: View {
         guard size.width > 0, size.height > 0 else { return nil }
 
         // Add padding for shadow overflow
-        let padding: CGFloat = element.shadow.enabled ? element.shadow.radius * 2 + max(abs(element.shadow.offsetX), abs(element.shadow.offsetY)) : 0
-        let renderSize = CGSize(width: size.width + padding * 2, height: size.height + padding * 2)
+        let padding: CGFloat = element.shadow.enabled
+            ? element.shadow.radius * 2 + max(abs(element.shadow.offsetX), abs(element.shadow.offsetY))
+            : 0
+        let renderSize = CGSize(
+            width: size.width + padding * 2,
+            height: size.height + padding * 2
+        )
 
         let format = UIGraphicsImageRendererFormat()
-        format.scale = UIScreen.main.scale
+        format.scale = UITraitCollection.current.displayScale
         format.opaque = false
 
         let renderer = UIGraphicsImageRenderer(size: renderSize, format: format)

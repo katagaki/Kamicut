@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct SavedCutsListView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \SavedCut.updatedAt, order: .reverse) private var savedCuts: [SavedCut]
@@ -15,9 +15,9 @@ struct SavedCutsListView: View {
             List {
                 Section {
                     Button {
-                        newCutName = vm.currentSavedCutName.isEmpty
-                            ? vm.document.template.localizedDisplayName
-                            : vm.currentSavedCutName
+                        newCutName = editor.currentSavedCutName.isEmpty
+                            ? editor.document.template.localizedDisplayName
+                            : editor.currentSavedCutName
                         showingSaveAlert = true
                     } label: {
                         Label(String(localized: "SavedCuts.SaveCurrent"), systemImage: "square.and.arrow.down")
@@ -86,16 +86,16 @@ struct SavedCutsListView: View {
 
     private func saveCurrent() {
         do {
-            if let existingID = vm.currentSavedCutID,
+            if let existingID = editor.currentSavedCutID,
                let existing = savedCuts.first(where: { $0.id == existingID }) {
-                try existing.updateDocument(vm.document)
+                try existing.updateDocument(editor.document)
                 existing.name = newCutName
-                vm.currentSavedCutName = newCutName
+                editor.currentSavedCutName = newCutName
             } else {
-                let newCut = try SavedCut(name: newCutName, document: vm.document)
+                let newCut = try SavedCut(name: newCutName, document: editor.document)
                 modelContext.insert(newCut)
-                vm.currentSavedCutID = newCut.id
-                vm.currentSavedCutName = newCut.name
+                editor.currentSavedCutID = newCut.id
+                editor.currentSavedCutName = newCut.name
             }
         } catch {
             // Encoding error — unlikely given existing Codable conformance
@@ -104,7 +104,7 @@ struct SavedCutsListView: View {
 
     private func loadCut(_ cut: SavedCut) {
         do {
-            try vm.loadSavedCut(cut)
+            try editor.loadSavedCut(cut)
             dismiss()
         } catch {
             // Decoding error
@@ -114,9 +114,9 @@ struct SavedCutsListView: View {
     private func deleteCuts(at offsets: IndexSet) {
         for index in offsets {
             let cut = savedCuts[index]
-            if vm.currentSavedCutID == cut.id {
-                vm.currentSavedCutID = nil
-                vm.currentSavedCutName = ""
+            if editor.currentSavedCutID == cut.id {
+                editor.currentSavedCutID = nil
+                editor.currentSavedCutName = ""
             }
             modelContext.delete(cut)
         }

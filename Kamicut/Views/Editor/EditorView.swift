@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Editor View
 
 struct EditorView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
     @State private var canvasScale: CGFloat = 1.0
     @GestureState private var pinchScale: CGFloat = 1.0
     @State private var sheetDetent: PresentationDetent = .height(300)
@@ -11,9 +11,9 @@ struct EditorView: View {
     @State private var canvasBottomPadding: CGFloat = 0
 
     private var isAnySheetActive: Bool {
-        vm.showTemplatePicker || vm.showProjectSettings || vm.showExportSheet ||
-        vm.showLayerManager || vm.showBackgroundSettings ||
-        vm.selectedTextID != nil || vm.selectedShapeID != nil
+        editor.showTemplatePicker || editor.showProjectSettings || editor.showExportSheet ||
+        editor.showLayerManager || editor.showBackgroundSettings ||
+        editor.selectedTextID != nil || editor.selectedShapeID != nil
     }
 
     var body: some View {
@@ -26,10 +26,10 @@ struct EditorView: View {
             GeometryReader { geo in
                 VStack(alignment: .center) {
                     Spacer()
-                    ElementToolbarView(vm: vm)
-                        .animation(.smooth.speed(2.0), value: vm.selectedImageID)
-                        .animation(.smooth.speed(2.0), value: vm.selectedTextID)
-                        .animation(.smooth.speed(2.0), value: vm.selectedShapeID)
+                    ElementToolbarView(editor: editor)
+                        .animation(.smooth.speed(2.0), value: editor.selectedImageID)
+                        .animation(.smooth.speed(2.0), value: editor.selectedTextID)
+                        .animation(.smooth.speed(2.0), value: editor.selectedShapeID)
                         .padding(.bottom, canvasBottomPadding > 0
                                  ? canvasBottomPadding - geo.safeAreaInsets.bottom / 2 + 8
                             : 8)
@@ -43,19 +43,19 @@ struct EditorView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    vm.showTemplatePicker = true
+                    editor.showTemplatePicker = true
                 } label: {
                     Image(systemName: "rectangle.on.rectangle")
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    vm.showExportSheet = true
+                    editor.showExportSheet = true
                 } label: {
                     Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
                 }
             }
-            ToolbarPanelView(vm: vm)
+            ToolbarPanelView(editor: editor)
         }
         .onChange(of: sheetDetent) { _, newDetent in
             withAnimation(.spring(duration: 0.3)) {
@@ -74,25 +74,25 @@ struct EditorView: View {
                 }
             }
         }
-        .onChange(of: vm.selectedTextID) { _, _ in
-            if vm.selectedTextID != nil { sheetDetent = .height(300) }
+        .onChange(of: editor.selectedTextID) { _, _ in
+            if editor.selectedTextID != nil { sheetDetent = .height(300) }
         }
-        .onChange(of: vm.selectedShapeID) { _, _ in
-            if vm.selectedShapeID != nil { sheetDetent = .height(300) }
+        .onChange(of: editor.selectedShapeID) { _, _ in
+            if editor.selectedShapeID != nil { sheetDetent = .height(300) }
         }
         // Sheets
-        .sheet(isPresented: $vm.showTemplatePicker) {
-            TemplatePickerView(vm: vm)
+        .sheet(isPresented: $editor.showTemplatePicker) {
+            TemplatePickerView(editor: editor)
                 .presentationDetents([.large])
                 .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showProjectSettings) {
+        .sheet(isPresented: $editor.showProjectSettings) {
             NavigationStack {
-                ProjectSettingsView(vm: vm)
+                ProjectSettingsView(editor: editor)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(role: .confirm) {
-                                vm.showProjectSettings = false
+                                editor.showProjectSettings = false
                             }
                         }
                     }
@@ -101,18 +101,18 @@ struct EditorView: View {
             .presentationBackgroundInteraction(.enabled)
             .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showExportSheet) {
-            ExportSheetView(vm: vm)
+        .sheet(isPresented: $editor.showExportSheet) {
+            ExportSheetView(editor: editor)
                 .presentationDetents([.medium, .large], selection: $exportSheetDetent)
                 .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showLayerManager) {
+        .sheet(isPresented: $editor.showLayerManager) {
             NavigationStack {
-                LayerManagerView(vm: vm)
+                LayerManagerView(editor: editor)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(role: .confirm) {
-                                vm.showLayerManager = false
+                                editor.showLayerManager = false
                             }
                         }
                     }
@@ -121,13 +121,13 @@ struct EditorView: View {
             .presentationBackgroundInteraction(.enabled)
             .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showBackgroundSettings) {
+        .sheet(isPresented: $editor.showBackgroundSettings) {
             NavigationStack {
-                BackgroundSettingsView(vm: vm)
+                BackgroundSettingsView(editor: editor)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(role: .confirm) {
-                                vm.showBackgroundSettings = false
+                                editor.showBackgroundSettings = false
                             }
                         }
                     }
@@ -137,17 +137,17 @@ struct EditorView: View {
             .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: Binding(
-            get: { vm.selectedTextID != nil },
-            set: { if !$0 { vm.selectedTextID = nil } }
+            get: { editor.selectedTextID != nil },
+            set: { if !$0 { editor.selectedTextID = nil } }
         )) {
             NavigationStack {
-                SelectedElementInspectorView(vm: vm)
-                    .navigationTitle(vm.selectedLayerLabel)
+                SelectedElementInspectorView(editor: editor)
+                    .navigationTitle(editor.selectedLayerLabel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button(role: .confirm) {
-                                vm.selectedTextID = nil
+                                editor.selectedTextID = nil
                             }
                         }
                     }
@@ -157,17 +157,17 @@ struct EditorView: View {
             .presentationContentInteraction(.scrolls)
         }
         .sheet(isPresented: Binding(
-            get: { vm.selectedShapeID != nil },
-            set: { if !$0 { vm.selectedShapeID = nil } }
+            get: { editor.selectedShapeID != nil },
+            set: { if !$0 { editor.selectedShapeID = nil } }
         )) {
             NavigationStack {
-                SelectedElementInspectorView(vm: vm)
-                    .navigationTitle(vm.selectedLayerLabel)
+                SelectedElementInspectorView(editor: editor)
+                    .navigationTitle(editor.selectedLayerLabel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(role: .confirm) {
-                                vm.selectedShapeID = nil
+                                editor.selectedShapeID = nil
                             }
                         }
                     }
@@ -176,12 +176,12 @@ struct EditorView: View {
             .presentationBackgroundInteraction(.enabled)
             .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $vm.showSavedCutsList) {
-            SavedCutsListView(vm: vm)
+        .sheet(isPresented: $editor.showSavedCutsList) {
+            SavedCutsListView(editor: editor)
                 .presentationDetents([.large])
         }
-        .fullScreenCover(isPresented: $vm.showSquiggleEditor) {
-            SquiggleEditorView(vm: vm)
+        .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
+            SquiggleEditorView(editor: editor)
         }
     }
 
@@ -189,7 +189,7 @@ struct EditorView: View {
 
     @ViewBuilder
     private var canvasPreview: some View {
-        let template = vm.document.template
+        let template = editor.document.template
 
         GeometryReader { previewGeo in
             let availableW = previewGeo.size.width - 32
@@ -205,7 +205,7 @@ struct EditorView: View {
                 Color(UIColor.secondarySystemBackground)
 
                 ScrollView([.horizontal, .vertical], showsIndicators: false) {
-                    EditorCanvasView(vm: vm)
+                    EditorCanvasView(editor: editor)
                         .scaleEffect(effectiveScale)
                         .frame(width: max(scaledW, previewGeo.size.width),
                                height: max(scaledH, previewGeo.size.height))

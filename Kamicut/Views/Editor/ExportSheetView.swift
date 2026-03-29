@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Export Sheet View
 
 struct ExportSheetView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
 
     private let renderer = CircleCutRenderer()
@@ -13,27 +13,27 @@ struct ExportSheetView: View {
             Form {
                 // Format
                 Section("Export.Format") {
-                    Picker("Export.FileFormat", selection: $vm.document.exportSettings.format) {
+                    Picker("Export.FileFormat", selection: $editor.document.exportSettings.format) {
                         ForEach(ExportFormat.allCases) { format in
                             Text(format.localizedName).tag(format)
                         }
                     }
                     .pickerStyle(.segmented)
 
-                    if vm.document.exportSettings.format == .jpg {
+                    if editor.document.exportSettings.format == .jpg {
                         HStack {
                             Text("Export.JpegQuality")
                             Spacer()
-                            Text("\(Int(vm.document.exportSettings.jpegQuality * 100))%")
+                            Text("\(Int(editor.document.exportSettings.jpegQuality * 100))%")
                                 .foregroundColor(.secondary)
                         }
-                        Slider(value: $vm.document.exportSettings.jpegQuality, in: 0.1...1.0, step: 0.05)
+                        Slider(value: $editor.document.exportSettings.jpegQuality, in: 0.1...1.0, step: 0.05)
                     }
                 }
 
                 // Color Mode
                 Section("Export.ColorMode") {
-                    Picker("Export.ColorMode", selection: $vm.document.exportSettings.colorMode) {
+                    Picker("Export.ColorMode", selection: $editor.document.exportSettings.colorMode) {
                         ForEach(ExportColorMode.allCases) { mode in
                             Text(mode.localizedName).tag(mode)
                         }
@@ -43,7 +43,7 @@ struct ExportSheetView: View {
 
                 // Resolution
                 Section("Export.Resolution") {
-                    Picker("Export.Resolution", selection: $vm.document.exportSettings.resolution) {
+                    Picker("Export.Resolution", selection: $editor.document.exportSettings.resolution) {
                         ForEach(ExportResolution.allCases) { res in
                             Text(res.label).tag(res)
                         }
@@ -54,8 +54,8 @@ struct ExportSheetView: View {
 
                 // Export size info
                 Section {
-                    let width = Int(vm.document.template.canvasSize.width)
-                    let height = Int(vm.document.template.canvasSize.height)
+                    let width = Int(editor.document.template.canvasSize.width)
+                    let height = Int(editor.document.template.canvasSize.height)
                     HStack {
                         Label("Export.OutputSize", systemImage: "ruler")
                         Spacer()
@@ -71,7 +71,7 @@ struct ExportSheetView: View {
                     } label: {
                         HStack {
                             Spacer()
-                            if vm.isExporting {
+                            if editor.isExporting {
                                 ProgressView()
                                     .padding(.trailing, 8)
                                 Text("Export.Rendering")
@@ -82,11 +82,11 @@ struct ExportSheetView: View {
                             Spacer()
                         }
                     }
-                    .disabled(vm.isExporting)
+                    .disabled(editor.isExporting)
                 }
 
                 // Preview
-                if let exported = vm.exportedImage {
+                if let exported = editor.exportedImage {
                     Section("Export.Preview") {
                         Image(uiImage: exported)
                             .resizable()
@@ -112,8 +112,8 @@ struct ExportSheetView: View {
     }
 
     private func doExport() async {
-        guard let image = await vm.exportImage(renderer: renderer) else { return }
-        let settings = vm.exportSettings
+        guard let image = await editor.exportImage(renderer: renderer) else { return }
+        let settings = editor.exportSettings
         let activityItems: [Any]
         if settings.format == .jpg {
             let data = image.jpegData(compressionQuality: settings.jpegQuality) ?? Data()
@@ -122,15 +122,17 @@ struct ExportSheetView: View {
             activityItems = [image]
         }
         await MainActor.run {
-            let vc = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+            let activityController = UIActivityViewController(
+                activityItems: activityItems, applicationActivities: nil
+            )
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let root = windowScene.windows.first?.rootViewController {
                 var presenter = root
                 while let presented = presenter.presentedViewController {
                     presenter = presented
                 }
-                vc.popoverPresentationController?.sourceView = presenter.view
-                presenter.present(vc, animated: true)
+                activityController.popoverPresentationController?.sourceView = presenter.view
+                presenter.present(activityController, animated: true)
             }
         }
     }

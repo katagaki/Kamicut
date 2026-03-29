@@ -10,6 +10,7 @@ struct ShapeElementView: View {
     @GestureState private var pinchScale: CGFloat = 1.0
     @State private var resizeStartSize: CGSize?
     @State private var resizeStartPosition: CGPoint?
+    @State private var resizeStartLocation: CGPoint?
 
     private let handleSize: CGFloat = 10
     private let handleHitSize: CGFloat = 44
@@ -85,17 +86,24 @@ struct ShapeElementView: View {
                 .offset(x: (handleSize - handleHitSize) / 2, y: (handleSize - handleHitSize) / 2))
             .position(x: pos.x, y: pos.y)
             .gesture(
-                DragGesture()
+                DragGesture(coordinateSpace: .named("canvas"))
                     .onChanged { value in
                         if resizeStartSize == nil {
                             resizeStartSize = element.size
                             resizeStartPosition = element.position
+                            resizeStartLocation = value.startLocation
                         }
-                        applyResize(handle: handle, translation: value.translation)
+                        guard let startLoc = resizeStartLocation else { return }
+                        let translation = CGSize(
+                            width: value.location.x - startLoc.x,
+                            height: value.location.y - startLoc.y
+                        )
+                        applyResize(handle: handle, translation: translation)
                     }
                     .onEnded { _ in
                         resizeStartSize = nil
                         resizeStartPosition = nil
+                        resizeStartLocation = nil
                     }
             )
     }
@@ -107,52 +115,77 @@ struct ShapeElementView: View {
 
         let scale = element.scale
         let rot = element.rotation * .pi / 180
+        let cosR = cos(rot), sinR = sin(rot)
 
         // Old element pixel sizes
         let oldW = startSize.width * canvasSize.width * scale
         let oldH = startSize.height * canvasSize.height * scale
 
         // Old bounding box half-sizes (axis-aligned)
-        let oldBBHalfW = (abs(oldW * cos(rot)) + abs(oldH * sin(rot))) / 2
-        let oldBBHalfH = (abs(oldW * sin(rot)) + abs(oldH * cos(rot))) / 2
+        let oldBBHalfW = (abs(oldW * cosR) + abs(oldH * sinR)) / 2
+        let oldBBHalfH = (abs(oldW * sinR) + abs(oldH * cosR)) / 2
 
         // Anchor: the opposite bounding box corner in canvas pixel space
-        // Handles are on the bounding box, so the anchor is axis-aligned
         let startCx = startPos.x * canvasSize.width
         let startCy = startPos.y * canvasSize.height
         let anchorX = startCx - handle.xFactor * oldBBHalfW
         let anchorY = startCy - handle.yFactor * oldBBHalfH
 
-        // Compute new size from drag translation rotated into local space
-        let localDragW = translation.width * cos(-rot) - translation.height * sin(-rot)
-        let localDragH = translation.width * sin(-rot) + translation.height * cos(-rot)
+        // The dragged handle moves in screen space; compute new bounding box from the
+        // anchor corner and the dragged corner's new position.
+        let draggedX = startCx + handle.xFactor * oldBBHalfW + translation.width
+        let draggedY = startCy + handle.yFactor * oldBBHalfH + translation.height
 
-        let locked = element.shapeKind.aspectLocked
-        var dx = handle.xFactor * localDragW
-        var dy = handle.yFactor * localDragH
+        // New bounding box half-sizes from anchor to dragged corner
+        var newBBHalfW = handle.xFactor != 0 ? abs(draggedX - anchorX) / 2 : oldBBHalfW
+        var newBBHalfH = handle.yFactor != 0 ? abs(draggedY - anchorY) / 2 : oldBBHalfH
 
-        if locked && handle.isCorner {
-            let avg = (dx + dy) / 2
-            dx = avg; dy = avg
+        // Invert bounding box formula to recover element pixel sizes:
+        //   bbW = |W·cos| + |H·sin|
+        //   bbH = |W·sin| + |H·cos|
+        let det = cosR * cosR - sinR * sinR  // cos(2θ)
+        var newPixelW: CGFloat
+        var newPixelH: CGFloat
+
+        if abs(det) < 1e-6 {
+            // Near 45°/135° the system is singular; fall back to uniform scaling
+            let avgBB = (newBBHalfW + newBBHalfH)
+            let oldAvgBB = (oldBBHalfW + oldBBHalfH)
+            let ratio = oldAvgBB > 0 ? avgBB / oldAvgBB : 1
+            newPixelW = oldW * ratio
+            newPixelH = oldH * ratio
+        } else {
+            // Solve: |W| = (bbW·|cos| - bbH·|sin|) / det,  |H| = (bbH·|cos| - bbW·|sin|) / det
+            //   where det = cos²-sin² and bb values use half-sizes * 2
+            let absCos = abs(cosR), absSin = abs(sinR)
+            newPixelW = abs((2 * newBBHalfW * absCos - 2 * newBBHalfH * absSin) / det)
+            newPixelH = abs((2 * newBBHalfH * absCos - 2 * newBBHalfW * absSin) / det)
         }
 
-        // Edge handles: left/right only change width, top/bottom only change height
-        let dw = handle.xFactor != 0 ? dx / (canvasSize.width * scale) : 0
-        let dh = handle.yFactor != 0 ? dy / (canvasSize.height * scale) : 0
-        let newW = max(minNormalized, startSize.width + dw)
-        let newH = max(minNormalized, startSize.height + dh)
+        let locked = element.shapeKind.aspectLocked
+        if locked {
+            // Maintain aspect ratio: use the smaller dimension to keep within the bounding box
+            let side = min(newPixelW, newPixelH)
+            newPixelW = side
+            newPixelH = side
+            // Recompute bounding box with locked sizes
+            newBBHalfW = (abs(newPixelW * cosR) + abs(newPixelH * sinR)) / 2
+            newBBHalfH = (abs(newPixelW * sinR) + abs(newPixelH * cosR)) / 2
+        }
 
-        // New element pixel sizes
-        let newPixelW = newW * canvasSize.width * scale
-        let newPixelH = newH * canvasSize.height * scale
+        // Convert back to normalized sizes
+        let newW = max(minNormalized, newPixelW / (canvasSize.width * scale))
+        let newH = max(minNormalized, newPixelH / (canvasSize.height * scale))
 
-        // New bounding box half-sizes
-        let newBBHalfW = (abs(newPixelW * cos(rot)) + abs(newPixelH * sin(rot))) / 2
-        let newBBHalfH = (abs(newPixelW * sin(rot)) + abs(newPixelH * cos(rot))) / 2
+        // Recompute final bounding box half-sizes (in case clamping changed things)
+        let finalPixelW = newW * canvasSize.width * scale
+        let finalPixelH = newH * canvasSize.height * scale
+        let finalBBHalfW = (abs(finalPixelW * cosR) + abs(finalPixelH * sinR)) / 2
+        let finalBBHalfH = (abs(finalPixelW * sinR) + abs(finalPixelH * cosR)) / 2
 
         // Solve for new center so the anchor bounding box corner stays fixed
-        let newCx = anchorX + handle.xFactor * newBBHalfW
-        let newCy = anchorY + handle.yFactor * newBBHalfH
+        let newCx = anchorX + handle.xFactor * finalBBHalfW
+        let newCy = anchorY + handle.yFactor * finalBBHalfH
 
         element.size = CGSize(width: newW, height: newH)
         element.position = CGPoint(
@@ -278,26 +311,26 @@ struct StarShape: InsettableShape {
         let innerRatio: CGFloat = 0.4
 
         // Compute unit vertices centered at origin with radius 1
-        var xs: [CGFloat] = []
-        var ys: [CGFloat] = []
+        var xCoords: [CGFloat] = []
+        var yCoords: [CGFloat] = []
         for index in 0..<totalPoints {
             let angle = (CGFloat(index) * .pi / CGFloat(points)) - .pi / 2
             let radius: CGFloat = index.isMultiple(of: 2) ? 1.0 : innerRatio
-            xs.append(cos(angle) * radius)
-            ys.append(sin(angle) * radius)
+            xCoords.append(cos(angle) * radius)
+            yCoords.append(sin(angle) * radius)
         }
 
         // Normalize to fill rect
-        let minX = xs.min()!, maxX = xs.max()!
-        let minY = ys.min()!, maxY = ys.max()!
+        let minX = xCoords.min()!, maxX = xCoords.max()!
+        let minY = yCoords.min()!, maxY = yCoords.max()!
         let scaleX = insetRect.width / (maxX - minX)
         let scaleY = insetRect.height / (maxY - minY)
 
         return Path { path in
             for index in 0..<totalPoints {
                 let point = CGPoint(
-                    x: insetRect.minX + (xs[index] - minX) * scaleX,
-                    y: insetRect.minY + (ys[index] - minY) * scaleY
+                    x: insetRect.minX + (xCoords[index] - minX) * scaleX,
+                    y: insetRect.minY + (yCoords[index] - minY) * scaleY
                 )
                 if index == 0 {
                     path.move(to: point)
@@ -322,25 +355,25 @@ struct PolygonShape: InsettableShape {
         let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
 
         // Compute unit vertices centered at origin with radius 1
-        var xs: [CGFloat] = []
-        var ys: [CGFloat] = []
+        var xCoords: [CGFloat] = []
+        var yCoords: [CGFloat] = []
         for index in 0..<sides {
             let angle = (CGFloat(index) * 2 * .pi / CGFloat(sides)) - .pi / 2
-            xs.append(cos(angle))
-            ys.append(sin(angle))
+            xCoords.append(cos(angle))
+            yCoords.append(sin(angle))
         }
 
         // Normalize to fill rect
-        let minX = xs.min()!, maxX = xs.max()!
-        let minY = ys.min()!, maxY = ys.max()!
+        let minX = xCoords.min()!, maxX = xCoords.max()!
+        let minY = yCoords.min()!, maxY = yCoords.max()!
         let scaleX = insetRect.width / (maxX - minX)
         let scaleY = insetRect.height / (maxY - minY)
 
         return Path { path in
             for index in 0..<sides {
                 let point = CGPoint(
-                    x: insetRect.minX + (xs[index] - minX) * scaleX,
-                    y: insetRect.minY + (ys[index] - minY) * scaleY
+                    x: insetRect.minX + (xCoords[index] - minX) * scaleX,
+                    y: insetRect.minY + (yCoords[index] - minY) * scaleY
                 )
                 if index == 0 {
                     path.move(to: point)

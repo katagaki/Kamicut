@@ -6,7 +6,7 @@ import PencilKit
 /// Full-screen drawing overlay using PencilKit.
 /// Users can draw continuously with pencil or eraser, then confirm to add as a layer.
 struct SquiggleEditorView: View {
-    var vm: EditorState
+    var editor: EditorState
     @Environment(\.dismiss) private var dismiss
 
     @State private var canvasView = PKCanvasView()
@@ -39,13 +39,13 @@ struct SquiggleEditorView: View {
                     strokeColor: $strokeColor,
                     strokeWidth: $strokeWidth,
                     hasStrokes: $hasStrokes,
-                    canvasSize: vm.document.template.canvasSize
+                    canvasSize: editor.document.template.canvasSize
                 )
             }
             .ignoresSafeArea(.container, edges: .bottom)
             .onAppear {
                 let renderer = CircleCutRenderer()
-                backgroundSnapshot = renderer.render(document: vm.document)
+                backgroundSnapshot = renderer.render(document: editor.document)
             }
             .navigationTitle(String(localized: "Squiggle.Title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -141,7 +141,7 @@ struct SquiggleEditorView: View {
 
         let bounds = drawing.bounds
         let image = drawing.image(from: bounds, scale: 1.0)
-        vm.addOverlayImage(image)
+        editor.addOverlayImage(image)
         dismiss()
     }
 }

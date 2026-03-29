@@ -12,6 +12,7 @@ struct OverlayImageView: View {
     @State private var rotationActivated: Bool = false
     @State private var resizeStartScale: CGFloat?
     @State private var resizeStartPosition: CGPoint?
+    @State private var resizeStartLocation: CGPoint?
 
     /// Rotation threshold in degrees before rotation kicks in.
     private let rotationThreshold: Double = 10
@@ -111,17 +112,24 @@ struct OverlayImageView: View {
                 .offset(x: (handleSize - handleHitSize) / 2, y: (handleSize - handleHitSize) / 2))
             .position(x: pos.x, y: pos.y)
             .gesture(
-                DragGesture()
+                DragGesture(coordinateSpace: .named("canvas"))
                     .onChanged { value in
                         if resizeStartScale == nil {
                             resizeStartScale = element.scale
                             resizeStartPosition = element.position
+                            resizeStartLocation = value.startLocation
                         }
-                        applyImageResize(handle: handle, translation: value.translation)
+                        guard let startLoc = resizeStartLocation else { return }
+                        let translation = CGSize(
+                            width: value.location.x - startLoc.x,
+                            height: value.location.y - startLoc.y
+                        )
+                        applyImageResize(handle: handle, translation: translation)
                     }
                     .onEnded { _ in
                         resizeStartScale = nil
                         resizeStartPosition = nil
+                        resizeStartLocation = nil
                     }
             )
     }
@@ -134,14 +142,15 @@ struct OverlayImageView: View {
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
         let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
         let rot = element.rotation * .pi / 180
+        let cosR = cos(rot), sinR = sin(rot)
 
         // Old pixel dimensions
         let oldH = baseSize * startScale
         let oldW = oldH * aspectRatio
 
         // Old bounding box half-sizes (axis-aligned)
-        let oldBBHalfW = (abs(oldW * cos(rot)) + abs(oldH * sin(rot))) / 2
-        let oldBBHalfH = (abs(oldW * sin(rot)) + abs(oldH * cos(rot))) / 2
+        let oldBBHalfW = (abs(oldW * cosR) + abs(oldH * sinR)) / 2
+        let oldBBHalfH = (abs(oldW * sinR) + abs(oldH * cosR)) / 2
 
         // Anchor: opposite bounding box corner in canvas pixel space
         let startCx = startPos.x * canvasSize.width
@@ -149,36 +158,40 @@ struct OverlayImageView: View {
         let anchorX = startCx - handle.xFactor * oldBBHalfW
         let anchorY = startCy - handle.yFactor * oldBBHalfH
 
-        // Compute new scale from drag translation rotated into local space
-        let localDragW = translation.width * cos(-rot) - translation.height * sin(-rot)
-        let localDragH = translation.width * sin(-rot) + translation.height * cos(-rot)
+        // The dragged handle moves in screen space
+        let draggedX = startCx + handle.xFactor * oldBBHalfW + translation.width
+        let draggedY = startCy + handle.yFactor * oldBBHalfH + translation.height
 
-        // Images always resize uniformly (aspect locked)
-        let dx = handle.xFactor * localDragW
-        let dy = handle.yFactor * localDragH
-        let avg: CGFloat
+        // New bounding box half-sizes from anchor to dragged corner
+        let newBBHalfW = handle.xFactor != 0 ? abs(draggedX - anchorX) / 2 : oldBBHalfW
+        let newBBHalfH = handle.yFactor != 0 ? abs(draggedY - anchorY) / 2 : oldBBHalfH
+
+        // Images resize uniformly — compute scale from bounding box change.
+        // Use the axis that the handle controls; for corners, average both.
+        let scaleFromW = oldBBHalfW > 0 ? newBBHalfW / oldBBHalfW : 1
+        let scaleFromH = oldBBHalfH > 0 ? newBBHalfH / oldBBHalfH : 1
+        let ratio: CGFloat
         if handle.isCorner {
-            avg = (dx + dy) / 2
+            ratio = (scaleFromW + scaleFromH) / 2
         } else if handle.xFactor != 0 {
-            avg = dx
+            ratio = scaleFromW
         } else {
-            avg = dy
+            ratio = scaleFromH
         }
 
-        let scaleDelta = avg / baseSize
-        let newScale = max(0.1, startScale + scaleDelta)
+        let newScale = max(0.1, startScale * ratio)
 
         // New pixel dimensions
         let newH = baseSize * newScale
         let newW = newH * aspectRatio
 
         // New bounding box half-sizes
-        let newBBHalfW = (abs(newW * cos(rot)) + abs(newH * sin(rot))) / 2
-        let newBBHalfH = (abs(newW * sin(rot)) + abs(newH * cos(rot))) / 2
+        let finalBBHalfW = (abs(newW * cosR) + abs(newH * sinR)) / 2
+        let finalBBHalfH = (abs(newW * sinR) + abs(newH * cosR)) / 2
 
         // Solve for new center so the anchor bounding box corner stays fixed
-        let newCx = anchorX + handle.xFactor * newBBHalfW
-        let newCy = anchorY + handle.yFactor * newBBHalfH
+        let newCx = anchorX + handle.xFactor * finalBBHalfW
+        let newCy = anchorY + handle.yFactor * finalBBHalfH
 
         element.scale = newScale
         element.position = CGPoint(

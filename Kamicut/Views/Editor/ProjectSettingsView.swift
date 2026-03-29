@@ -4,7 +4,7 @@ import SwiftUI
 
 /// Shows document-level settings: circle info, space number, canvas size, and layout.
 struct ProjectSettingsView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -12,26 +12,33 @@ struct ProjectSettingsView: View {
             Form {
                 // Circle Info
                 Section(String(localized: "Document.CircleInfo")) {
-                    TextField(String(localized: "Document.CircleName"), text: $vm.document.circleName)
+                    TextField(String(localized: "Document.CircleName"), text: $editor.document.circleName)
                         .autocorrectionDisabled()
-                    TextField(String(localized: "SpaceNumber.Placeholder"), text: $vm.document.spaceNumber.text)
+                    TextField(String(localized: "SpaceNumber.Placeholder"), text: $editor.document.spaceNumber.text)
                         .autocorrectionDisabled()
                 }
 
                 // Space Number Style
                 Section(String(localized: "SpaceNumber.Style")) {
-                    Picker(String(localized: "Common.Position"), selection: $vm.document.spaceNumber.position) {
+                    Picker(String(localized: "Common.Position"), selection: $editor.document.spaceNumber.position) {
                         ForEach(SpaceNumberPosition.allCases, id: \.self) { pos in
                             Text(pos.localizedName).tag(pos)
                         }
                     }
-                    FontPickerRow(selectedFontName: $vm.document.spaceNumber.fontName, label: String(localized: "Common.Font"))
+                    FontPickerRow(
+                        selectedFontName: $editor.document.spaceNumber.fontName,
+                        label: String(localized: "Common.Font")
+                    )
                     HStack {
                         Text("Common.Size")
                         Spacer()
-                        Stepper("\(Int(vm.document.spaceNumber.fontSize)) pt", value: $vm.document.spaceNumber.fontSize, in: 6...72, step: 1)
+                        Stepper(
+                            "\(Int(editor.document.spaceNumber.fontSize)) pt",
+                            value: $editor.document.spaceNumber.fontSize,
+                            in: 6...72, step: 1
+                        )
                     }
-                    ColorPickerRow(title: String(localized: "Common.Color"), color: $vm.document.spaceNumber.color)
+                    ColorPickerRow(title: String(localized: "Common.Color"), color: $editor.document.spaceNumber.color)
                 }
 
                 // Canvas Size
@@ -39,7 +46,11 @@ struct ProjectSettingsView: View {
                     HStack {
                         Text("Common.Width")
                         Spacer()
-                        TextField("Common.Width", value: $vm.document.template.canvasSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField(
+                            "Common.Width",
+                            value: $editor.document.template.canvasSize.width,
+                            format: FloatingPointFormatStyle<CGFloat>()
+                        )
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
@@ -48,7 +59,11 @@ struct ProjectSettingsView: View {
                     HStack {
                         Text("Common.Height")
                         Spacer()
-                        TextField("Common.Height", value: $vm.document.template.canvasSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField(
+                            "Common.Height",
+                            value: $editor.document.template.canvasSize.height,
+                            format: FloatingPointFormatStyle<CGFloat>()
+                        )
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
@@ -58,12 +73,19 @@ struct ProjectSettingsView: View {
 
                 // Checkbox Area
                 Section(String(localized: "Layers.CheckboxArea")) {
-                    Toggle(String(localized: "Layers.CheckboxArea.Enabled"), isOn: $vm.document.template.checkboxAreaEnabled)
-                    if vm.document.template.checkboxAreaEnabled {
+                    Toggle(
+                        String(localized: "Layers.CheckboxArea.Enabled"),
+                        isOn: $editor.document.template.checkboxAreaEnabled
+                    )
+                    if editor.document.template.checkboxAreaEnabled {
                         HStack {
                             Text("Common.Width")
                             Spacer()
-                            TextField("Common.Width", value: $vm.document.template.checkboxAreaSize.width, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField(
+                                "Common.Width",
+                                value: $editor.document.template.checkboxAreaSize.width,
+                                format: FloatingPointFormatStyle<CGFloat>()
+                            )
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
@@ -72,7 +94,11 @@ struct ProjectSettingsView: View {
                         HStack {
                             Text("Common.Height")
                             Spacer()
-                            TextField("Common.Height", value: $vm.document.template.checkboxAreaSize.height, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField(
+                                "Common.Height",
+                                value: $editor.document.template.checkboxAreaSize.height,
+                                format: FloatingPointFormatStyle<CGFloat>()
+                            )
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
@@ -86,7 +112,11 @@ struct ProjectSettingsView: View {
                     HStack {
                         Text(String(localized: "Layers.Thickness"))
                         Spacer()
-                        TextField(String(localized: "Layers.Thickness"), value: $vm.document.template.outerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField(
+                            String(localized: "Layers.Thickness"),
+                            value: $editor.document.template.outerBorderThickness,
+                            format: FloatingPointFormatStyle<CGFloat>()
+                        )
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
@@ -99,7 +129,11 @@ struct ProjectSettingsView: View {
                     HStack {
                         Text(String(localized: "Layers.Thickness"))
                         Spacer()
-                        TextField(String(localized: "Layers.Thickness"), value: $vm.document.template.innerBorderThickness, format: FloatingPointFormatStyle<CGFloat>())
+                        TextField(
+                            String(localized: "Layers.Thickness"),
+                            value: $editor.document.template.innerBorderThickness,
+                            format: FloatingPointFormatStyle<CGFloat>()
+                        )
                             .keyboardType(.decimalPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 80)
@@ -109,9 +143,15 @@ struct ProjectSettingsView: View {
 
                 // Text Area
                 Section(String(localized: "Layers.TextArea")) {
-                    Toggle(String(localized: "Layers.TextArea.Enabled"), isOn: $vm.document.template.textAreaEnabled)
-                    if vm.document.template.textAreaEnabled {
-                        Picker(String(localized: "Common.Position"), selection: $vm.document.template.textAreaPosition) {
+                    Toggle(
+                        String(localized: "Layers.TextArea.Enabled"),
+                        isOn: $editor.document.template.textAreaEnabled
+                    )
+                    if editor.document.template.textAreaEnabled {
+                        Picker(
+                        String(localized: "Common.Position"),
+                        selection: $editor.document.template.textAreaPosition
+                    ) {
                             ForEach(TextAreaPosition.allCases, id: \.self) { pos in
                                 Text(pos.localizedName).tag(pos)
                             }
@@ -119,13 +159,20 @@ struct ProjectSettingsView: View {
                         HStack {
                             Text("Common.Height")
                             Spacer()
-                            TextField("Common.Height", value: $vm.document.template.textAreaHeight, format: FloatingPointFormatStyle<CGFloat>())
+                            TextField(
+                                "Common.Height",
+                                value: $editor.document.template.textAreaHeight,
+                                format: FloatingPointFormatStyle<CGFloat>()
+                            )
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 80)
                             Text("Common.Px")
                         }
-                        Toggle(String(localized: "Layers.TextArea.Transparent"), isOn: $vm.document.template.textAreaTransparent)
+                        Toggle(
+                            String(localized: "Layers.TextArea.Transparent"),
+                            isOn: $editor.document.template.textAreaTransparent
+                        )
                     }
                 }
             }

@@ -4,7 +4,7 @@ import PhotosUI
 // MARK: - Layer Manager View
 
 struct LayerManagerView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
 
     // Background settings state
@@ -17,14 +17,14 @@ struct LayerManagerView: View {
             List {
                 // User layers (reorderable)
                 Section(String(localized: "Layers.Elements")) {
-                    ForEach(Array(vm.document.layers.enumerated().reversed()), id: \.element.id) { index, layer in
+                    ForEach(Array(editor.document.layers.enumerated().reversed()), id: \.element.id) { index, layer in
                         elementRow(layer: layer, index: index)
                     }
                     .onMove { source, destination in
-                        let count = vm.document.layers.count
+                        let count = editor.document.layers.count
                         let actualSource = IndexSet(source.map { count - 1 - $0 })
                         let actualDestination = count - destination
-                        vm.moveLayers(from: actualSource, to: actualDestination)
+                        editor.moveLayers(from: actualSource, to: actualDestination)
                     }
                 }
 
@@ -32,18 +32,21 @@ struct LayerManagerView: View {
                 Section {
                     DisclosureGroup {
                         // Color
-                        Toggle(String(localized: "Toolbar.Background.SetColor"), isOn: $hasBackgroundColor.animation(.smooth.speed(2.0)))
+                        Toggle(
+                            String(localized: "Toolbar.Background.SetColor"),
+                            isOn: $hasBackgroundColor.animation(.smooth.speed(2.0))
+                        )
                             .onChange(of: hasBackgroundColor) { _, enabled in
                                 if enabled {
-                                    vm.setBackgroundColor(backgroundColor)
+                                    editor.setBackgroundColor(backgroundColor)
                                 } else {
-                                    vm.removeBackgroundColor()
+                                    editor.removeBackgroundColor()
                                 }
                             }
                         if hasBackgroundColor {
                             ColorPicker(String(localized: "Common.Color"), selection: $backgroundColor)
                                 .onChange(of: backgroundColor) { _, newColor in
-                                    vm.setBackgroundColor(newColor)
+                                    editor.setBackgroundColor(newColor)
                                 }
                         }
 
@@ -54,16 +57,16 @@ struct LayerManagerView: View {
                         .onChange(of: backgroundPickerItem) { _, item in
                             Task { await loadBackgroundImage(item: item) }
                         }
-                        if vm.document.backgroundImage != nil {
+                        if editor.document.backgroundImage != nil {
                             Button(role: .destructive) {
-                                vm.removeBackgroundImage()
+                                editor.removeBackgroundImage()
                             } label: {
                                 Label(String(localized: "Common.Delete"), systemImage: "trash")
                             }
                         }
 
                         // Bleed
-                        Picker(String(localized: "Toolbar.Background.Bleed"), selection: $vm.document.bleedOption) {
+                        Picker(String(localized: "Toolbar.Background.Bleed"), selection: $editor.document.bleedOption) {
                             ForEach(BleedOption.allCases, id: \.self) { option in
                                 Text(option.localizedName).tag(option)
                             }
@@ -95,7 +98,7 @@ struct LayerManagerView: View {
             }
         }
         .onAppear {
-            if let existing = vm.document.backgroundColor {
+            if let existing = editor.document.backgroundColor {
                 hasBackgroundColor = true
                 backgroundColor = existing.color
             }
@@ -121,14 +124,14 @@ struct LayerManagerView: View {
     private func elementRow(layer: CanvasLayer, index: Int) -> some View {
         let isSelected: Bool = {
             switch layer {
-            case .image: return vm.selectedImageID == layer.id
-            case .text: return vm.selectedTextID == layer.id
-            case .shape: return vm.selectedShapeID == layer.id
+            case .image: return editor.selectedImageID == layer.id
+            case .text: return editor.selectedTextID == layer.id
+            case .shape: return editor.selectedShapeID == layer.id
             }
         }()
 
         return Button {
-            vm.selectLayer(id: layer.id)
+            editor.selectLayer(id: layer.id)
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: layer.systemImage)
@@ -150,7 +153,7 @@ struct LayerManagerView: View {
         }
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
-                vm.removeLayer(id: layer.id)
+                editor.removeLayer(id: layer.id)
             } label: {
                 Label("Common.Delete", systemImage: "trash")
             }
@@ -163,6 +166,6 @@ struct LayerManagerView: View {
         guard let item else { return }
         guard let data = try? await item.loadTransferable(type: Data.self),
               let image = UIImage(data: data) else { return }
-        vm.setBackgroundImage(image)
+        editor.setBackgroundImage(image)
     }
 }

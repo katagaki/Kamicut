@@ -66,7 +66,10 @@ struct ProjectsListView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
-                            Label(String(localized: "App.SourceCode"), systemImage: "chevron.left.forwardslash.chevron.right")
+                            Label(
+                                String(localized: "App.SourceCode"),
+                                systemImage: "chevron.left.forwardslash.chevron.right"
+                            )
                         }
                     } label: {
                         Image(systemName: "ellipsis")

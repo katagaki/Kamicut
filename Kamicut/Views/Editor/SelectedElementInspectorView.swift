@@ -5,17 +5,17 @@ import SwiftUI
 /// Inline inspector panel for text and shape element properties.
 /// Only appears when a text or shape element is selected.
 struct SelectedElementInspectorView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
 
     var body: some View {
-        if let id = vm.selectedTextID,
-           let layerIdx = vm.document.layers.firstIndex(where: { $0.id == id }),
-           case .text = vm.document.layers[layerIdx] {
+        if let id = editor.selectedTextID,
+           let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+           case .text = editor.document.layers[layerIdx] {
             textInspector(layerIdx: layerIdx)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-        } else if let id = vm.selectedShapeID,
-                  let layerIdx = vm.document.layers.firstIndex(where: { $0.id == id }),
-                  case .shape = vm.document.layers[layerIdx] {
+        } else if let id = editor.selectedShapeID,
+                  let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+                  case .shape = editor.document.layers[layerIdx] {
             shapeInspector(layerIdx: layerIdx)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
         }
@@ -26,10 +26,10 @@ struct SelectedElementInspectorView: View {
     private func textInspector(layerIdx: Int) -> some View {
         let textBinding = Binding<TextElement>(
             get: {
-                if case .text(let el) = vm.document.layers[safe: layerIdx] { return el }
+                if case .text(let txt) = editor.document.layers[safe: layerIdx] { return txt }
                 return TextElement()
             },
-            set: { vm.document.layers[layerIdx] = .text($0) }
+            set: { editor.document.layers[layerIdx] = .text($0) }
         )
 
         return VStack(spacing: 0) {
@@ -48,10 +48,10 @@ struct SelectedElementInspectorView: View {
     private func shapeInspector(layerIdx: Int) -> some View {
         let shapeBinding = Binding<ShapeElement>(
             get: {
-                if case .shape(let el) = vm.document.layers[safe: layerIdx] { return el }
+                if case .shape(let shp) = editor.document.layers[safe: layerIdx] { return shp }
                 return ShapeElement()
             },
-            set: { vm.document.layers[layerIdx] = .shape($0) }
+            set: { editor.document.layers[layerIdx] = .shape($0) }
         )
 
         return VStack(spacing: 0) {

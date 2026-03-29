@@ -130,17 +130,20 @@ enum CanvasLayer: Identifiable, Codable {
 
     var id: UUID {
         switch self {
-        case .image(let el): return el.id
-        case .text(let el): return el.id
-        case .shape(let el): return el.id
+        case .image(let img): return img.id
+        case .text(let txt): return txt.id
+        case .shape(let shp): return shp.id
         }
     }
 
     var label: String {
         switch self {
         case .image: return String(localized: "Layers.Image")
-        case .text(let el): return el.content.isEmpty ? String(localized: "Layers.Text") : String(el.content.prefix(20))
-        case .shape(let el): return el.shapeKind.localizedName
+        case .text(let txt):
+            return txt.content.isEmpty
+                ? String(localized: "Layers.Text")
+                : String(txt.content.prefix(20))
+        case .shape(let shp): return shp.shapeKind.localizedName
         }
     }
 
@@ -148,7 +151,7 @@ enum CanvasLayer: Identifiable, Codable {
         switch self {
         case .image: return "photo"
         case .text: return "textformat"
-        case .shape(let el): return el.shapeKind.systemImage
+        case .shape(let shp): return shp.shapeKind.systemImage
         }
     }
 }

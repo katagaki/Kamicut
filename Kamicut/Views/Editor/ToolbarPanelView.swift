@@ -5,7 +5,7 @@ import PhotosUI
 
 /// Bottom toolbar for the editor.
 struct ToolbarPanelView: ToolbarContent {
-    var vm: EditorState
+    var editor: EditorState
 
     @State private var overlayPickerItem: PhotosPickerItem?
     @State private var showPhotoPicker: Bool = false
@@ -26,12 +26,12 @@ struct ToolbarPanelView: ToolbarContent {
         // Project + Layers
         ToolbarItemGroup(placement: .bottomBar) {
             Button {
-                vm.showProjectSettings = true
+                editor.showProjectSettings = true
             } label: {
                 Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
             }
             Button {
-                vm.showLayerManager = true
+                editor.showLayerManager = true
             } label: {
                 Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
             }
@@ -54,14 +54,14 @@ struct ToolbarPanelView: ToolbarContent {
             HStack {
                 // Project
                 Button {
-                    vm.showProjectSettings = true
+                    editor.showProjectSettings = true
                 } label: {
                     Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
                 }
 
                 // Layers
                 Button {
-                    vm.showLayerManager = true
+                    editor.showLayerManager = true
                 } label: {
                     Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
                 }
@@ -85,14 +85,14 @@ struct ToolbarPanelView: ToolbarContent {
                 Label(String(localized: "Toolbar.Add.Image"), systemImage: "photo.stack")
             }
             Button {
-                _ = vm.addTextElement()
+                _ = editor.addTextElement()
             } label: {
                 Label(String(localized: "Toolbar.Add.Text"), systemImage: "textformat")
             }
             Menu {
                 ForEach(ShapeKind.allCases) { kind in
                     Button {
-                        _ = vm.addShapeElement(kind)
+                        _ = editor.addShapeElement(kind)
                     } label: {
                         Label(kind.localizedName, systemImage: kind.systemImage)
                     }
@@ -101,7 +101,7 @@ struct ToolbarPanelView: ToolbarContent {
                 Label(String(localized: "Toolbar.Add.Shape"), systemImage: "square.on.circle")
             }
             Button {
-                vm.showSquiggleEditor = true
+                editor.showSquiggleEditor = true
             } label: {
                 Label(String(localized: "Toolbar.Add.Squiggle"), systemImage: "scribble.variable")
             }
@@ -120,6 +120,6 @@ struct ToolbarPanelView: ToolbarContent {
         guard let item else { return }
         guard let data = try? await item.loadTransferable(type: Data.self),
               let image = UIImage(data: data) else { return }
-        vm.addOverlayImage(image)
+        editor.addOverlayImage(image)
     }
 }

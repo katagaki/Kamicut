@@ -3,9 +3,9 @@ import SwiftUI
 // MARK: - Editor Canvas View
 
 struct EditorCanvasView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
 
-    private var canvasSize: CGSize { vm.document.template.canvasSize }
+    private var canvasSize: CGSize { editor.document.template.canvasSize }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -13,12 +13,12 @@ struct EditorCanvasView: View {
             canvasBackground
 
             // Background image (image area only, unless bleed)
-            if let bg = vm.document.backgroundImage, let uiImg = bg.uiImage {
+            if let backgroundImg = editor.document.backgroundImage, let uiImg = backgroundImg.uiImage {
                 backgroundImageLayer(uiImg)
             }
 
             // Layers (images and text in unified z-order)
-            ForEach(Array(vm.document.layers.enumerated()), id: \.element.id) { index, layer in
+            ForEach(Array(editor.document.layers.enumerated()), id: \.element.id) { index, layer in
                 let isSelected = isLayerSelected(layer)
                 Group {
                     switch layer {
@@ -26,40 +26,40 @@ struct EditorCanvasView: View {
                         OverlayImageView(
                             element: Binding(
                                 get: {
-                                    if case .image(let el) = vm.document.layers[safe: index] { return el }
+                                    if case .image(let img) = editor.document.layers[safe: index] { return img }
                                     return imageEl
                                 },
-                                set: { vm.document.layers[index] = .image($0) }
+                                set: { editor.document.layers[index] = .image($0) }
                             ),
                             canvasSize: canvasSize,
                             isSelected: isSelected,
-                            onTap: { vm.selectLayer(id: imageEl.id) }
+                            onTap: { editor.selectLayer(id: imageEl.id) }
                         )
                     case .text(let textEl):
                         TextElementView(
                             element: Binding(
                                 get: {
-                                    if case .text(let el) = vm.document.layers[safe: index] { return el }
+                                    if case .text(let txt) = editor.document.layers[safe: index] { return txt }
                                     return textEl
                                 },
-                                set: { vm.document.layers[index] = .text($0) }
+                                set: { editor.document.layers[index] = .text($0) }
                             ),
                             canvasSize: canvasSize,
                             isSelected: isSelected,
-                            onTap: { vm.selectLayer(id: textEl.id) }
+                            onTap: { editor.selectLayer(id: textEl.id) }
                         )
                     case .shape(let shapeEl):
                         ShapeElementView(
                             element: Binding(
                                 get: {
-                                    if case .shape(let el) = vm.document.layers[safe: index] { return el }
+                                    if case .shape(let shp) = editor.document.layers[safe: index] { return shp }
                                     return shapeEl
                                 },
-                                set: { vm.document.layers[index] = .shape($0) }
+                                set: { editor.document.layers[index] = .shape($0) }
                             ),
                             canvasSize: canvasSize,
                             isSelected: isSelected,
-                            onTap: { vm.selectLayer(id: shapeEl.id) }
+                            onTap: { editor.selectLayer(id: shapeEl.id) }
                         )
                     }
                 }
@@ -79,12 +79,13 @@ struct EditorCanvasView: View {
             spaceNumberOverlay
         }
         .frame(width: canvasSize.width, height: canvasSize.height)
+        .coordinateSpace(name: "canvas")
         .clipped()
         .contentShape(Rectangle())
         .onTapGesture {
-            vm.selectedImageID = nil
-            vm.selectedTextID = nil
-            vm.selectedShapeID = nil
+            editor.selectedImageID = nil
+            editor.selectedTextID = nil
+            editor.selectedShapeID = nil
         }
     }
 
@@ -92,9 +93,9 @@ struct EditorCanvasView: View {
 
     private func isLayerSelected(_ layer: CanvasLayer) -> Bool {
         switch layer {
-        case .image(let el): return vm.selectedImageID == el.id
-        case .text(let el): return vm.selectedTextID == el.id
-        case .shape(let el): return vm.selectedShapeID == el.id
+        case .image(let img): return editor.selectedImageID == img.id
+        case .text(let txt): return editor.selectedTextID == txt.id
+        case .shape(let shp): return editor.selectedShapeID == shp.id
         }
     }
 
@@ -102,16 +103,16 @@ struct EditorCanvasView: View {
 
     private var canvasBackground: some View {
         Rectangle()
-            .fill(vm.document.backgroundColor?.color ?? Color.white)
+            .fill(editor.document.backgroundColor?.color ?? Color.white)
             .frame(width: canvasSize.width, height: canvasSize.height)
     }
 
     private func backgroundImageLayer(_ uiImg: UIImage) -> some View {
-        let template = vm.document.template
+        let template = editor.document.template
         let border = template.outerBorderThickness
         let imgAreaH = imageAreaHeight
         let imageAreaY: CGFloat
-        if vm.bleedOption == .full {
+        if editor.bleedOption == .full {
             imageAreaY = 0
         } else if template.textAreaEnabled && template.textAreaPosition == .top {
             imageAreaY = border + template.textAreaHeight
@@ -122,16 +123,16 @@ struct EditorCanvasView: View {
             .resizable()
             .scaledToFill()
             .frame(
-                width: vm.bleedOption == .full ? canvasSize.width : canvasSize.width - border * 2,
-                height: vm.bleedOption == .full ? canvasSize.height : imgAreaH
+                width: editor.bleedOption == .full ? canvasSize.width : canvasSize.width - border * 2,
+                height: editor.bleedOption == .full ? canvasSize.height : imgAreaH
             )
             .clipped()
-            .offset(x: vm.bleedOption == .full ? 0 : border, y: imageAreaY)
+            .offset(x: editor.bleedOption == .full ? 0 : border, y: imageAreaY)
             .allowsHitTesting(false)
     }
 
     private var textAreaOverlay: some View {
-        let template = vm.document.template
+        let template = editor.document.template
         guard template.textAreaEnabled else { return AnyView(EmptyView()) }
         let border = template.outerBorderThickness
         let textH = template.textAreaHeight
@@ -176,7 +177,7 @@ struct EditorCanvasView: View {
     }
 
     private var checkboxAreaOverlay: some View {
-        let template = vm.document.template
+        let template = editor.document.template
         guard template.checkboxAreaEnabled else { return AnyView(EmptyView()) }
         let border = template.outerBorderThickness
         let innerBorder = template.innerBorderThickness
@@ -203,19 +204,19 @@ struct EditorCanvasView: View {
     }
 
     private var spaceNumberOverlay: some View {
-        let template = vm.document.template
-        let sn = vm.spaceNumber
-        guard !sn.text.isEmpty else { return AnyView(EmptyView()) }
+        let template = editor.document.template
+        let spaceNum = editor.spaceNumber
+        guard !spaceNum.text.isEmpty else { return AnyView(EmptyView()) }
 
-        let font = Font.custom(sn.fontName, size: sn.fontSize)
-        let color = sn.color.color
+        let font = Font.custom(spaceNum.fontName, size: spaceNum.fontSize)
+        let color = spaceNum.color.color
 
-        switch sn.position {
+        switch spaceNum.position {
         case .textArea:
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
             let rect = textAreaContentRect
             return AnyView(
-                Text(sn.text)
+                Text(spaceNum.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
@@ -228,7 +229,7 @@ struct EditorCanvasView: View {
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
             let rect = textAreaContentRect
             return AnyView(
-                Text(sn.text)
+                Text(spaceNum.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
@@ -242,7 +243,7 @@ struct EditorCanvasView: View {
             guard template.textAreaEnabled else { return AnyView(EmptyView()) }
             let rect = textAreaContentRect
             return AnyView(
-                Text(sn.text)
+                Text(spaceNum.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
@@ -258,7 +259,7 @@ struct EditorCanvasView: View {
             let imageAreaY: CGFloat = (template.textAreaEnabled && template.textAreaPosition == .top)
                 ? border + template.textAreaHeight : border
             let alignment: Alignment = {
-                switch sn.position {
+                switch spaceNum.position {
                 case .imageTopLeft: return .topLeading
                 case .imageTopRight: return .topTrailing
                 case .imageBottomLeft: return .bottomLeading
@@ -267,7 +268,7 @@ struct EditorCanvasView: View {
                 }
             }()
             return AnyView(
-                Text(sn.text)
+                Text(spaceNum.text)
                     .font(font)
                     .foregroundColor(color)
                     .lineLimit(1)
@@ -279,8 +280,13 @@ struct EditorCanvasView: View {
         }
     }
 
-    private var canvasBorder: some View {
-        let template = vm.document.template
+}
+
+// MARK: - Geometry Helpers & Border
+
+extension EditorCanvasView {
+    var canvasBorder: some View {
+        let template = editor.document.template
         let border = template.outerBorderThickness
         // When text area is outside the border (no top border, bottom position),
         // the outer border only covers the area above the text area
@@ -311,10 +317,8 @@ struct EditorCanvasView: View {
         .allowsHitTesting(false)
     }
 
-    // MARK: - Geometry Helpers
-
-    private var imageAreaHeight: CGFloat {
-        let template = vm.document.template
+    var imageAreaHeight: CGFloat {
+        let template = editor.document.template
         let border = template.outerBorderThickness
         if template.textAreaEnabled && !template.textAreaHasTopBorder && template.textAreaPosition == .bottom {
             // Text area is outside the outer border
@@ -325,8 +329,8 @@ struct EditorCanvasView: View {
     }
 
     /// The text area rect, positioned after the outer border and to the right of the checkbox area when at top.
-    private var textAreaRect: CGRect {
-        let template = vm.document.template
+    var textAreaRect: CGRect {
+        let template = editor.document.template
         let border = template.outerBorderThickness
         let textH = template.textAreaHeight
         if template.textAreaPosition == .top {
@@ -347,8 +351,8 @@ struct EditorCanvasView: View {
     }
 
     /// The text area content rect, excluding the divider border thickness.
-    private var textAreaContentRect: CGRect {
-        let template = vm.document.template
+    var textAreaContentRect: CGRect {
+        let template = editor.document.template
         let rect = textAreaRect
         let innerBorder = template.innerBorderThickness
         if template.textAreaHasTopBorder {
@@ -357,12 +361,18 @@ struct EditorCanvasView: View {
                 return CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height - innerBorder)
             } else {
                 // Divider is at the top of the text area
-                return CGRect(x: rect.minX, y: rect.minY + innerBorder, width: rect.width, height: rect.height - innerBorder)
+                return CGRect(
+                    x: rect.minX, y: rect.minY + innerBorder,
+                    width: rect.width, height: rect.height - innerBorder
+                )
             }
         } else if !template.textAreaHasTopBorder && template.textAreaPosition == .bottom {
             // Outside border text area (e.g. Manga Report) — inset by its own border
             let borderThickness = template.textAreaBorderThickness
-            return CGRect(x: rect.minX + borderThickness, y: rect.minY + borderThickness, width: rect.width - borderThickness * 2, height: rect.height - borderThickness * 2)
+            return CGRect(
+                x: rect.minX + borderThickness, y: rect.minY + borderThickness,
+                width: rect.width - borderThickness * 2, height: rect.height - borderThickness * 2
+            )
         }
         return rect
     }

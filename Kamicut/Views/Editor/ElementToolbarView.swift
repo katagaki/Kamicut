@@ -5,11 +5,11 @@ import SwiftUI
 /// Small liquid glass capsule toolbar centered above the main toolbar,
 /// with rotate, scale, and delete controls for the selected element.
 struct ElementToolbarView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
 
     var body: some View {
-        if let selectedID = vm.selectedImageID ?? vm.selectedTextID ?? vm.selectedShapeID,
-           let layerIdx = vm.document.layers.firstIndex(where: { $0.id == selectedID }) {
+        if let selectedID = editor.selectedImageID ?? editor.selectedTextID ?? editor.selectedShapeID,
+           let layerIdx = editor.document.layers.firstIndex(where: { $0.id == selectedID }) {
             HStack(spacing: 16) {
                 Button {
                     mutateLayer(at: layerIdx) { .rotate(-15) }
@@ -43,7 +43,7 @@ struct ElementToolbarView: View {
 
                 Button(role: .destructive) {
                     withAnimation(.smooth.speed(2.0)) {
-                        vm.removeLayer(id: selectedID)
+                        editor.removeLayer(id: selectedID)
                     }
                 } label: {
                     Image(systemName: "trash")
@@ -67,31 +67,31 @@ struct ElementToolbarView: View {
     }
 
     private func mutateLayer(at index: Int, _ mutation: () -> LayerMutation) {
-        guard index < vm.document.layers.count else { return }
+        guard index < editor.document.layers.count else { return }
         switch mutation() {
         case .rotate(let degrees):
-            switch vm.document.layers[index] {
-            case .image(var el):
-                el.rotation += degrees
-                vm.document.layers[index] = .image(el)
-            case .text(var el):
-                el.rotation += degrees
-                vm.document.layers[index] = .text(el)
-            case .shape(var el):
-                el.rotation += degrees
-                vm.document.layers[index] = .shape(el)
+            switch editor.document.layers[index] {
+            case .image(var img):
+                img.rotation += degrees
+                editor.document.layers[index] = .image(img)
+            case .text(var txt):
+                txt.rotation += degrees
+                editor.document.layers[index] = .text(txt)
+            case .shape(var shp):
+                shp.rotation += degrees
+                editor.document.layers[index] = .shape(shp)
             }
         case .scale(let delta):
-            switch vm.document.layers[index] {
-            case .image(var el):
-                el.scale = max(0.1, el.scale + delta)
-                vm.document.layers[index] = .image(el)
-            case .text(var el):
-                el.fontSize = max(4, el.fontSize + delta * 10)
-                vm.document.layers[index] = .text(el)
-            case .shape(var el):
-                el.scale = max(0.1, el.scale + delta)
-                vm.document.layers[index] = .shape(el)
+            switch editor.document.layers[index] {
+            case .image(var img):
+                img.scale = max(0.1, img.scale + delta)
+                editor.document.layers[index] = .image(img)
+            case .text(var txt):
+                txt.fontSize = max(4, txt.fontSize + delta * 10)
+                editor.document.layers[index] = .text(txt)
+            case .shape(var shp):
+                shp.scale = max(0.1, shp.scale + delta)
+                editor.document.layers[index] = .shape(shp)
             }
         }
     }

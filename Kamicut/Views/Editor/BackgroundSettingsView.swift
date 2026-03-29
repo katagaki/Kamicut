@@ -4,7 +4,7 @@ import PhotosUI
 // MARK: - Background Settings View
 
 struct BackgroundSettingsView: View {
-    @Bindable var vm: EditorState
+    @Bindable var editor: EditorState
 
     @Environment(\.dismiss) private var dismiss
     @State private var backgroundPickerItem: PhotosPickerItem?
@@ -16,18 +16,21 @@ struct BackgroundSettingsView: View {
             Form {
                 // Color
                 Section(String(localized: "Toolbar.Background.ColorHeader")) {
-                    Toggle(String(localized: "Toolbar.Background.SetColor"), isOn: $hasBackgroundColor.animation(.smooth.speed(2.0)))
+                    Toggle(
+                        String(localized: "Toolbar.Background.SetColor"),
+                        isOn: $hasBackgroundColor.animation(.smooth.speed(2.0))
+                    )
                         .onChange(of: hasBackgroundColor) { _, enabled in
                             if enabled {
-                                vm.setBackgroundColor(backgroundColor)
+                                editor.setBackgroundColor(backgroundColor)
                             } else {
-                                vm.removeBackgroundColor()
+                                editor.removeBackgroundColor()
                             }
                         }
                     if hasBackgroundColor {
                         ColorPicker(String(localized: "Common.Color"), selection: $backgroundColor)
                             .onChange(of: backgroundColor) { _, newColor in
-                                vm.setBackgroundColor(newColor)
+                                editor.setBackgroundColor(newColor)
                             }
                     }
                 }
@@ -40,9 +43,9 @@ struct BackgroundSettingsView: View {
                     .onChange(of: backgroundPickerItem) { _, item in
                         Task { await loadBackgroundImage(item: item) }
                     }
-                    if vm.document.backgroundImage != nil {
+                    if editor.document.backgroundImage != nil {
                         Button(role: .destructive) {
-                            vm.removeBackgroundImage()
+                            editor.removeBackgroundImage()
                         } label: {
                             Label(String(localized: "Common.Delete"), systemImage: "trash")
                         }
@@ -51,7 +54,7 @@ struct BackgroundSettingsView: View {
 
                 // Bleed
                 Section(String(localized: "Toolbar.Background.Bleed")) {
-                    Picker(String(localized: "Toolbar.Background.Bleed"), selection: $vm.document.bleedOption) {
+                    Picker(String(localized: "Toolbar.Background.Bleed"), selection: $editor.document.bleedOption) {
                         ForEach(BleedOption.allCases, id: \.self) { option in
                             Text(option.localizedName).tag(option)
                         }
@@ -72,7 +75,7 @@ struct BackgroundSettingsView: View {
             }
         }
         .onAppear {
-            if let existing = vm.document.backgroundColor {
+            if let existing = editor.document.backgroundColor {
                 hasBackgroundColor = true
                 backgroundColor = existing.color
             }
@@ -85,6 +88,6 @@ struct BackgroundSettingsView: View {
         guard let item else { return }
         guard let data = try? await item.loadTransferable(type: Data.self),
               let image = UIImage(data: data) else { return }
-        vm.setBackgroundImage(image)
+        editor.setBackgroundImage(image)
     }
 }
