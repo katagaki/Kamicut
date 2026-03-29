@@ -45,13 +45,13 @@ struct EditorDestination: View {
         let renderer = CircleCutRenderer()
         let thumbnailImage = renderer.render(document: editor.document)
         let thumbnailData: Data? = thumbnailImage.flatMap { image in
-            let maxDimension: CGFloat = 224
+            let maxDimension: CGFloat = 512
             let aspect = image.size.width / image.size.height
             let thumbSize: CGSize
             if aspect > 1 {
-                thumbSize = CGSize(width: maxDimension, height: maxDimension / aspect)
+                thumbSize = CGSize(width: maxDimension, height: (maxDimension / aspect).rounded(.down))
             } else {
-                thumbSize = CGSize(width: maxDimension * aspect, height: maxDimension)
+                thumbSize = CGSize(width: (maxDimension * aspect).rounded(.down), height: maxDimension)
             }
             let format = UIGraphicsImageRendererFormat()
             format.scale = 1
