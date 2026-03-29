@@ -9,13 +9,32 @@
 		<key>UIImageName</key>
 		<string></string>
 	</dict>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Circle Cut</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.tsubuzaki.kamicut.cut</string>
+			</array>
+		</dict>
+	</array>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeIdentifier</key>
 			<string>com.tsubuzaki.kamicut.cut</string>
 			<key>UTTypeDescription</key>
-			<string>Kamicut Document</string>
+			<string>Circle Cut</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>com.apple.package</string>

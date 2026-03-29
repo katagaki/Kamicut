@@ -30,11 +30,16 @@ struct EditorView: View {
                     Image(systemName: "rectangle.on.rectangle")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 Button {
                     editor.showExportSheet = true
                 } label: {
                     Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
+                }
+                Button {
+                    editor.showMoreView = true
+                } label: {
+                    Image(systemName: "ellipsis")
                 }
             }
             ToolbarPanelView(editor: editor)
@@ -103,9 +108,9 @@ struct EditorView: View {
                 .presentationBackgroundInteraction(.enabled)
                 .presentationContentInteraction(.scrolls)
         }
-        .sheet(isPresented: $editor.showSavedCutsList) {
-            SavedCutsListView(editor: editor)
-                .presentationDetents([.large])
+        .sheet(isPresented: $editor.showMoreView) {
+            MoreView()
+                .presentationDetents([.medium, .large])
         }
         .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
             SquiggleEditorView(editor: editor)

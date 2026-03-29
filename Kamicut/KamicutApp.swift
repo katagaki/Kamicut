@@ -3,15 +3,14 @@ import SwiftData
 
 @main
 struct KamicutApp: App {
-    @State private var storageManager = CutStorageManager.shared
+
+    init() {
+        DataMigrator.migrateIfNeeded()
+    }
 
     var body: some Scene {
-        WindowGroup {
-            ProjectsListView()
-                .onAppear {
-                    DataMigrator.migrateIfNeeded()
-                    storageManager.loadAllCuts()
-                }
+        DocumentGroup(newDocument: { CutDocument() }) { file in
+            DocumentEditorView(document: file.document)
         }
         // Keep SwiftData container available for migration reads only
         .modelContainer(for: LegacySavedCut.self)

@@ -29,10 +29,9 @@ final class CutStorageManager {
 
     // MARK: - Paths
 
-    /// Root folder: Documents/Kamicut/
+    /// Root folder: Documents/
     var rootDirectory: URL {
-        let docs = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return docs.appendingPathComponent("Kamicut", isDirectory: true)
+        fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 
     func packageURL(for id: UUID, name: String) -> URL {

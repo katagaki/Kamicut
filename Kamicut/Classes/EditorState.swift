@@ -19,11 +19,6 @@ final class EditorState {
     var selectedTextID: UUID?
     var selectedShapeID: UUID?
 
-    // MARK: Saved Cut Tracking
-
-    var currentPackageURL: URL?
-    var currentSavedCutName: String = ""
-
     // MARK: UI State
 
     var showTemplatePicker: Bool = false
@@ -31,7 +26,7 @@ final class EditorState {
     var showExportSheet: Bool = false
     var showSpaceNumberEditor: Bool = false
     var showLayerManager: Bool = false
-    var showSavedCutsList: Bool = false
+    var showMoreView: Bool = false
     var showBackgroundSettings: Bool = false
     var showSquiggleEditor: Bool = false
 
@@ -222,8 +217,6 @@ final class EditorState {
 
     func reset() {
         document = EditorDocument()
-        currentPackageURL = nil
-        currentSavedCutName = ""
         selectedImageID = nil
         selectedTextID = nil
         selectedShapeID = nil
