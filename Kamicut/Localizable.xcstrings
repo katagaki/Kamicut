@@ -169,6 +169,23 @@
         }
       }
     },
+    "Common.Save" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
+        }
+      }
+    },
     "Common.Delete" : {
       "extractionState" : "manual",
       "localizations" : {

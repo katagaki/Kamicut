@@ -9,6 +9,9 @@ struct ProjectsListView: View {
     @State private var path = NavigationPath()
     @State private var showNewProjectAlert = false
     @State private var newCircleName = ""
+    @State private var showRenameAlert = false
+    @State private var renamingCut: SavedCut?
+    @State private var renameText = ""
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -34,6 +37,13 @@ struct ProjectsListView: View {
                                 }
                                 .buttonStyle(.plain)
                                 .contextMenu {
+                                    Button {
+                                        renamingCut = cut
+                                        renameText = cut.name
+                                        showRenameAlert = true
+                                    } label: {
+                                        Label(String(localized: "Projects.Rename"), systemImage: "pencil")
+                                    }
                                     Button {
                                         duplicateCut(cut)
                                     } label: {
@@ -77,6 +87,14 @@ struct ProjectsListView: View {
             } message: {
                 Text(String(localized: "Projects.EnterCircleName"))
             }
+            .alert(String(localized: "Projects.Rename"), isPresented: $showRenameAlert) {
+                TextField(String(localized: "Document.CircleName"), text: $renameText)
+                Button(String(localized: "Common.Cancel"), role: .cancel) {}
+                Button(String(localized: "Common.Save")) {
+                    renameCut()
+                }
+                .disabled(renameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
@@ -107,6 +125,18 @@ struct ProjectsListView: View {
     }
 
     // MARK: - Actions
+
+    private func renameCut() {
+        guard let cut = renamingCut else { return }
+        let trimmed = renameText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        cut.name = trimmed
+        if var document = try? cut.loadDocument() {
+            document.circleName = trimmed
+            try? cut.updateDocument(document)
+        }
+        renamingCut = nil
+    }
 
     private func deleteCut(_ cut: SavedCut) {
         modelContext.delete(cut)
