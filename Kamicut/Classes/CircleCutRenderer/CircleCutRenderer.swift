@@ -33,7 +33,7 @@ final class CircleCutRenderer {
             let cgCtx = ctx.cgContext
             let layout = CanvasLayout(template: template, canvasSize: canvasSize)
 
-            drawBackground(context: cgCtx, canvasSize: canvasSize)
+            drawBackground(document: document, context: cgCtx, canvasSize: canvasSize)
             drawImageArea(document: document, layout: layout, canvasSize: canvasSize, context: cgCtx)
             drawTextAreaBackground(template: template, layout: layout, context: cgCtx)
             drawCheckboxArea(template: template, layout: layout, context: cgCtx)
@@ -84,8 +84,9 @@ final class CircleCutRenderer {
 
     // MARK: - Render Sub-steps
 
-    private func drawBackground(context: CGContext, canvasSize: CGSize) {
-        UIColor.white.setFill()
+    private func drawBackground(document: EditorDocument, context: CGContext, canvasSize: CGSize) {
+        let color = document.backgroundColor?.uiColor ?? UIColor.white
+        color.setFill()
         context.fill(CGRect(origin: .zero, size: canvasSize))
     }
 

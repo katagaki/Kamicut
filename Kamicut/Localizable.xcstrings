@@ -736,13 +736,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Are you sure you want to delete this element?"
+            "value" : "Are you sure you want to delete this layer?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "この要素を削除してもよろしいですか？"
+            "value" : "このレイヤーを削除してもよろしいですか？"
           }
         }
       }
@@ -753,13 +753,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete Element"
+            "value" : "Delete Layer"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "要素を削除"
+            "value" : "レイヤーを削除"
           }
         }
       }
