@@ -9,5 +9,27 @@
 		<key>UIImageName</key>
 		<string></string>
 	</dict>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.tsubuzaki.kamicut.cut</string>
+			<key>UTTypeDescription</key>
+			<string>Kamicut Document</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cut</string>
+				</array>
+			</dict>
+			<key>UTTypeIcons</key>
+			<dict/>
+		</dict>
+	</array>
 </dict>
 </plist>
