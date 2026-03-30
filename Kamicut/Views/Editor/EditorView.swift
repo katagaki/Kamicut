@@ -41,10 +41,9 @@ struct EditorView: View {
                         Image(systemName: "ellipsis")
                     }
                 }
-            }
-            .safeAreaInset(edge: .bottom) {
                 ToolbarPanelView(editor: editor)
             }
+            .toolbar(.visible, for: .bottomBar)
             .onChange(of: sheetDetent) { _, newDetent in
                 withAnimation(.spring(duration: 0.3)) {
                     canvasBottomPadding = (isAnySheetActive && newDetent == .height(300)) ? 300 : 0

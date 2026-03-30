@@ -3,15 +3,28 @@ import PhotosUI
 
 // MARK: - Toolbar Panel
 
-/// Bottom toolbar for the editor, rendered as a regular view.
-struct ToolbarPanelView: View {
+/// Bottom toolbar for the editor.
+struct ToolbarPanelView: ToolbarContent {
     var editor: EditorState
 
     @State private var overlayPickerItem: PhotosPickerItem?
     @State private var showPhotoPicker: Bool = false
 
-    var body: some View {
-        HStack {
+    var body: some ToolbarContent {
+        if #available(iOS 26, *) {
+            ios26Toolbar
+        } else {
+            legacyToolbar
+        }
+    }
+
+    // MARK: - iOS 26+ (native ToolbarItemGroup + ToolbarSpacer)
+
+    @available(iOS 26, *)
+    @ToolbarContentBuilder
+    private var ios26Toolbar: some ToolbarContent {
+        // Project + Layers
+        ToolbarItemGroup(placement: .bottomBar) {
             Button {
                 editor.showProjectSettings = true
             } label: {
@@ -22,17 +35,47 @@ struct ToolbarPanelView: View {
             } label: {
                 Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
             }
+        }
 
-            Spacer()
+        ToolbarSpacer(.flexible, placement: .bottomBar)
 
+        // Add (+) Menu
+        ToolbarItemGroup(placement: .bottomBar) {
             addMenu
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(.bar)
+
     }
 
-    // MARK: - Add Menu
+    // MARK: - iOS 18 fallback (HStack)
+
+    @ToolbarContentBuilder
+    private var legacyToolbar: some ToolbarContent {
+        ToolbarItem(placement: .bottomBar) {
+            HStack {
+                // Project
+                Button {
+                    editor.showProjectSettings = true
+                } label: {
+                    Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
+                }
+
+                // Layers
+                Button {
+                    editor.showLayerManager = true
+                } label: {
+                    Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
+                }
+
+                Spacer()
+                    .frame(width: 16)
+
+                addMenu
+
+            }
+        }
+    }
+
+    // MARK: - Shared Controls
 
     private var addMenu: some View {
         Menu {
