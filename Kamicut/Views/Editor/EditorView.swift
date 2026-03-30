@@ -20,7 +20,6 @@ struct EditorView: View {
         canvasPreview
             .ignoresSafeArea()
         .ignoresSafeArea(.keyboard)
-        .navigationTitle(String(localized: "App.Name"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
