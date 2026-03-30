@@ -5,11 +5,6 @@ import SwiftUI
 struct EditorCanvasView: View {
     @Bindable var editor: EditorState
 
-    // Cached background image to avoid re-decoding every render
-    @State private var cachedBackgroundImage: UIImage?
-    @State private var cachedBackgroundDataHash: Int = 0
-    @State private var cachedBackgroundMaxPixel: CGFloat = 0
-
     private var canvasSize: CGSize { editor.document.template.canvasSize }
 
     var body: some View {
@@ -18,8 +13,8 @@ struct EditorCanvasView: View {
             canvasBackground
 
             // Background image (image area only, unless bleed)
-            if let img = cachedBackgroundImage {
-                backgroundImageLayer(img)
+            if let backgroundImg = editor.document.backgroundImage, let uiImg = backgroundImg.uiImage {
+                backgroundImageLayer(uiImg)
             }
 
             // Layers (images and text in unified z-order)
@@ -92,29 +87,6 @@ struct EditorCanvasView: View {
             editor.selectedTextID = nil
             editor.selectedShapeID = nil
         }
-        .onAppear { updateCachedBackgroundImage() }
-        .onChange(of: editor.document.backgroundImage?.imageData) { updateCachedBackgroundImage() }
-        .onChange(of: editor.bleedOption) { updateCachedBackgroundImage() }
-        .onChange(of: editor.document.template.canvasSize) { updateCachedBackgroundImage() }
-    }
-
-    // MARK: - Background Image Cache
-
-    private func updateCachedBackgroundImage() {
-        guard let bgImage = editor.document.backgroundImage else {
-            cachedBackgroundImage = nil
-            return
-        }
-        let dataHash = bgImage.imageData.hashValue
-        let maxPixel = max(canvasSize.width, canvasSize.height) * UIScreen.main.scale
-        let dataChanged = dataHash != cachedBackgroundDataHash
-        let sizeRatio = cachedBackgroundMaxPixel > 0 ? maxPixel / cachedBackgroundMaxPixel : 0
-        let sizeChanged = sizeRatio < 0.8 || sizeRatio > 1.2
-        guard dataChanged || sizeChanged else { return }
-        cachedBackgroundDataHash = dataHash
-        cachedBackgroundMaxPixel = maxPixel
-        cachedBackgroundImage = ImageDownsampler.downsample(data: bgImage.imageData, maxPixelSize: maxPixel)
-            ?? UIImage(data: bgImage.imageData)
     }
 
     // MARK: - Helpers

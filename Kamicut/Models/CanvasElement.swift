@@ -8,6 +8,11 @@ enum CanvasElementType: String, Codable {
     case shape
 }
 
+// MARK: - Image Cache
+
+/// Global cache so repeated accesses to `ImageElement.uiImage` don't re-decode.
+private let _imageCache = NSCache<NSData, UIImage>()
+
 // MARK: - Image Element
 
 struct ImageElement: Identifiable, Codable {
@@ -24,7 +29,13 @@ struct ImageElement: Identifiable, Codable {
     var shadow: TextShadowStyle = TextShadowStyle()
 
     var uiImage: UIImage? {
-        UIImage(data: imageData)
+        let key = imageData as NSData
+        if let cached = _imageCache.object(forKey: key) {
+            return cached
+        }
+        guard let image = UIImage(data: imageData) else { return nil }
+        _imageCache.setObject(image, forKey: key)
+        return image
     }
 }
 
