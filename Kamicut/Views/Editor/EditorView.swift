@@ -4,8 +4,6 @@ import SwiftUI
 
 struct EditorView: View {
     @Bindable var editor: EditorState
-    @State private var canvasScale: CGFloat = 1.0
-    @GestureState private var pinchScale: CGFloat = 1.0
     @State private var sheetDetent: PresentationDetent = .height(300)
     @State private var exportSheetDetent: PresentationDetent = .large
     @State private var canvasBottomPadding: CGFloat = 0
@@ -41,9 +39,10 @@ struct EditorView: View {
                         Image(systemName: "ellipsis")
                     }
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
                 ToolbarPanelView(editor: editor)
             }
-            .toolbar(.visible, for: .bottomBar)
             .onChange(of: sheetDetent) { _, newDetent in
                 withAnimation(.spring(duration: 0.3)) {
                     canvasBottomPadding = (isAnySheetActive && newDetent == .height(300)) ? 300 : 0
@@ -123,38 +122,16 @@ struct EditorView: View {
     private var canvasPreview: some View {
         let template = editor.document.template
 
-        GeometryReader { previewGeo in
-            let availableW = previewGeo.size.width - 32
-            let availableH = previewGeo.size.height - 32
-            let fitScale = min(availableW / template.canvasSize.width,
-                               availableH / template.canvasSize.height)
-            let effectiveScale = fitScale * canvasScale * pinchScale
+        ZStack {
+            Color(UIColor.secondarySystemBackground)
 
-            let scaledW = template.canvasSize.width * effectiveScale
-            let scaledH = template.canvasSize.height * effectiveScale
-
-            ZStack {
-                Color(UIColor.secondarySystemBackground)
-
-                ScrollView([.horizontal, .vertical], showsIndicators: false) {
-                    EditorCanvasView(editor: editor)
-                        .scaleEffect(effectiveScale)
-                        .frame(width: max(scaledW, previewGeo.size.width),
-                               height: max(scaledH, previewGeo.size.height))
-                        .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
-                        .safeAreaPadding(.bottom, canvasBottomPadding)
-                }
-                .scrollDismissesKeyboard(.interactively)
+            ZoomableScrollView {
+                EditorCanvasView(editor: editor)
+                    .frame(width: template.canvasSize.width,
+                           height: template.canvasSize.height)
+                    .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
+                    .safeAreaPadding(.bottom, canvasBottomPadding)
             }
-            .gesture(
-                MagnifyGesture()
-                    .updating($pinchScale) { value, state, _ in
-                        state = value.magnification
-                    }
-                    .onEnded { value in
-                        canvasScale = max(0.1, canvasScale * value.magnification)
-                    }
-            )
         }
     }
 }

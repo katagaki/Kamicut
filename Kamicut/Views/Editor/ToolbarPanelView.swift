@@ -3,79 +3,48 @@ import PhotosUI
 
 // MARK: - Toolbar Panel
 
-/// Bottom toolbar for the editor.
-struct ToolbarPanelView: ToolbarContent {
+/// Bottom toolbar for the editor, rendered via safeAreaInset
+/// because DocumentGroup's navigation context does not reliably
+/// support .bottomBar toolbar placement.
+struct ToolbarPanelView: View {
     var editor: EditorState
 
     @State private var overlayPickerItem: PhotosPickerItem?
     @State private var showPhotoPicker: Bool = false
 
-    var body: some ToolbarContent {
-        if #available(iOS 26, *) {
-            ios26Toolbar
-        } else {
-            legacyToolbar
-        }
-    }
+    private let buttonSize: CGFloat = 52
 
-    // MARK: - iOS 26+ (native ToolbarItemGroup + ToolbarSpacer)
-
-    @available(iOS 26, *)
-    @ToolbarContentBuilder
-    private var ios26Toolbar: some ToolbarContent {
-        // Project + Layers
-        ToolbarItemGroup(placement: .bottomBar) {
+    var body: some View {
+        HStack(spacing: 16) {
             Button {
                 editor.showProjectSettings = true
             } label: {
-                Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
+                Image(systemName: "doc.text")
+
+                    .frame(width: buttonSize, height: buttonSize)
             }
+            .glassEffect(.regular.interactive(), in: .circle)
+
             Button {
                 editor.showLayerManager = true
             } label: {
-                Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
+                Image(systemName: "square.3.layers.3d")
+
+                    .frame(width: buttonSize, height: buttonSize)
             }
-        }
+            .glassEffect(.regular.interactive(), in: .circle)
 
-        ToolbarSpacer(.flexible, placement: .bottomBar)
+            Spacer()
 
-        // Add (+) Menu
-        ToolbarItemGroup(placement: .bottomBar) {
             addMenu
         }
-
+        .imageScale(.large)
+        .tint(.primary)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 4)
     }
 
-    // MARK: - iOS 18 fallback (HStack)
-
-    @ToolbarContentBuilder
-    private var legacyToolbar: some ToolbarContent {
-        ToolbarItem(placement: .bottomBar) {
-            HStack {
-                // Project
-                Button {
-                    editor.showProjectSettings = true
-                } label: {
-                    Label(String(localized: "Toolbar.Document"), systemImage: "doc.text")
-                }
-
-                // Layers
-                Button {
-                    editor.showLayerManager = true
-                } label: {
-                    Label(String(localized: "Toolbar.Layers"), systemImage: "square.3.layers.3d")
-                }
-
-                Spacer()
-                    .frame(width: 16)
-
-                addMenu
-
-            }
-        }
-    }
-
-    // MARK: - Shared Controls
+    // MARK: - Add Menu
 
     private var addMenu: some View {
         Menu {
@@ -106,8 +75,11 @@ struct ToolbarPanelView: ToolbarContent {
                 Label(String(localized: "Toolbar.Add.Squiggle"), systemImage: "scribble.variable")
             }
         } label: {
-            Label(String(localized: "Toolbar.Add"), systemImage: "plus")
+            Image(systemName: "plus")
+                .tint(.primary)
+                .frame(width: buttonSize, height: buttonSize)
         }
+        .glassEffect(.regular.tint(.accentColor).interactive(), in: .circle)
         .photosPicker(isPresented: $showPhotoPicker, selection: $overlayPickerItem, matching: .images)
         .onChange(of: overlayPickerItem) { _, item in
             Task { await loadOverlayImage(item: item) }

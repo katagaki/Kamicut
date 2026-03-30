@@ -163,14 +163,6 @@
 		};
 /* End PBXNativeTarget section */
 
-/* Begin PBXTargetDependency section */
-		E4CC000B2F80000B002D2CB0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E4CC00062F800006002D2CB0 /* KamicutThumbnail */;
-			targetProxy = E4CC000A2F80000A002D2CB0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXProject section */
 		E44728332F716E8C002D2CB0 /* Project object */ = {
 			isa = PBXProject;
@@ -262,6 +254,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E4CC000B2F80000B002D2CB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E4CC00062F800006002D2CB0 /* KamicutThumbnail */;
+			targetProxy = E4CC000A2F80000A002D2CB0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E44728462F716E8D002D2CB0 /* Debug */ = {
