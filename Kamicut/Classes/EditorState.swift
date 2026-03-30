@@ -19,11 +19,6 @@ final class EditorState {
     var selectedTextID: UUID?
     var selectedShapeID: UUID?
 
-    // MARK: Saved Cut Tracking
-
-    var currentSavedCutID: UUID?
-    var currentSavedCutName: String = ""
-
     // MARK: UI State
 
     var showTemplatePicker: Bool = false
@@ -31,7 +26,7 @@ final class EditorState {
     var showExportSheet: Bool = false
     var showSpaceNumberEditor: Bool = false
     var showLayerManager: Bool = false
-    var showSavedCutsList: Bool = false
+    var showMoreView: Bool = false
     var showBackgroundSettings: Bool = false
     var showSquiggleEditor: Bool = false
 
@@ -218,24 +213,10 @@ final class EditorState {
         return image
     }
 
-    // MARK: - Load Saved Cut
-
-    func loadSavedCut(_ savedCut: SavedCut) throws {
-        self.document = try savedCut.loadDocument()
-        self.currentSavedCutID = savedCut.id
-        self.currentSavedCutName = savedCut.name
-        self.selectedImageID = nil
-        self.selectedTextID = nil
-        self.selectedShapeID = nil
-        self.exportedImage = nil
-    }
-
     // MARK: - Reset
 
     func reset() {
         document = EditorDocument()
-        currentSavedCutID = nil
-        currentSavedCutName = ""
         selectedImageID = nil
         selectedTextID = nil
         selectedShapeID = nil

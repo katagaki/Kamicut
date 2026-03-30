@@ -18,6 +18,23 @@
           }
         }
       }
+    },
+    "Circle Cut" : {
+      "comment" : "UTType description for .cut files",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Circle Cut"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サークルカット"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

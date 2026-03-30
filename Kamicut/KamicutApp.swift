@@ -3,10 +3,16 @@ import SwiftData
 
 @main
 struct KamicutApp: App {
+
+    init() {
+        DataMigrator.migrateIfNeeded()
+    }
+
     var body: some Scene {
-        WindowGroup {
-            ProjectsListView()
+        DocumentGroup(newDocument: { CutDocument() }) { file in
+            DocumentEditorView(document: file.document)
         }
-        .modelContainer(for: SavedCut.self)
+        // Keep SwiftData container available for migration reads only
+        .modelContainer(for: LegacySavedCut.self)
     }
 }

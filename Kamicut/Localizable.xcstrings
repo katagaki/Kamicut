@@ -169,23 +169,6 @@
         }
       }
     },
-    "Common.Save" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "保存"
-          }
-        }
-      }
-    },
     "Common.Delete" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -267,6 +250,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "px"
+          }
+        }
+      }
+    },
+    "Common.Save" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
           }
         }
       }
@@ -781,6 +781,9 @@
         }
       }
     },
+    "katagaki/Kamicut" : {
+
+    },
     "Layers.Background" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1015,6 +1018,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "レイヤー"
+          }
+        }
+      }
+    },
+    "More.SourceCode" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source Code"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ソースコード"
+          }
+        }
+      }
+    },
+    "More.Title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
           }
         }
       }
