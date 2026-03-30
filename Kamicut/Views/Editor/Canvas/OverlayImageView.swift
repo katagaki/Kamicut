@@ -14,10 +14,19 @@ struct OverlayImageView: View {
     @State private var resizeStartPosition: CGPoint?
     @State private var resizeStartLocation: CGPoint?
 
+    // Cached display image and metadata
+    @State private var displayImage: UIImage?
+    @State private var imageAspectRatio: CGFloat = 1.0
+    @State private var lastRenderedMaxPixel: CGFloat = 0
+    @State private var lastImageDataHash: Int = 0
+
     /// Rotation threshold in degrees before rotation kicks in.
     private let rotationThreshold: Double = 10
     private let handleSize: CGFloat = 10
     private let handleHitSize: CGFloat = 44
+
+    /// Only regenerate the downsampled image when the display size changes by this factor.
+    private let resizeThreshold: CGFloat = 0.2
 
     var body: some View {
         let center = CGPoint(
@@ -25,15 +34,14 @@ struct OverlayImageView: View {
             y: element.position.y * canvasSize.height
         )
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
-        let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
         let height = baseSize * element.scale * pinchScale
-        let width = height * aspectRatio
+        let width = height * imageAspectRatio
         let activeRotation = rotationActivated ? gestureRotation.degrees : 0
 
         let totalRotation = element.rotation + activeRotation
 
         Group {
-            if let img = element.uiImage {
+            if let img = displayImage {
                 ZStack {
                     Image(uiImage: img)
                         .resizable()
@@ -104,6 +112,52 @@ struct OverlayImageView: View {
                     .onTapGesture(perform: onTap)
             }
         }
+        .onAppear { rebuildDisplayImage(force: true) }
+        .onChange(of: element.imageData) { rebuildDisplayImage(force: true) }
+        .onChange(of: element.scale) { rebuildDisplayImageIfNeeded() }
+        .onChange(of: canvasSize) { rebuildDisplayImageIfNeeded() }
+    }
+
+    // MARK: - Display Image Cache
+
+    private func rebuildDisplayImage(force: Bool) {
+        let dataHash = element.imageData.hashValue
+        let dataChanged = dataHash != lastImageDataHash
+        if dataChanged {
+            lastImageDataHash = dataHash
+            if let size = ImageDownsampler.imageSize(from: element.imageData) {
+                imageAspectRatio = size.width / size.height
+            }
+        }
+        if force || dataChanged {
+            updateDownsampledImage()
+        }
+    }
+
+    private func rebuildDisplayImageIfNeeded() {
+        let maxPixel = targetMaxPixel
+        guard lastRenderedMaxPixel > 0 else {
+            updateDownsampledImage()
+            return
+        }
+        let ratio = maxPixel / lastRenderedMaxPixel
+        if ratio < (1.0 - resizeThreshold) || ratio > (1.0 + resizeThreshold) {
+            updateDownsampledImage()
+        }
+    }
+
+    private var targetMaxPixel: CGFloat {
+        let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
+        let displayHeight = baseSize * element.scale
+        let displayWidth = displayHeight * imageAspectRatio
+        let screenScale = UIScreen.main.scale
+        return max(displayWidth, displayHeight) * screenScale
+    }
+
+    private func updateDownsampledImage() {
+        let maxPixel = max(targetMaxPixel, 1)
+        lastRenderedMaxPixel = maxPixel
+        displayImage = ImageDownsampler.downsample(data: element.imageData, maxPixelSize: maxPixel)
     }
 
     // MARK: - Selection Overlay with Grab Handles
@@ -146,13 +200,12 @@ struct OverlayImageView: View {
         guard let startScale = resizeStartScale, let startPos = resizeStartPosition else { return }
 
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
-        let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
         let rot = element.rotation * .pi / 180
         let cosR = cos(rot), sinR = sin(rot)
 
         // Old pixel dimensions
         let oldH = baseSize * startScale
-        let oldW = oldH * aspectRatio
+        let oldW = oldH * imageAspectRatio
 
         // Project drag translation into the element's local (rotated) coordinate system
         let localDx =  translation.width * cosR + translation.height * sinR
@@ -174,7 +227,7 @@ struct OverlayImageView: View {
 
         // New pixel dimensions
         let newH = baseSize * newScale
-        let newW = newH * aspectRatio
+        let newW = newH * imageAspectRatio
 
         // Anchor: opposite edge/corner in local (unrotated) space
         let anchorLocalX = -handle.xFactor * oldW / 2
