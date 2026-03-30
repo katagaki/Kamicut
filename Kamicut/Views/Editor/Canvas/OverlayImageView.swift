@@ -127,6 +127,8 @@ struct OverlayImageView: View {
             lastImageDataHash = dataHash
             if let size = ImageDownsampler.imageSize(from: element.imageData) {
                 imageAspectRatio = size.width / size.height
+            } else if let img = UIImage(data: element.imageData) {
+                imageAspectRatio = img.size.width / img.size.height
             }
         }
         if force || dataChanged {
@@ -158,6 +160,7 @@ struct OverlayImageView: View {
         let maxPixel = max(targetMaxPixel, 1)
         lastRenderedMaxPixel = maxPixel
         displayImage = ImageDownsampler.downsample(data: element.imageData, maxPixelSize: maxPixel)
+            ?? UIImage(data: element.imageData)
     }
 
     // MARK: - Selection Overlay with Grab Handles

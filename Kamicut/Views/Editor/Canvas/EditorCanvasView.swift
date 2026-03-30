@@ -114,6 +114,7 @@ struct EditorCanvasView: View {
         cachedBackgroundDataHash = dataHash
         cachedBackgroundMaxPixel = maxPixel
         cachedBackgroundImage = ImageDownsampler.downsample(data: bgImage.imageData, maxPixelSize: maxPixel)
+            ?? UIImage(data: bgImage.imageData)
     }
 
     // MARK: - Helpers
