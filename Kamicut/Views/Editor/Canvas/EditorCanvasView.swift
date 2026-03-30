@@ -13,8 +13,11 @@ struct EditorCanvasView: View {
             canvasBackground
 
             // Background image (image area only, unless bleed)
-            if let backgroundImg = editor.document.backgroundImage, let uiImg = backgroundImg.uiImage {
-                backgroundImageLayer(uiImg)
+            if let backgroundImg = editor.document.backgroundImage {
+                let maxPixel = max(canvasSize.width, canvasSize.height) * UIScreen.main.scale
+                if let uiImg = ImageDownsampler.displayImage(for: backgroundImg, maxPixelSize: maxPixel) {
+                    backgroundImageLayer(uiImg)
+                }
             }
 
             // Layers (images and text in unified z-order)

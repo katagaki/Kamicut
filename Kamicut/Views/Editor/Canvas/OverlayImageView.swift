@@ -26,14 +26,24 @@ struct OverlayImageView: View {
         )
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
         let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
-        let height = baseSize * element.scale * pinchScale
-        let width = height * aspectRatio
-        let activeRotation = rotationActivated ? gestureRotation.degrees : 0
 
+        // Committed dimensions (used for downsample target)
+        let committedHeight = baseSize * element.scale
+        let committedWidth = committedHeight * aspectRatio
+
+        // Live dimensions (includes transient pinch gesture)
+        let height = committedHeight * pinchScale
+        let width = committedWidth * pinchScale
+
+        let activeRotation = rotationActivated ? gestureRotation.degrees : 0
         let totalRotation = element.rotation + activeRotation
 
+        // Downsample to committed size; during pinch SwiftUI scales the same image
+        let maxPixel = max(committedWidth, committedHeight) * UIScreen.main.scale
+        let img: UIImage? = ImageDownsampler.displayImage(for: element, maxPixelSize: maxPixel)
+
         Group {
-            if let img = element.uiImage {
+            if let img {
                 ZStack {
                     Image(uiImage: img)
                         .resizable()
@@ -55,7 +65,7 @@ struct OverlayImageView: View {
                             .frame(width: width, height: height)
                             .overlay {
                                 ForEach(ResizeHandle.allCases, id: \.self) { handle in
-                                    imageHandleView(for: handle, width: width, height: height)
+                                    imageHandleView(for: handle, width: width, height: height, aspectRatio: aspectRatio)
                                 }
                             }
                             .rotationEffect(.degrees(totalRotation))
@@ -108,7 +118,7 @@ struct OverlayImageView: View {
 
     // MARK: - Selection Overlay with Grab Handles
 
-    private func imageHandleView(for handle: ResizeHandle, width: CGFloat, height: CGFloat) -> some View {
+    private func imageHandleView(for handle: ResizeHandle, width: CGFloat, height: CGFloat, aspectRatio: CGFloat) -> some View {
         let pos = handle.position(in: CGSize(width: width, height: height))
         return Circle()
             .fill(Color.white)
@@ -130,7 +140,7 @@ struct OverlayImageView: View {
                             width: value.location.x - startLoc.x,
                             height: value.location.y - startLoc.y
                         )
-                        applyImageResize(handle: handle, translation: translation)
+                        applyImageResize(handle: handle, translation: translation, aspectRatio: aspectRatio)
                     }
                     .onEnded { _ in
                         resizeStartScale = nil
@@ -142,11 +152,10 @@ struct OverlayImageView: View {
 
     // MARK: - Resize Logic
 
-    private func applyImageResize(handle: ResizeHandle, translation: CGSize) {
+    private func applyImageResize(handle: ResizeHandle, translation: CGSize, aspectRatio: CGFloat) {
         guard let startScale = resizeStartScale, let startPos = resizeStartPosition else { return }
 
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
-        let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
         let rot = element.rotation * .pi / 180
         let cosR = cos(rot), sinR = sin(rot)
 
