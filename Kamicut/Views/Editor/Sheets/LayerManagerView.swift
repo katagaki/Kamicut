@@ -92,6 +92,7 @@ struct LayerManagerView: View {
             .listSectionSpacing(.compact)
             .navigationTitle(String(localized: "Layers.Title"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(role: .confirm) { dismiss() }

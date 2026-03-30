@@ -49,7 +49,7 @@ enum DataMigrator {
 
             UserDefaults.standard.set(true, forKey: migrationKey)
         } catch {
-            // Migration failed — will retry on next launch
+            // Migration failed - will retry on next launch
         }
     }
 }

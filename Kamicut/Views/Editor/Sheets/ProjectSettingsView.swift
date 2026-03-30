@@ -180,6 +180,7 @@ struct ProjectSettingsView: View {
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(String(localized: "Document.Title"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(role: .confirm) { dismiss() }

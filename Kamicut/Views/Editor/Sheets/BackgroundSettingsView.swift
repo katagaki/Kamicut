@@ -65,6 +65,7 @@ struct BackgroundSettingsView: View {
             .listSectionSpacing(.compact)
             .navigationTitle(String(localized: "Toolbar.Background"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if #available(iOS 26, *) {

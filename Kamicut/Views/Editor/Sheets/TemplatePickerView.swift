@@ -154,6 +154,7 @@ struct TemplatePickerView: View {
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(String(localized: "Toolbar.Template"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     if #available(iOS 26, *) {

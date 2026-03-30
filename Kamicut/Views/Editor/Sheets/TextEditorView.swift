@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Inline Text Properties List
 
 /// Inline settings-style list for editing a text element's properties.
-/// Embed this directly in a `List` or `Form` — it emits sections.
+/// Embed this directly in a `List` or `Form` - it emits sections.
 struct TextPropertiesSections: View {
     @Binding var element: TextElement
 
@@ -185,6 +185,7 @@ struct FontPickerSheet: View {
             .searchable(text: $searchText, prompt: Text("Fonts.Search"))
             .navigationTitle(String(localized: "Fonts.Title"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if #available(iOS 26, *) {

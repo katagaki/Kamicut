@@ -103,6 +103,7 @@ struct ExportSheetView: View {
             .scrollDismissesKeyboard(.interactively)
             .navigationTitle(String(localized: "Toolbar.Export"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     if #available(iOS 26, *) {

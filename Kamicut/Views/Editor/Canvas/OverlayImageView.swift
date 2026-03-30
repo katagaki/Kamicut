@@ -158,7 +158,7 @@ struct OverlayImageView: View {
         let localDx =  translation.width * cosR + translation.height * sinR
         let localDy = -translation.width * sinR + translation.height * cosR
 
-        // Images resize uniformly — compute scale from local-space change.
+        // Images resize uniformly - compute scale from local-space change.
         let scaleFromW = oldW > 0 ? (oldW + handle.xFactor * localDx) / oldW : 1
         let scaleFromH = oldH > 0 ? (oldH + handle.yFactor * localDy) / oldH : 1
         let ratio: CGFloat

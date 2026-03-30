@@ -32,6 +32,7 @@ struct SelectedElementInspectorView: View {
             }
             .navigationTitle(editor.selectedLayerLabel)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(role: .destructive) {

@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Renders text using NSAttributedString as a rendered UIImage, supporting
-/// outline, shadow, and plain text — matching the export renderer exactly.
+/// outline, shadow, and plain text - matching the export renderer exactly.
 struct CanvasTextView: View {
     let element: TextElement
 

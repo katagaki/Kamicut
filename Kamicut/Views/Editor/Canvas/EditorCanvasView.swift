@@ -367,7 +367,7 @@ extension EditorCanvasView {
                 )
             }
         } else if !template.textAreaHasTopBorder && template.textAreaPosition == .bottom {
-            // Outside border text area (e.g. Manga Report) — inset by its own border
+            // Outside border text area (e.g. Manga Report) - inset by its own border
             let borderThickness = template.textAreaBorderThickness
             return CGRect(
                 x: rect.minX + borderThickness, y: rect.minY + borderThickness,

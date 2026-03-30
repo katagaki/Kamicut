@@ -6,7 +6,6 @@ struct EditorView: View {
     @Bindable var editor: EditorState
     @State private var sheetDetent: PresentationDetent = .height(300)
     @State private var exportSheetDetent: PresentationDetent = .large
-    @State private var canvasBottomPadding: CGFloat = 0
 
     private var isAnySheetActive: Bool {
         editor.showTemplatePicker || editor.showProjectSettings || editor.showExportSheet ||
@@ -20,7 +19,7 @@ struct EditorView: View {
             .ignoresSafeArea(.keyboard)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItemGroup(placement: .topBarLeading) {
                     Button {
                         editor.showTemplatePicker = true
                     } label: {
@@ -43,21 +42,9 @@ struct EditorView: View {
             .safeAreaInset(edge: .bottom) {
                 ToolbarPanelView(editor: editor)
             }
-            .onChange(of: sheetDetent) { _, newDetent in
-                withAnimation(.spring(duration: 0.3)) {
-                    canvasBottomPadding = (isAnySheetActive && newDetent == .height(300)) ? 300 : 0
-                }
-            }
             .onChange(of: isAnySheetActive) { _, isActive in
                 if isActive {
                     sheetDetent = .height(300)
-                    withAnimation(.spring(duration: 0.3)) {
-                        canvasBottomPadding = 300
-                    }
-                } else {
-                    withAnimation(.spring(duration: 0.3)) {
-                        canvasBottomPadding = 0
-                    }
                 }
             }
             .onChange(of: editor.selectedTextID) { _, _ in
@@ -125,12 +112,18 @@ struct EditorView: View {
         ZStack {
             Color(UIColor.secondarySystemBackground)
 
-            ZoomableScrollView {
-                EditorCanvasView(editor: editor)
-                    .frame(width: template.canvasSize.width,
-                           height: template.canvasSize.height)
-                    .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
-                    .safeAreaPadding(.bottom, canvasBottomPadding)
+            ZoomableScrollView(additionalBottomInset: 60,
+                               focalSize: template.canvasSize) {
+                Color.clear
+                    .frame(width: template.canvasSize.width * 3,
+                           height: template.canvasSize.height * 3)
+                    .overlay {
+                        EditorCanvasView(editor: editor)
+                            .frame(width: template.canvasSize.width,
+                                   height: template.canvasSize.height)
+                            .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
+                    }
+                    .padding(16)
             }
         }
     }
