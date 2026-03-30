@@ -8,9 +8,11 @@ struct DocumentEditorView: View {
     @Environment(\.undoManager) private var undoManager
 
     var body: some View {
-        EditorView(editor: document.editorState)
-            .onChange(of: document.editorState.documentRevision) {
-                undoManager?.registerUndo(withTarget: document) { _ in }
-            }
+        NavigationStack {
+            EditorView(editor: document.editorState)
+        }
+        .onChange(of: document.editorState.documentRevision) {
+            undoManager?.registerUndo(withTarget: document) { _ in }
+        }
     }
 }
