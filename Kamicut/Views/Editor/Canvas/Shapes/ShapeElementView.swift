@@ -27,11 +27,6 @@ struct ShapeElementView: View {
         let width = element.shapeKind.aspectLocked ? side : rawW
         let height = element.shapeKind.aspectLocked ? side : rawH
 
-        // Compute the axis-aligned bounding box of the rotated shape
-        let radians = element.rotation * .pi / 180
-        let boundingW = abs(width * cos(radians)) + abs(height * sin(radians))
-        let boundingH = abs(width * sin(radians)) + abs(height * cos(radians))
-
         ZStack {
             shapeView
                 .frame(width: width, height: height)
@@ -40,12 +35,13 @@ struct ShapeElementView: View {
             if isSelected {
                 Rectangle()
                     .stroke(Color.blue, lineWidth: 1.5)
-                    .frame(width: boundingW, height: boundingH)
+                    .frame(width: width, height: height)
                     .overlay {
                         ForEach(ResizeHandle.allCases, id: \.self) { handle in
-                            handleView(for: handle, width: boundingW, height: boundingH)
+                            handleView(for: handle, width: width, height: height)
                         }
                     }
+                    .rotationEffect(.degrees(element.rotation))
             }
         }
         .position(
@@ -121,71 +117,54 @@ struct ShapeElementView: View {
         let oldW = startSize.width * canvasSize.width * scale
         let oldH = startSize.height * canvasSize.height * scale
 
-        // Old bounding box half-sizes (axis-aligned)
-        let oldBBHalfW = (abs(oldW * cosR) + abs(oldH * sinR)) / 2
-        let oldBBHalfH = (abs(oldW * sinR) + abs(oldH * cosR)) / 2
+        // Project drag translation into the element's local (rotated) coordinate system.
+        // This avoids the ill-conditioned bounding-box inversion that breaks near 45°/135°.
+        let localDx =  translation.width * cosR + translation.height * sinR
+        let localDy = -translation.width * sinR + translation.height * cosR
 
-        // Anchor: the opposite bounding box corner in canvas pixel space
-        let startCx = startPos.x * canvasSize.width
-        let startCy = startPos.y * canvasSize.height
-        let anchorX = startCx - handle.xFactor * oldBBHalfW
-        let anchorY = startCy - handle.yFactor * oldBBHalfH
+        // Apply handle factors: xFactor/yFactor tell us which axes this handle affects
+        // and in which direction (+1 = right/bottom edge, -1 = left/top edge, 0 = no change)
+        var newPixelW = oldW + handle.xFactor * localDx
+        var newPixelH = oldH + handle.yFactor * localDy
 
-        // The dragged handle moves in screen space; compute new bounding box from the
-        // anchor corner and the dragged corner's new position.
-        let draggedX = startCx + handle.xFactor * oldBBHalfW + translation.width
-        let draggedY = startCy + handle.yFactor * oldBBHalfH + translation.height
-
-        // New bounding box half-sizes from anchor to dragged corner
-        var newBBHalfW = handle.xFactor != 0 ? abs(draggedX - anchorX) / 2 : oldBBHalfW
-        var newBBHalfH = handle.yFactor != 0 ? abs(draggedY - anchorY) / 2 : oldBBHalfH
-
-        // Invert bounding box formula to recover element pixel sizes:
-        //   bbW = |W·cos| + |H·sin|
-        //   bbH = |W·sin| + |H·cos|
-        let det = cosR * cosR - sinR * sinR  // cos(2θ)
-        var newPixelW: CGFloat
-        var newPixelH: CGFloat
-
-        if abs(det) < 1e-6 {
-            // Near 45°/135° the system is singular; fall back to uniform scaling
-            let avgBB = (newBBHalfW + newBBHalfH)
-            let oldAvgBB = (oldBBHalfW + oldBBHalfH)
-            let ratio = oldAvgBB > 0 ? avgBB / oldAvgBB : 1
-            newPixelW = oldW * ratio
-            newPixelH = oldH * ratio
-        } else {
-            // Solve: |W| = (bbW·|cos| - bbH·|sin|) / det,  |H| = (bbH·|cos| - bbW·|sin|) / det
-            //   where det = cos²-sin² and bb values use half-sizes * 2
-            let absCos = abs(cosR), absSin = abs(sinR)
-            newPixelW = abs((2 * newBBHalfW * absCos - 2 * newBBHalfH * absSin) / det)
-            newPixelH = abs((2 * newBBHalfH * absCos - 2 * newBBHalfW * absSin) / det)
-        }
+        // Prevent flipping
+        newPixelW = max(minNormalized * canvasSize.width * scale, newPixelW)
+        newPixelH = max(minNormalized * canvasSize.height * scale, newPixelH)
 
         let locked = element.shapeKind.aspectLocked
         if locked {
-            // Maintain aspect ratio: use the smaller dimension to keep within the bounding box
             let side = min(newPixelW, newPixelH)
             newPixelW = side
             newPixelH = side
-            // Recompute bounding box with locked sizes
-            newBBHalfW = (abs(newPixelW * cosR) + abs(newPixelH * sinR)) / 2
-            newBBHalfH = (abs(newPixelW * sinR) + abs(newPixelH * cosR)) / 2
         }
 
         // Convert back to normalized sizes
         let newW = max(minNormalized, newPixelW / (canvasSize.width * scale))
         let newH = max(minNormalized, newPixelH / (canvasSize.height * scale))
 
-        // Recompute final bounding box half-sizes (in case clamping changed things)
+        // Recompute final pixel sizes after clamping
         let finalPixelW = newW * canvasSize.width * scale
         let finalPixelH = newH * canvasSize.height * scale
-        let finalBBHalfW = (abs(finalPixelW * cosR) + abs(finalPixelH * sinR)) / 2
-        let finalBBHalfH = (abs(finalPixelW * sinR) + abs(finalPixelH * cosR)) / 2
 
-        // Solve for new center so the anchor bounding box corner stays fixed
-        let newCx = anchorX + handle.xFactor * finalBBHalfW
-        let newCy = anchorY + handle.yFactor * finalBBHalfH
+        // The anchor is the opposite edge/corner in local space.
+        // In local (unrotated) coordinates, the element spans from -oldW/2 to +oldW/2.
+        // The anchor local point is the side opposite to the handle.
+        let anchorLocalX = -handle.xFactor * oldW / 2
+        let anchorLocalY = -handle.yFactor * oldH / 2
+
+        // The new local center relative to the anchor
+        let newLocalCx = anchorLocalX + handle.xFactor * finalPixelW / 2
+        let newLocalCy = anchorLocalY + handle.yFactor * finalPixelH / 2
+
+        // For axes the handle doesn't affect, the center stays at 0 in local space
+        let effectiveLocalCx = handle.xFactor != 0 ? newLocalCx : 0
+        let effectiveLocalCy = handle.yFactor != 0 ? newLocalCy : 0
+
+        // Rotate the local center offset back to canvas space and add to original center
+        let startCx = startPos.x * canvasSize.width
+        let startCy = startPos.y * canvasSize.height
+        let newCx = startCx + effectiveLocalCx * cosR - effectiveLocalCy * sinR
+        let newCy = startCy + effectiveLocalCx * sinR + effectiveLocalCy * cosR
 
         element.size = CGSize(width: newW, height: newH)
         element.position = CGPoint(
