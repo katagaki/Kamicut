@@ -31,9 +31,6 @@ struct OverlayImageView: View {
         let activeRotation = rotationActivated ? gestureRotation.degrees : 0
 
         let totalRotation = element.rotation + activeRotation
-        let radians = totalRotation * .pi / 180
-        let boundingW = abs(width * cos(radians)) + abs(height * sin(radians))
-        let boundingH = abs(width * sin(radians)) + abs(height * cos(radians))
 
         Group {
             if let img = element.uiImage {
@@ -55,12 +52,13 @@ struct OverlayImageView: View {
                     if isSelected {
                         Rectangle()
                             .stroke(Color.blue, lineWidth: 1.5)
-                            .frame(width: boundingW, height: boundingH)
+                            .frame(width: width, height: height)
                             .overlay {
                                 ForEach(ResizeHandle.allCases, id: \.self) { handle in
-                                    imageHandleView(for: handle, width: boundingW, height: boundingH)
+                                    imageHandleView(for: handle, width: width, height: height)
                                 }
                             }
+                            .rotationEffect(.degrees(totalRotation))
                     }
                 }
                     .position(
@@ -156,28 +154,13 @@ struct OverlayImageView: View {
         let oldH = baseSize * startScale
         let oldW = oldH * aspectRatio
 
-        // Old bounding box half-sizes (axis-aligned)
-        let oldBBHalfW = (abs(oldW * cosR) + abs(oldH * sinR)) / 2
-        let oldBBHalfH = (abs(oldW * sinR) + abs(oldH * cosR)) / 2
+        // Project drag translation into the element's local (rotated) coordinate system
+        let localDx =  translation.width * cosR + translation.height * sinR
+        let localDy = -translation.width * sinR + translation.height * cosR
 
-        // Anchor: opposite bounding box corner in canvas pixel space
-        let startCx = startPos.x * canvasSize.width
-        let startCy = startPos.y * canvasSize.height
-        let anchorX = startCx - handle.xFactor * oldBBHalfW
-        let anchorY = startCy - handle.yFactor * oldBBHalfH
-
-        // The dragged handle moves in screen space
-        let draggedX = startCx + handle.xFactor * oldBBHalfW + translation.width
-        let draggedY = startCy + handle.yFactor * oldBBHalfH + translation.height
-
-        // New bounding box half-sizes from anchor to dragged corner
-        let newBBHalfW = handle.xFactor != 0 ? abs(draggedX - anchorX) / 2 : oldBBHalfW
-        let newBBHalfH = handle.yFactor != 0 ? abs(draggedY - anchorY) / 2 : oldBBHalfH
-
-        // Images resize uniformly — compute scale from bounding box change.
-        // Use the axis that the handle controls; for corners, average both.
-        let scaleFromW = oldBBHalfW > 0 ? newBBHalfW / oldBBHalfW : 1
-        let scaleFromH = oldBBHalfH > 0 ? newBBHalfH / oldBBHalfH : 1
+        // Images resize uniformly — compute scale from local-space change.
+        let scaleFromW = oldW > 0 ? (oldW + handle.xFactor * localDx) / oldW : 1
+        let scaleFromH = oldH > 0 ? (oldH + handle.yFactor * localDy) / oldH : 1
         let ratio: CGFloat
         if handle.isCorner {
             ratio = (scaleFromW + scaleFromH) / 2
@@ -193,13 +176,23 @@ struct OverlayImageView: View {
         let newH = baseSize * newScale
         let newW = newH * aspectRatio
 
-        // New bounding box half-sizes
-        let finalBBHalfW = (abs(newW * cosR) + abs(newH * sinR)) / 2
-        let finalBBHalfH = (abs(newW * sinR) + abs(newH * cosR)) / 2
+        // Anchor: opposite edge/corner in local (unrotated) space
+        let anchorLocalX = -handle.xFactor * oldW / 2
+        let anchorLocalY = -handle.yFactor * oldH / 2
 
-        // Solve for new center so the anchor bounding box corner stays fixed
-        let newCx = anchorX + handle.xFactor * finalBBHalfW
-        let newCy = anchorY + handle.yFactor * finalBBHalfH
+        // New local center relative to the anchor
+        let newLocalCx = anchorLocalX + handle.xFactor * newW / 2
+        let newLocalCy = anchorLocalY + handle.yFactor * newH / 2
+
+        // For axes the handle doesn't affect, center stays at 0 in local space
+        let effectiveLocalCx = handle.xFactor != 0 ? newLocalCx : 0
+        let effectiveLocalCy = handle.yFactor != 0 ? newLocalCy : 0
+
+        // Rotate local center offset back to canvas space and add to original center
+        let startCx = startPos.x * canvasSize.width
+        let startCy = startPos.y * canvasSize.height
+        let newCx = startCx + effectiveLocalCx * cosR - effectiveLocalCy * sinR
+        let newCy = startCy + effectiveLocalCx * sinR + effectiveLocalCy * cosR
 
         element.scale = newScale
         element.position = CGPoint(
