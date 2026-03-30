@@ -14,10 +14,6 @@ struct OverlayImageView: View {
     @State private var resizeStartPosition: CGPoint?
     @State private var resizeStartLocation: CGPoint?
 
-    // Downsampled display image, regenerated when committed size changes
-    @State private var downsampledImage: UIImage?
-    @State private var downsampledMaxPixel: CGFloat = 0
-
     /// Rotation threshold in degrees before rotation kicks in.
     private let rotationThreshold: Double = 10
     private let handleSize: CGFloat = 10
@@ -30,17 +26,24 @@ struct OverlayImageView: View {
         )
         let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
         let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
-        let height = baseSize * element.scale * pinchScale
-        let width = height * aspectRatio
-        let activeRotation = rotationActivated ? gestureRotation.degrees : 0
 
+        // Committed dimensions (used for downsample target)
+        let committedHeight = baseSize * element.scale
+        let committedWidth = committedHeight * aspectRatio
+
+        // Live dimensions (includes transient pinch gesture)
+        let height = committedHeight * pinchScale
+        let width = committedWidth * pinchScale
+
+        let activeRotation = rotationActivated ? gestureRotation.degrees : 0
         let totalRotation = element.rotation + activeRotation
 
-        // Use downsampled image when available, fall back to cached full image
-        let renderImage = downsampledImage ?? element.uiImage
+        // Downsample to committed size; during pinch SwiftUI scales the same image
+        let maxPixel = max(committedWidth, committedHeight) * UIScreen.main.scale
+        let img: UIImage? = ImageDownsampler.displayImage(for: element, maxPixelSize: maxPixel)
 
         Group {
-            if let img = renderImage {
+            if let img {
                 ZStack {
                     Image(uiImage: img)
                         .resizable()
@@ -111,39 +114,6 @@ struct OverlayImageView: View {
                     .onTapGesture(perform: onTap)
             }
         }
-        .task(id: DownsampleKey(data: element.imageData, scale: element.scale, canvasSize: canvasSize)) {
-            updateDownsampledImage()
-        }
-    }
-
-    // MARK: - Downsampling
-
-    /// Key that changes when we need a new downsample pass.
-    private struct DownsampleKey: Equatable {
-        let data: Data
-        let scale: CGFloat
-        let canvasSize: CGSize
-    }
-
-    private func updateDownsampledImage() {
-        let baseSize = min(canvasSize.width, canvasSize.height) * 0.4
-        let aspectRatio = element.uiImage.map { $0.size.width / $0.size.height } ?? 1.0
-        let displayHeight = baseSize * element.scale
-        let displayWidth = displayHeight * aspectRatio
-        let screenScale = UIScreen.main.scale
-        let maxPixel = max(displayWidth, displayHeight) * screenScale
-
-        // Skip if already rendered close to this size
-        if downsampledMaxPixel > 0 {
-            let ratio = maxPixel / downsampledMaxPixel
-            if ratio > 0.8 && ratio < 1.2 { return }
-        }
-
-        downsampledMaxPixel = maxPixel
-        downsampledImage = ImageDownsampler.downsample(
-            data: element.imageData,
-            maxPixelSize: maxPixel
-        )
     }
 
     // MARK: - Selection Overlay with Grab Handles
