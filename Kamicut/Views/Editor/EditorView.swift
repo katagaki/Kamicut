@@ -17,108 +17,103 @@ struct EditorView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            canvasPreview
-                .ignoresSafeArea()
-                .ignoresSafeArea(.keyboard)
-                .toolbar {
-                    ToolbarPanelView(editor: editor)
+        canvasPreview
+            .ignoresSafeArea()
+            .ignoresSafeArea(.keyboard)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        editor.showTemplatePicker = true
+                    } label: {
+                        Image(systemName: "rectangle.on.rectangle")
+                    }
                 }
-                .toolbar(.hidden, for: .navigationBar)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    editor.showTemplatePicker = true
-                } label: {
-                    Image(systemName: "rectangle.on.rectangle")
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button {
+                        editor.showExportSheet = true
+                    } label: {
+                        Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
+                    }
+                    Button {
+                        editor.showMoreView = true
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
                 }
+                ToolbarPanelView(editor: editor)
             }
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                Button {
-                    editor.showExportSheet = true
-                } label: {
-                    Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
-                }
-                Button {
-                    editor.showMoreView = true
-                } label: {
-                    Image(systemName: "ellipsis")
-                }
-            }
-        }
-        .onChange(of: sheetDetent) { _, newDetent in
-            withAnimation(.spring(duration: 0.3)) {
-                canvasBottomPadding = (isAnySheetActive && newDetent == .height(300)) ? 300 : 0
-            }
-        }
-        .onChange(of: isAnySheetActive) { _, isActive in
-            if isActive {
-                sheetDetent = .height(300)
+            .onChange(of: sheetDetent) { _, newDetent in
                 withAnimation(.spring(duration: 0.3)) {
-                    canvasBottomPadding = 300
-                }
-            } else {
-                withAnimation(.spring(duration: 0.3)) {
-                    canvasBottomPadding = 0
+                    canvasBottomPadding = (isAnySheetActive && newDetent == .height(300)) ? 300 : 0
                 }
             }
-        }
-        .onChange(of: editor.selectedTextID) { _, _ in
-            if editor.selectedTextID != nil { sheetDetent = .height(300) }
-        }
-        .onChange(of: editor.selectedShapeID) { _, _ in
-            if editor.selectedShapeID != nil { sheetDetent = .height(300) }
-        }
-        .onChange(of: editor.selectedImageID) { _, _ in
-            if editor.selectedImageID != nil { sheetDetent = .height(300) }
-        }
-        // Sheets
-        .sheet(isPresented: $editor.showTemplatePicker) {
-            TemplatePickerView(editor: editor)
-                .presentationDetents([.large])
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: $editor.showProjectSettings) {
-            ProjectSettingsView(editor: editor)
-                .presentationDetents([.height(300), .large], selection: $sheetDetent)
-                .presentationBackgroundInteraction(.enabled)
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: $editor.showExportSheet) {
-            ExportSheetView(editor: editor)
-                .presentationDetents([.medium, .large], selection: $exportSheetDetent)
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: $editor.showLayerManager) {
-            LayerManagerView(editor: editor)
-                .presentationDetents([.height(300), .large], selection: $sheetDetent)
-                .presentationBackgroundInteraction(.enabled)
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: $editor.showBackgroundSettings) {
-            BackgroundSettingsView(editor: editor)
-                .presentationDetents([.height(300), .large], selection: $sheetDetent)
-                .presentationBackgroundInteraction(.enabled)
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: Binding(
-            get: { editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil },
-            set: { if !$0 { editor.selectedTextID = nil; editor.selectedShapeID = nil; editor.selectedImageID = nil } }
-        )) {
-            SelectedElementInspectorView(editor: editor)
-                .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)
-                .presentationBackgroundInteraction(.enabled)
-                .presentationContentInteraction(.scrolls)
-        }
-        .sheet(isPresented: $editor.showMoreView) {
-            MoreView()
-                .presentationDetents([.medium, .large])
-        }
-        .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
-            SquiggleEditorView(editor: editor)
-        }
+            .onChange(of: isAnySheetActive) { _, isActive in
+                if isActive {
+                    sheetDetent = .height(300)
+                    withAnimation(.spring(duration: 0.3)) {
+                        canvasBottomPadding = 300
+                    }
+                } else {
+                    withAnimation(.spring(duration: 0.3)) {
+                        canvasBottomPadding = 0
+                    }
+                }
+            }
+            .onChange(of: editor.selectedTextID) { _, _ in
+                if editor.selectedTextID != nil { sheetDetent = .height(300) }
+            }
+            .onChange(of: editor.selectedShapeID) { _, _ in
+                if editor.selectedShapeID != nil { sheetDetent = .height(300) }
+            }
+            .onChange(of: editor.selectedImageID) { _, _ in
+                if editor.selectedImageID != nil { sheetDetent = .height(300) }
+            }
+            // Sheets
+            .sheet(isPresented: $editor.showTemplatePicker) {
+                TemplatePickerView(editor: editor)
+                    .presentationDetents([.large])
+                    .presentationContentInteraction(.scrolls)
+            }
+            .sheet(isPresented: $editor.showProjectSettings) {
+                ProjectSettingsView(editor: editor)
+                    .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                    .presentationBackgroundInteraction(.enabled)
+                    .presentationContentInteraction(.scrolls)
+            }
+            .sheet(isPresented: $editor.showExportSheet) {
+                ExportSheetView(editor: editor)
+                    .presentationDetents([.medium, .large], selection: $exportSheetDetent)
+                    .presentationContentInteraction(.scrolls)
+            }
+            .sheet(isPresented: $editor.showLayerManager) {
+                LayerManagerView(editor: editor)
+                    .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                    .presentationBackgroundInteraction(.enabled)
+                    .presentationContentInteraction(.scrolls)
+            }
+            .sheet(isPresented: $editor.showBackgroundSettings) {
+                BackgroundSettingsView(editor: editor)
+                    .presentationDetents([.height(300), .large], selection: $sheetDetent)
+                    .presentationBackgroundInteraction(.enabled)
+                    .presentationContentInteraction(.scrolls)
+            }
+            .sheet(isPresented: Binding(
+                get: { editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil },
+                set: { if !$0 { editor.selectedTextID = nil; editor.selectedShapeID = nil; editor.selectedImageID = nil } }
+            )) {
+                SelectedElementInspectorView(editor: editor)
+                    .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)
+                    .presentationBackgroundInteraction(.enabled)
+                    .presentationContentInteraction(.scrolls)
+            }
+            .sheet(isPresented: $editor.showMoreView) {
+                MoreView()
+                    .presentationDetents([.medium, .large])
+            }
+            .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
+                SquiggleEditorView(editor: editor)
+            }
     }
 
     // MARK: - Canvas Preview
