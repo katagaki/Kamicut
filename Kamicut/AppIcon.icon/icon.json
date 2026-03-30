@@ -48,13 +48,13 @@
       }
     },
     {
-      "blur-material" : 0.5,
+      "blur-material" : 0.25,
       "layers" : [
         {
           "fill-specializations" : [
             {
               "value" : {
-                "automatic-gradient" : "srgb:0.86917,0.97773,0.99976,1.00000"
+                "automatic-gradient" : "srgb:0.80658,0.84495,0.99976,1.00000"
               }
             },
             {
@@ -71,7 +71,7 @@
           "fill-specializations" : [
             {
               "value" : {
-                "automatic-gradient" : "srgb:0.67961,0.91693,1.00000,1.00000"
+                "automatic-gradient" : "srgb:0.67961,0.73003,1.00000,1.00000"
               }
             },
             {
@@ -89,17 +89,17 @@
             {
               "value" : {
                 "linear-gradient" : [
-                  "display-p3:0.66467,0.70972,0.88680,1.00000",
-                  "srgb:0.44554,0.75669,0.82548,1.00000"
+                  "display-p3:0.66467,0.80178,0.88680,1.00000",
+                  "srgb:0.53973,0.62061,1.00000,1.00000"
                 ],
                 "orientation" : {
                   "start" : {
-                    "x" : 0.5,
-                    "y" : 0.10848433024234488
+                    "x" : 0.42319490557836925,
+                    "y" : 0.1802096153175136
                   },
                   "stop" : {
-                    "x" : 0.5866375244168335,
-                    "y" : 0.7121519750926627
+                    "x" : 0.6590099589149162,
+                    "y" : 0.8244230902590122
                   }
                 }
               }
@@ -140,9 +140,10 @@
         "kind" : "layer-color",
         "opacity" : 1
       },
+      "specular" : true,
       "translucency" : {
         "enabled" : true,
-        "value" : 0.5
+        "value" : 1
       }
     },
     {
