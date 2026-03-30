@@ -17,9 +17,15 @@ struct EditorView: View {
     }
 
     var body: some View {
-        canvasPreview
-            .ignoresSafeArea()
-        .ignoresSafeArea(.keyboard)
+        NavigationStack {
+            canvasPreview
+                .ignoresSafeArea()
+                .ignoresSafeArea(.keyboard)
+                .toolbar {
+                    ToolbarPanelView(editor: editor)
+                }
+                .toolbar(.hidden, for: .navigationBar)
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -41,7 +47,6 @@ struct EditorView: View {
                     Image(systemName: "ellipsis")
                 }
             }
-            ToolbarPanelView(editor: editor)
         }
         .onChange(of: sheetDetent) { _, newDetent in
             withAnimation(.spring(duration: 0.3)) {
