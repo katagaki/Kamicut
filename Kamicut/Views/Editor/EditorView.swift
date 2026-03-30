@@ -41,6 +41,8 @@ struct EditorView: View {
                         Image(systemName: "ellipsis")
                     }
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
                 ToolbarPanelView(editor: editor)
             }
             .onChange(of: sheetDetent) { _, newDetent in
