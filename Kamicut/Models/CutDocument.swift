@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import UniformTypeIdentifiers
 
 // MARK: - UTType for .cut
@@ -11,7 +12,7 @@ extension UTType {
 
 /// File document that reads/writes .cut package directories.
 /// Used with DocumentGroup to provide the system document browser.
-final class CutDocument: ReferenceFileDocument, @unchecked Sendable {
+final class CutDocument: ReferenceFileDocument, ObservableObject, @unchecked Sendable {
 
     /// The parsed document, stored nonisolated for init, then consumed by editorState.
     private var _initialDocument: EditorDocument?
@@ -37,8 +38,8 @@ final class CutDocument: ReferenceFileDocument, @unchecked Sendable {
 
     /// Read an existing .cut package from disk.
     nonisolated init(configuration: ReadConfiguration) throws {
-        guard let fileWrapper = configuration.file,
-              fileWrapper.isDirectory else {
+        let fileWrapper = configuration.file
+        guard fileWrapper.isDirectory else {
             throw CocoaError(.fileReadCorruptFile)
         }
 
