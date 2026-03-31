@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E42E4BAD2F7C7C5E0084E87F /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E42E4BAC2F7C7C5E0084E87F /* QuickLook.framework */; };
 		E4CC000D2F80000D002D2CB0 /* KamicutThumbnail.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4CC00012F800001002D2CB0 /* KamicutThumbnail.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E4DD00012F80001A002D2CB0 /* KamicutQuickLook.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4DD00032F80001A002D2CB0 /* KamicutQuickLook.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -44,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E42E4BAC2F7C7C5E0084E87F /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk/System/Library/Frameworks/QuickLook.framework; sourceTree = DEVELOPER_DIR; };
 		E447283B2F716E8C002D2CB0 /* Kamicut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kamicut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4CC00012F800001002D2CB0 /* KamicutThumbnail.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KamicutThumbnail.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4DD00032F80001A002D2CB0 /* KamicutQuickLook.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KamicutQuickLook.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,18 +121,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E42E4BAD2F7C7C5E0084E87F /* QuickLook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E42E4BAB2F7C7C5E0084E87F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E42E4BAC2F7C7C5E0084E87F /* QuickLook.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E44728322F716E8C002D2CB0 = {
 			isa = PBXGroup;
 			children = (
 				E447283D2F716E8C002D2CB0 /* Kamicut */,
 				E4CC00022F800002002D2CB0 /* KamicutThumbnail */,
 				E4DD00052F80001A002D2CB0 /* KamicutQuickLook */,
+				E42E4BAB2F7C7C5E0084E87F /* Frameworks */,
 				E447283C2F716E8C002D2CB0 /* Products */,
 			);
 			sourceTree = "<group>";
