@@ -17,15 +17,6 @@ struct ToolbarPanelView: View {
     var body: some View {
         HStack(spacing: 16) {
             Button {
-                editor.showProjectSettings = true
-            } label: {
-                Image(systemName: "doc.text")
-
-                    .frame(width: buttonSize, height: buttonSize)
-            }
-            .glassEffect(.regular.interactive(), in: .circle)
-
-            Button {
                 editor.showLayerManager = true
             } label: {
                 Image(systemName: "square.3.layers.3d")

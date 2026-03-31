@@ -26,8 +26,7 @@ final class EditorState {
     var showExportSheet: Bool = false
     var showSpaceNumberEditor: Bool = false
     var showLayerManager: Bool = false
-    var showMoreView: Bool = false
-    var showBackgroundSettings: Bool = false
+var showBackgroundSettings: Bool = false
     var showSquiggleEditor: Bool = false
 
     // MARK: Auto-Save Tracking

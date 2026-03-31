@@ -18,22 +18,29 @@ struct EditorView: View {
             .ignoresSafeArea()
             .ignoresSafeArea(.keyboard)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.editor)
             .toolbar {
-                ToolbarItemGroup(placement: .topBarLeading) {
-                    Button {
-                        editor.showTemplatePicker = true
-                    } label: {
-                        Image(systemName: "rectangle.on.rectangle")
-                    }
-                }
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
                         editor.showExportSheet = true
                     } label: {
                         Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
                     }
-                    Button {
-                        editor.showMoreView = true
+                    Menu {
+                        Button {
+                            editor.showTemplatePicker = true
+                        } label: {
+                            Label(String(localized: "More.Template"), systemImage: "rectangle.on.rectangle")
+                        }
+                        Button {
+                            editor.showProjectSettings = true
+                        } label: {
+                            Label(String(localized: "More.DocumentSettings"), systemImage: "doc.badge.gearshape")
+                        }
+                        Divider()
+                        Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
+                            Label(String(localized: "More.SourceCode"), systemImage: "curlybraces")
+                        }
                     } label: {
                         Image(systemName: "ellipsis")
                     }
@@ -93,10 +100,6 @@ struct EditorView: View {
                     .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .presentationContentInteraction(.scrolls)
-            }
-            .sheet(isPresented: $editor.showMoreView) {
-                MoreView()
-                    .presentationDetents([.medium, .large])
             }
             .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
                 SquiggleEditorView(editor: editor)
