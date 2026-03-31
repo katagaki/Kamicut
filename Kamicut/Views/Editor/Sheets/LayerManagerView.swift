@@ -17,21 +17,28 @@ struct LayerManagerView: View {
             List {
                 // User layers (reorderable)
                 Section {
-                    ForEach(Array(editor.document.layers.enumerated().reversed()), id: \.element.id) { index, layer in
-                        elementRow(layer: layer, index: index)
-                    }
-                    .onMove { source, destination in
-                        let count = editor.document.layers.count
-                        let actualSource = IndexSet(source.map { count - 1 - $0 })
-                        let actualDestination = count - destination
-                        editor.moveLayers(from: actualSource, to: actualDestination)
+                    if editor.document.layers.isEmpty {
+                        Text(String(localized: "Layers.Empty.Description"))
+                            .foregroundStyle(.tertiary)
+                    } else {
+                        ForEach(Array(editor.document.layers.enumerated().reversed()), id: \.element.id) { index, layer in
+                            elementRow(layer: layer, index: index)
+                        }
+                        .onMove { source, destination in
+                            let count = editor.document.layers.count
+                            let actualSource = IndexSet(source.map { count - 1 - $0 })
+                            let actualDestination = count - destination
+                            editor.moveLayers(from: actualSource, to: actualDestination)
+                        }
                     }
                 } header: {
                     HStack {
                         Text(String(localized: "Layers.Elements"))
                         Spacer()
-                        EditButton()
-                            .textCase(nil)
+                        if !editor.document.layers.isEmpty {
+                            EditButton()
+                                .textCase(nil)
+                        }
                     }
                 }
 

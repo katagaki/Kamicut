@@ -841,13 +841,46 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elements"
+            "value" : "Layers"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エレメント"
+            "value" : "レイヤー"
+          }
+        }
+      }
+    },
+    "Layers.Empty.Description" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add images, text, or shapes to get started."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像、テキスト、図形を追加できます。"
+          }
+        }
+      }
+    },
+    "Layers.Empty.Title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Layers"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レイヤーなし"
           }
         }
       }
@@ -1022,6 +1055,22 @@
         }
       }
     },
+    "More.DocumentSettings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Document Settings"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書類設定"
+          }
+        }
+      }
+    },
     "More.SourceCode" : {
       "localizations" : {
         "en" : {
@@ -1050,22 +1099,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "テンプレート…"
-          }
-        }
-      }
-    },
-    "More.DocumentSettings" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Document Settings"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "書類設定"
           }
         }
       }

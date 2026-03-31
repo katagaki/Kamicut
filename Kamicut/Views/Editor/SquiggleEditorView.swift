@@ -49,6 +49,7 @@ struct SquiggleEditorView: View {
             }
             .navigationTitle(String(localized: "Squiggle.Title"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarRole(.navigationStack)
             .toolbar {
                 ToolbarItemGroup(placement: .topBarLeading) {
                     if #available(iOS 26, *) {
