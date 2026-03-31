@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E4CC000D2F80000D002D2CB0 /* KamicutThumbnail.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4CC00012F800001002D2CB0 /* KamicutThumbnail.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E4DD00012F80001A002D2CB0 /* KamicutQuickLook.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E4DD00032F80001A002D2CB0 /* KamicutQuickLook.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -17,6 +18,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = E4CC00062F800006002D2CB0;
 			remoteInfo = KamicutThumbnail;
+		};
+		E4DD00022F80001A002D2CB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E44728332F716E8C002D2CB0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E4DD00072F80001A002D2CB0;
+			remoteInfo = KamicutQuickLook;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -28,6 +36,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				E4CC000D2F80000D002D2CB0 /* KamicutThumbnail.appex in Embed Foundation Extensions */,
+				E4DD00012F80001A002D2CB0 /* KamicutQuickLook.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,6 +46,7 @@
 /* Begin PBXFileReference section */
 		E447283B2F716E8C002D2CB0 /* Kamicut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kamicut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4CC00012F800001002D2CB0 /* KamicutThumbnail.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KamicutThumbnail.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4DD00032F80001A002D2CB0 /* KamicutQuickLook.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KamicutQuickLook.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -53,6 +63,13 @@
 				Info.plist,
 			);
 			target = E4CC00062F800006002D2CB0 /* KamicutThumbnail */;
+		};
+		E4DD00042F80001A002D2CB0 /* Exceptions for "KamicutQuickLook" folder in "KamicutQuickLook" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E4DD00072F80001A002D2CB0 /* KamicutQuickLook */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -73,6 +90,14 @@
 			path = KamicutThumbnail;
 			sourceTree = "<group>";
 		};
+		E4DD00052F80001A002D2CB0 /* KamicutQuickLook */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E4DD00042F80001A002D2CB0 /* Exceptions for "KamicutQuickLook" folder in "KamicutQuickLook" target */,
+			);
+			path = KamicutQuickLook;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +115,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E4DD00062F80001A002D2CB0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -98,6 +130,7 @@
 			children = (
 				E447283D2F716E8C002D2CB0 /* Kamicut */,
 				E4CC00022F800002002D2CB0 /* KamicutThumbnail */,
+				E4DD00052F80001A002D2CB0 /* KamicutQuickLook */,
 				E447283C2F716E8C002D2CB0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -107,6 +140,7 @@
 			children = (
 				E447283B2F716E8C002D2CB0 /* Kamicut.app */,
 				E4CC00012F800001002D2CB0 /* KamicutThumbnail.appex */,
+				E4DD00032F80001A002D2CB0 /* KamicutQuickLook.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,6 +162,7 @@
 			);
 			dependencies = (
 				E4CC000B2F80000B002D2CB0 /* PBXTargetDependency */,
+				E4DD000A2F80001A002D2CB0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E447283D2F716E8C002D2CB0 /* Kamicut */,
@@ -161,6 +196,28 @@
 			productReference = E4CC00012F800001002D2CB0 /* KamicutThumbnail.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		E4DD00072F80001A002D2CB0 /* KamicutQuickLook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E4DD000D2F80001A002D2CB0 /* Build configuration list for PBXNativeTarget "KamicutQuickLook" */;
+			buildPhases = (
+				E4DD00092F80001A002D2CB0 /* Sources */,
+				E4DD00062F80001A002D2CB0 /* Frameworks */,
+				E4DD00082F80001A002D2CB0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E4DD00052F80001A002D2CB0 /* KamicutQuickLook */,
+			);
+			name = KamicutQuickLook;
+			packageProductDependencies = (
+			);
+			productName = KamicutQuickLook;
+			productReference = E4DD00032F80001A002D2CB0 /* KamicutQuickLook.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -175,6 +232,9 @@
 						CreatedOnToolsVersion = 26.3;
 					};
 					E4CC00062F800006002D2CB0 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					E4DD00072F80001A002D2CB0 = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
@@ -196,6 +256,7 @@
 			targets = (
 				E447283A2F716E8C002D2CB0 /* Kamicut */,
 				E4CC00062F800006002D2CB0 /* KamicutThumbnail */,
+				E4DD00072F80001A002D2CB0 /* KamicutQuickLook */,
 			);
 		};
 /* End PBXProject section */
@@ -209,6 +270,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E4CC00052F800005002D2CB0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4DD00082F80001A002D2CB0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +321,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E4DD00092F80001A002D2CB0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -260,6 +335,11 @@
 			isa = PBXTargetDependency;
 			target = E4CC00062F800006002D2CB0 /* KamicutThumbnail */;
 			targetProxy = E4CC000A2F80000A002D2CB0 /* PBXContainerItemProxy */;
+		};
+		E4DD000A2F80001A002D2CB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E4DD00072F80001A002D2CB0 /* KamicutQuickLook */;
+			targetProxy = E4DD00022F80001A002D2CB0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -417,8 +497,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Kamicut/Info.plist;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = NO;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = NO;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
@@ -475,8 +555,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Kamicut/Info.plist;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = NO;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = NO;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
@@ -582,6 +662,82 @@
 			};
 			name = Release;
 		};
+		E4DD000B2F80001A002D2CB0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = YYM4Z6MU8F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KamicutQuickLook/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KamicutQuickLook;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tsubuzaki.Kamicut.QuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		E4DD000C2F80001A002D2CB0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = YYM4Z6MU8F;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KamicutQuickLook/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KamicutQuickLook;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tsubuzaki.Kamicut.QuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -608,6 +764,15 @@
 			buildConfigurations = (
 				E4CC00072F800007002D2CB0 /* Debug */,
 				E4CC00082F800008002D2CB0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E4DD000D2F80001A002D2CB0 /* Build configuration list for PBXNativeTarget "KamicutQuickLook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4DD000B2F80001A002D2CB0 /* Debug */,
+				E4DD000C2F80001A002D2CB0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
