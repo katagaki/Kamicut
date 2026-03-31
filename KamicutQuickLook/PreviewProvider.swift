@@ -22,29 +22,17 @@ class PreviewViewController: UIViewController, QLPreviewingController {
         at url: URL,
         completionHandler handler: @escaping (Error?) -> Void
     ) {
-        let coordinator = NSFileCoordinator(filePresenter: nil)
-        var coordinatorError: NSError?
+        let isAccessing = url.startAccessingSecurityScopedResource()
+        defer { if isAccessing { url.stopAccessingSecurityScopedResource() } }
 
-        coordinator.coordinate(
-            readingItemAt: url,
-            options: .withoutChanges,
-            error: &coordinatorError
-        ) { accessedURL in
-            let thumbnailURL = accessedURL.appendingPathComponent("Thumbnail.jpg")
-            guard let data = try? Data(contentsOf: thumbnailURL),
-                  let image = UIImage(data: data) else {
-                handler(CocoaError(.fileReadCorruptFile))
-                return
-            }
-            DispatchQueue.main.async {
-                self.imageView.image = image
-                self.preferredContentSize = image.size
-                handler(nil)
-            }
+        let thumbnailURL = url.appendingPathComponent("Thumbnail.jpg")
+        guard let data = try? Data(contentsOf: thumbnailURL),
+              let image = UIImage(data: data) else {
+            handler(CocoaError(.fileReadCorruptFile))
+            return
         }
-
-        if let error = coordinatorError {
-            handler(error)
-        }
+        imageView.image = image
+        preferredContentSize = image.size
+        handler(nil)
     }
 }
