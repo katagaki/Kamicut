@@ -8,6 +8,7 @@ import PhotosUI
 /// support .bottomBar toolbar placement.
 struct ToolbarPanelView: View {
     var editor: EditorState
+    var transitionNamespace: Namespace.ID
 
     @State private var overlayPickerItem: PhotosPickerItem?
     @State private var showPhotoPicker: Bool = false
@@ -24,6 +25,7 @@ struct ToolbarPanelView: View {
                     .frame(width: buttonSize, height: buttonSize)
             }
             .glassEffect(.regular.interactive(), in: .circle)
+            .matchedTransitionSource(id: "layerManager", in: transitionNamespace)
 
             Spacer()
 

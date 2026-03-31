@@ -6,6 +6,7 @@ struct EditorView: View {
     @Bindable var editor: EditorState
     @State private var sheetDetent: PresentationDetent = .height(300)
     @State private var exportSheetDetent: PresentationDetent = .large
+    @Namespace private var transitionNamespace
 
     private var isAnySheetActive: Bool {
         editor.showTemplatePicker || editor.showProjectSettings || editor.showExportSheet ||
@@ -47,7 +48,7 @@ struct EditorView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                ToolbarPanelView(editor: editor)
+                ToolbarPanelView(editor: editor, transitionNamespace: transitionNamespace)
             }
             .onChange(of: isAnySheetActive) { _, isActive in
                 if isActive {
@@ -85,6 +86,7 @@ struct EditorView: View {
                     .presentationDetents([.height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .presentationContentInteraction(.scrolls)
+                    .navigationTransition(.zoom(sourceID: "layerManager", in: transitionNamespace))
             }
             .sheet(isPresented: $editor.showBackgroundSettings) {
                 BackgroundSettingsView(editor: editor)
