@@ -1,41 +1,50 @@
 import QuickLook
 import UIKit
-import UniformTypeIdentifiers
 
-@preconcurrency
-class PreviewProvider: QLPreviewProvider {
+class PreviewViewController: UIViewController, QLPreviewingController {
 
-    override func providePreview(
-        for request: QLFilePreviewRequest
-    ) async throws -> QLPreviewReply {
+    private let imageView = UIImageView()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(imageView)
+        NSLayoutConstraint.activate([
+            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: view.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+    }
+
+    func preparePreviewOfFile(
+        at url: URL,
+        completionHandler handler: @escaping (Error?) -> Void
+    ) {
         let coordinator = NSFileCoordinator(filePresenter: nil)
-        let imageData: Data = try await withCheckedThrowingContinuation { continuation in
-            var coordinatorError: NSError?
-            coordinator.coordinate(
-                readingItemAt: request.fileURL,
-                options: .withoutChanges,
-                error: &coordinatorError
-            ) { accessedURL in
-                let accessedThumbnailURL = accessedURL.appendingPathComponent("Thumbnail.jpg")
-                do {
-                    let data = try Data(contentsOf: accessedThumbnailURL)
-                    continuation.resume(returning: data)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
+        var coordinatorError: NSError?
+
+        coordinator.coordinate(
+            readingItemAt: url,
+            options: .withoutChanges,
+            error: &coordinatorError
+        ) { accessedURL in
+            let thumbnailURL = accessedURL.appendingPathComponent("Thumbnail.jpg")
+            guard let data = try? Data(contentsOf: thumbnailURL),
+                  let image = UIImage(data: data) else {
+                handler(CocoaError(.fileReadCorruptFile))
+                return
             }
-            if let error = coordinatorError {
-                continuation.resume(throwing: error)
+            DispatchQueue.main.async {
+                self.imageView.image = image
+                self.preferredContentSize = image.size
+                handler(nil)
             }
         }
 
-        guard let image = UIImage(data: imageData) else {
-            throw CocoaError(.fileReadCorruptFile)
-        }
-
-        let imageSize = image.size
-        return QLPreviewReply(dataOfContentType: .jpeg, contentSize: imageSize) { _ in
-            return imageData
+        if let error = coordinatorError {
+            handler(error)
         }
     }
 }
