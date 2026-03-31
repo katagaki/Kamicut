@@ -2,9 +2,10 @@ import QuickLook
 import UIKit
 import UniformTypeIdentifiers
 
+@preconcurrency
 class PreviewProvider: QLPreviewProvider {
 
-    nonisolated override func providePreview(
+    override func providePreview(
         for request: QLFilePreviewRequest
     ) async throws -> QLPreviewReply {
         let coordinator = NSFileCoordinator(filePresenter: nil)
