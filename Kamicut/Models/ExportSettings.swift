@@ -3,8 +3,8 @@ import Foundation
 // MARK: - Export Format
 
 enum ExportFormat: String, Codable, CaseIterable, Identifiable {
-    case png = "PNG"
-    case jpg = "JPEG"
+    case png
+    case jpg
 
     var id: String { rawValue }
     var fileExtension: String {
@@ -24,8 +24,8 @@ enum ExportFormat: String, Codable, CaseIterable, Identifiable {
 // MARK: - Export Color Mode
 
 enum ExportColorMode: String, Codable, CaseIterable, Identifiable {
-    case color = "Color"
-    case blackAndWhite = "Black & White"
+    case color
+    case blackAndWhite
 
     var id: String { rawValue }
     var localizedName: String {

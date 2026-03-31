@@ -3,8 +3,8 @@ import SwiftUI
 // MARK: - Text Area Position
 
 enum TextAreaPosition: String, Codable, CaseIterable {
-    case top = "Top"
-    case bottom = "Bottom"
+    case top
+    case bottom
 
     var localizedName: String {
         switch self {
