@@ -171,13 +171,13 @@ enum CanvasLayer: Identifiable, Codable {
 // MARK: - Space Number
 
 enum SpaceNumberPosition: String, Codable, CaseIterable {
-    case textArea = "Text area"
-    case textAreaLeading = "Text area (leading)"
-    case textAreaTrailing = "Text area (trailing)"
-    case imageTopLeft = "Image (top-left)"
-    case imageTopRight = "Image (top-right)"
-    case imageBottomLeft = "Image (bottom-left)"
-    case imageBottomRight = "Image (bottom-right)"
+    case textArea
+    case textAreaLeading
+    case textAreaTrailing
+    case imageTopLeft
+    case imageTopRight
+    case imageBottomLeft
+    case imageBottomRight
 
     var localizedName: String {
         switch self {
@@ -203,8 +203,8 @@ struct SpaceNumberInfo: Codable {
 // MARK: - Bleed Option
 
 enum BleedOption: String, Codable, CaseIterable {
-    case none = "No Bleed"
-    case full = "Full Bleed"
+    case none
+    case full
 
     var localizedName: String {
         switch self {
