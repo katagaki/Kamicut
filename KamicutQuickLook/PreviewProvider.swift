@@ -1,13 +1,12 @@
 import QuickLook
 import UIKit
+import UniformTypeIdentifiers
 
 class PreviewProvider: QLPreviewProvider {
 
-    override func providePreview(
+    nonisolated override func providePreview(
         for request: QLFilePreviewRequest
     ) async throws -> QLPreviewReply {
-        let thumbnailURL = request.fileURL.appendingPathComponent("Thumbnail.jpg")
-
         let coordinator = NSFileCoordinator(filePresenter: nil)
         let imageData: Data = try await withCheckedThrowingContinuation { continuation in
             var coordinatorError: NSError?
@@ -34,7 +33,7 @@ class PreviewProvider: QLPreviewProvider {
         }
 
         let imageSize = image.size
-        return QLPreviewReply(dataOfContentType: .jpeg, contentSize: imageSize) { replyToUpdate in
+        return QLPreviewReply(dataOfContentType: .jpeg, contentSize: imageSize) { _ in
             return imageData
         }
     }
