@@ -119,17 +119,33 @@ struct ExportSheetView: View {
     private func doExport() async {
         guard let image = await editor.exportImage(renderer: renderer) else { return }
         let settings = editor.exportSettings
-        let activityItems: [Any]
+
+        let tempDir = FileManager.default.temporaryDirectory
+        let fileName: String
+        let fileData: Data
+
         if settings.format == .jpg {
-            let data = image.jpegData(compressionQuality: settings.jpegQuality) ?? Data()
-            activityItems = [data]
+            fileName = "Kamicut Export.jpg"
+            fileData = image.jpegData(compressionQuality: settings.jpegQuality) ?? Data()
         } else {
-            activityItems = [image]
+            fileName = "Kamicut Export.png"
+            fileData = image.pngData() ?? Data()
         }
+
+        let fileURL = tempDir.appendingPathComponent(fileName)
+        do {
+            try fileData.write(to: fileURL, options: .atomic)
+        } catch {
+            return
+        }
+
         await MainActor.run {
             let activityController = UIActivityViewController(
-                activityItems: activityItems, applicationActivities: nil
+                activityItems: [fileURL], applicationActivities: nil
             )
+            activityController.completionWithItemsHandler = { _, _, _, _ in
+                try? FileManager.default.removeItem(at: fileURL)
+            }
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let root = windowScene.windows.first?.rootViewController {
                 var presenter = root
