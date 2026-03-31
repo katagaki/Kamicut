@@ -4,6 +4,11 @@
 <dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+	</dict>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIImageName</key>

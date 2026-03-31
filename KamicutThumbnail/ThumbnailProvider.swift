@@ -65,8 +65,12 @@ class ThumbnailProvider: QLThumbnailProvider {
             }
 
             let reply = QLThumbnailReply(contextSize: drawSize) { () -> Bool in
-                let context = UIGraphicsGetCurrentContext()
-                context?.draw(cgImage, in: CGRect(origin: .zero, size: drawSize))
+                guard let context = UIGraphicsGetCurrentContext() else { return false }
+                // Flip the coordinate system so the image draws right-side up.
+                // CGContext origin is bottom-left; QLThumbnailReply expects top-left.
+                context.translateBy(x: 0, y: drawSize.height)
+                context.scaleBy(x: 1, y: -1)
+                context.draw(cgImage, in: CGRect(origin: .zero, size: drawSize))
                 return true
             }
 
