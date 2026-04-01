@@ -156,7 +156,7 @@ final class CircleCutRenderer {
         UIColor.white.setFill()
         context.fill(boxRect)
 
-        UIColor.black.setFill()
+        template.innerBorderColor.uiColor.setFill()
         context.fill(CGRect(x: border + boxW - innerBorder, y: border,
                             width: innerBorder, height: boxH))
         context.fill(CGRect(x: border, y: border + boxH - innerBorder,
@@ -176,7 +176,7 @@ final class CircleCutRenderer {
             outerBorderH = canvasSize.height
         }
 
-        UIColor.black.setStroke()
+        template.outerBorderColor.uiColor.setStroke()
         context.setLineWidth(border)
         context.stroke(CGRect(x: 0, y: 0, width: canvasSize.width, height: outerBorderH)
             .insetBy(dx: halfBorder, dy: halfBorder))
@@ -186,14 +186,14 @@ final class CircleCutRenderer {
             let dividerY = layout.textAreaAtTop
                 ? border + layout.textAreaH - innerBorder
                 : canvasSize.height - border - layout.textAreaH
-            UIColor.black.setFill()
-            context.fill(CGRect(x: 0, y: dividerY, width: canvasSize.width, height: innerBorder))
+            template.innerBorderColor.uiColor.setFill()
+            context.fill(CGRect(x: border, y: dividerY, width: canvasSize.width - border * 2, height: innerBorder))
         }
 
         if template.textAreaEnabled && !template.textAreaHasTopBorder {
             let halfTA = template.textAreaBorderThickness / 2
             context.setLineWidth(template.textAreaBorderThickness)
-            UIColor.black.setStroke()
+            template.innerBorderColor.uiColor.setStroke()
             context.stroke(layout.textAreaRect.insetBy(dx: halfTA, dy: halfTA))
         }
     }

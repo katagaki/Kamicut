@@ -9,16 +9,20 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     var additionalBottomInset: CGFloat
     /// The size to fit into view on initial zoom (e.g. the actual canvas, not the full scrollable content).
     var focalSize: CGSize?
+    /// Changing this value triggers a re-zoom to fit the focal size.
+    var zoomResetToken: Int
     @ViewBuilder var content: () -> Content
 
     init(minZoom: CGFloat = 0.1, maxZoom: CGFloat = 10.0,
          additionalBottomInset: CGFloat = 0,
          focalSize: CGSize? = nil,
+         zoomResetToken: Int = 0,
          @ViewBuilder content: @escaping () -> Content) {
         self.minZoom = minZoom
         self.maxZoom = maxZoom
         self.additionalBottomInset = additionalBottomInset
         self.focalSize = focalSize
+        self.zoomResetToken = zoomResetToken
         self.content = content
     }
 
@@ -65,6 +69,10 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 
         coordinator.additionalBottomInset = additionalBottomInset
         coordinator.focalSize = focalSize
+        if coordinator.lastZoomResetToken != zoomResetToken {
+            coordinator.lastZoomResetToken = zoomResetToken
+            coordinator.resetZoom()
+        }
     }
 
     /// UIScrollView subclass that triggers initial zoom after layout is complete,
@@ -82,6 +90,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         let hostingController = UIHostingController<Content?>(rootView: nil)
         weak var scrollView: UIScrollView?
         var hasAppliedInitialZoom = false
+        var lastZoomResetToken: Int = 0
         var additionalBottomInset: CGFloat = 0
         var focalSize: CGSize?
 
@@ -134,6 +143,12 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
                 x: max(offsetX, -inset.left),
                 y: max(offsetY, -inset.top)
             )
+        }
+
+        func resetZoom() {
+            hasAppliedInitialZoom = false
+            guard let scrollView else { return }
+            scrollView.setNeedsLayout()
         }
     }
 }

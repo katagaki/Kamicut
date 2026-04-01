@@ -11,7 +11,7 @@
       "shouldTranslate" : false
     },
     "%.1f×" : {
-
+      "shouldTranslate" : false
     },
     "%lld pt" : {
       "shouldTranslate" : false
@@ -782,7 +782,7 @@
       }
     },
     "katagaki/Kamicut" : {
-
+      "shouldTranslate" : false
     },
     "Layers.Background" : {
       "extractionState" : "manual",
@@ -864,23 +864,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "画像、テキスト、図形を追加できます。"
-          }
-        }
-      }
-    },
-    "Layers.Empty.Title" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No Layers"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "レイヤーなし"
           }
         }
       }
@@ -1066,7 +1049,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書類設定"
+            "value" : "ドキュメント設定"
           }
         }
       }

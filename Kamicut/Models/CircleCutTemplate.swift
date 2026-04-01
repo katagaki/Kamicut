@@ -26,7 +26,9 @@ struct CircleCutTemplate: Identifiable, Hashable, Codable {
 
     // Borders
     var outerBorderThickness: CGFloat
+    var outerBorderColor: CodableColor
     var innerBorderThickness: CGFloat
+    var innerBorderColor: CodableColor
 
     // Checkbox area (space number area)
     var checkboxAreaEnabled: Bool
@@ -43,6 +45,44 @@ struct CircleCutTemplate: Identifiable, Hashable, Codable {
     // Header font name
     var headerFontName: String
 
+    init(
+        id: UUID = UUID(),
+        name: String,
+        displayName: String,
+        canvasSize: CGSize,
+        outerBorderThickness: CGFloat,
+        outerBorderColor: CodableColor = CodableColor(color: UIColor.black),
+        innerBorderThickness: CGFloat,
+        innerBorderColor: CodableColor = CodableColor(color: UIColor.black),
+        checkboxAreaEnabled: Bool,
+        checkboxAreaSize: CGSize,
+        textAreaEnabled: Bool,
+        textAreaHeight: CGFloat,
+        textAreaPosition: TextAreaPosition,
+        textAreaTransparent: Bool,
+        textAreaBorderThickness: CGFloat,
+        textAreaHasTopBorder: Bool,
+        headerFontName: String
+    ) {
+        self.id = id
+        self.name = name
+        self.displayName = displayName
+        self.canvasSize = canvasSize
+        self.outerBorderThickness = outerBorderThickness
+        self.outerBorderColor = outerBorderColor
+        self.innerBorderThickness = innerBorderThickness
+        self.innerBorderColor = innerBorderColor
+        self.checkboxAreaEnabled = checkboxAreaEnabled
+        self.checkboxAreaSize = checkboxAreaSize
+        self.textAreaEnabled = textAreaEnabled
+        self.textAreaHeight = textAreaHeight
+        self.textAreaPosition = textAreaPosition
+        self.textAreaTransparent = textAreaTransparent
+        self.textAreaBorderThickness = textAreaBorderThickness
+        self.textAreaHasTopBorder = textAreaHasTopBorder
+        self.headerFontName = headerFontName
+    }
+
     var localizedDisplayName: String {
         switch name {
         case "templateA": return String(localized: "Template.ComiketA")
@@ -52,6 +92,29 @@ struct CircleCutTemplate: Identifiable, Hashable, Codable {
         case "custom": return String(localized: "Template.Custom")
         default: return displayName
         }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        displayName = try container.decode(String.self, forKey: .displayName)
+        canvasSize = try container.decode(CGSize.self, forKey: .canvasSize)
+        outerBorderThickness = try container.decode(CGFloat.self, forKey: .outerBorderThickness)
+        outerBorderColor = try container.decodeIfPresent(CodableColor.self, forKey: .outerBorderColor)
+            ?? CodableColor(color: UIColor.black)
+        innerBorderThickness = try container.decode(CGFloat.self, forKey: .innerBorderThickness)
+        innerBorderColor = try container.decodeIfPresent(CodableColor.self, forKey: .innerBorderColor)
+            ?? CodableColor(color: UIColor.black)
+        checkboxAreaEnabled = try container.decode(Bool.self, forKey: .checkboxAreaEnabled)
+        checkboxAreaSize = try container.decode(CGSize.self, forKey: .checkboxAreaSize)
+        textAreaEnabled = try container.decode(Bool.self, forKey: .textAreaEnabled)
+        textAreaHeight = try container.decode(CGFloat.self, forKey: .textAreaHeight)
+        textAreaPosition = try container.decode(TextAreaPosition.self, forKey: .textAreaPosition)
+        textAreaTransparent = try container.decode(Bool.self, forKey: .textAreaTransparent)
+        textAreaBorderThickness = try container.decode(CGFloat.self, forKey: .textAreaBorderThickness)
+        textAreaHasTopBorder = try container.decode(Bool.self, forKey: .textAreaHasTopBorder)
+        headerFontName = try container.decode(String.self, forKey: .headerFontName)
     }
 
     static func == (lhs: CircleCutTemplate, rhs: CircleCutTemplate) -> Bool {

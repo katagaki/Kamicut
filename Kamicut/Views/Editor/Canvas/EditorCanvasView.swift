@@ -171,7 +171,7 @@ struct EditorCanvasView: View {
                 // Text area own border (when it has its own border style)
                 if !template.textAreaHasTopBorder && template.textAreaPosition == .bottom {
                     Rectangle()
-                        .strokeBorder(Color.black, lineWidth: template.textAreaBorderThickness)
+                        .strokeBorder(template.innerBorderColor.color, lineWidth: template.textAreaBorderThickness)
                 }
             }
             .frame(width: textW, height: textH)
@@ -192,12 +192,12 @@ struct EditorCanvasView: View {
                     .fill(Color.white)
                 // Right edge border
                 Rectangle()
-                    .fill(Color.black)
+                    .fill(template.innerBorderColor.color)
                     .frame(width: innerBorder, height: boxH)
                     .offset(x: boxW - innerBorder)
                 // Bottom edge border
                 Rectangle()
-                    .fill(Color.black)
+                    .fill(template.innerBorderColor.color)
                     .frame(width: boxW, height: innerBorder)
                     .offset(y: boxH - innerBorder)
             }
@@ -302,7 +302,7 @@ extension EditorCanvasView {
         return ZStack(alignment: .topLeading) {
             // Outer border (inset so it draws entirely inside the canvas)
             Rectangle()
-                .strokeBorder(Color.black, lineWidth: border)
+                .strokeBorder(template.outerBorderColor.color, lineWidth: border)
                 .frame(width: canvasSize.width, height: outerBorderHeight)
             // Text area divider (filled rect to align with box borders)
             if template.textAreaEnabled && template.textAreaHasTopBorder {
@@ -312,9 +312,9 @@ extension EditorCanvasView {
                     ? border + textH - innerBorder
                     : canvasSize.height - border - textH
                 Rectangle()
-                    .fill(Color.black)
-                    .frame(width: canvasSize.width, height: innerBorder)
-                    .offset(y: dividerY)
+                    .fill(template.innerBorderColor.color)
+                    .frame(width: canvasSize.width - border * 2, height: innerBorder)
+                    .offset(x: border, y: dividerY)
             }
         }
         .allowsHitTesting(false)

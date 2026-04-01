@@ -6,6 +6,7 @@ struct EditorView: View {
     @Bindable var editor: EditorState
     @State private var sheetDetent: PresentationDetent = .height(300)
     @State private var exportSheetDetent: PresentationDetent = .large
+    @State private var zoomResetToken: Int = 0
     @Namespace private var transitionNamespace
 
     private var isAnySheetActive: Bool {
@@ -64,6 +65,9 @@ struct EditorView: View {
             .onChange(of: editor.selectedImageID) { _, _ in
                 if editor.selectedImageID != nil { sheetDetent = .height(300) }
             }
+            .onChange(of: editor.document.template.canvasSize) {
+                zoomResetToken += 1
+            }
             // Sheets
             .sheet(isPresented: $editor.showTemplatePicker) {
                 TemplatePickerView(editor: editor)
@@ -118,7 +122,8 @@ struct EditorView: View {
             Color(UIColor.secondarySystemBackground)
 
             ZoomableScrollView(additionalBottomInset: 60,
-                               focalSize: template.canvasSize) {
+                               focalSize: template.canvasSize,
+                               zoomResetToken: zoomResetToken) {
                 Color.clear
                     .frame(width: template.canvasSize.width * 3,
                            height: template.canvasSize.height * 3)

@@ -86,6 +86,10 @@ struct ProjectSettingsView: View {
                         .frame(width: 80)
                         Text("Common.Px")
                     }
+                    ColorPickerRow(
+                        title: String(localized: "Common.Color"),
+                        color: $editor.document.template.outerBorderColor
+                    )
                 }
 
                 // Inner Outline
@@ -103,6 +107,10 @@ struct ProjectSettingsView: View {
                         .frame(width: 80)
                         Text("Common.Px")
                     }
+                    ColorPickerRow(
+                        title: String(localized: "Common.Color"),
+                        color: $editor.document.template.innerBorderColor
+                    )
                 }
 
                 // Checkbox Area

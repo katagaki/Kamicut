@@ -69,6 +69,10 @@ struct TemplatePickerView: View {
                             .frame(width: 80)
                         Text("Common.Px")
                     }
+                    ColorPickerRow(
+                        title: String(localized: "Common.Color"),
+                        color: $editingTemplate.outerBorderColor
+                    )
                     HStack {
                         Text("Template.Inner")
                         Spacer()
@@ -82,6 +86,10 @@ struct TemplatePickerView: View {
                             .frame(width: 80)
                         Text("Common.Px")
                     }
+                    ColorPickerRow(
+                        title: String(localized: "Common.Color"),
+                        color: $editingTemplate.innerBorderColor
+                    )
                 }
 
                 // Text Area
