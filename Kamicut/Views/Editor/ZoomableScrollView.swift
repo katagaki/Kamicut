@@ -32,8 +32,8 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         scrollView.minimumZoomScale = minZoom
         scrollView.maximumZoomScale = maxZoom
         scrollView.bouncesZoom = true
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = true
+        scrollView.showsVerticalScrollIndicator = true
         scrollView.backgroundColor = .clear
         scrollView.keyboardDismissMode = .interactive
         scrollView.coordinator = context.coordinator
