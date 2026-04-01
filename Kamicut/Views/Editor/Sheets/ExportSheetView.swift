@@ -1,3 +1,4 @@
+import Photos
 import SwiftUI
 
 // MARK: - Export Sheet View
@@ -5,6 +6,10 @@ import SwiftUI
 struct ExportSheetView: View {
     @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
+
+    @State private var isSavingToPhotos = false
+    @State private var savedToPhotos = false
+    @State private var saveToPhotosError = false
 
     private let renderer = CircleCutRenderer()
 
@@ -36,7 +41,7 @@ struct ExportSheetView: View {
                     .listRowBackground(Color.clear)
                 }
 
-                // Export button
+                // Export buttons
                 Section {
                     Button {
                         Task { await doExport() }
@@ -54,7 +59,28 @@ struct ExportSheetView: View {
                             Spacer()
                         }
                     }
-                    .disabled(editor.isExporting)
+                    .disabled(editor.isExporting || isSavingToPhotos)
+
+                    Button {
+                        Task { await saveToPhotos() }
+                    } label: {
+                        HStack {
+                            Spacer()
+                            if isSavingToPhotos {
+                                ProgressView()
+                                    .padding(.trailing, 8)
+                                Text("Export.Rendering")
+                            } else if savedToPhotos {
+                                Label("Export.SavedToPhotos", systemImage: "checkmark.circle.fill")
+                                    .fontWeight(.semibold)
+                            } else {
+                                Label("Export.SaveToPhotos", systemImage: "photo.on.rectangle.angled")
+                                    .fontWeight(.semibold)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .disabled(editor.isExporting || isSavingToPhotos || savedToPhotos)
                 }
 
                 // Format
@@ -113,6 +139,36 @@ struct ExportSheetView: View {
                     }
                 }
             }
+        }
+        .alert("Export.SaveToPhotosFailed", isPresented: $saveToPhotosError) {
+            Button("OK") { }
+        }
+    }
+
+    private func saveToPhotos() async {
+        isSavingToPhotos = true
+        defer { isSavingToPhotos = false }
+
+        guard let image = await editor.exportImage(renderer: renderer) else {
+            saveToPhotosError = true
+            return
+        }
+
+        let settings = editor.exportSettings
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                let request = PHAssetCreationRequest.forAsset()
+                if settings.format == .jpg {
+                    let data = image.jpegData(compressionQuality: settings.jpegQuality) ?? Data()
+                    request.addResource(with: .photo, data: data, options: nil)
+                } else {
+                    let data = image.pngData() ?? Data()
+                    request.addResource(with: .photo, data: data, options: nil)
+                }
+            }
+            savedToPhotos = true
+        } catch {
+            saveToPhotosError = true
         }
     }
 
