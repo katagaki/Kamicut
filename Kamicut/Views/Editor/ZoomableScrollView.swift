@@ -83,6 +83,12 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         override func layoutSubviews() {
             super.layoutSubviews()
             coordinator?.applyInitialZoomIfNeeded(scrollView: self)
+
+            // Keep scroll indicators within the safe area so they don't
+            // extend into the bottom home-indicator region.
+            let bottom = safeAreaInsets.bottom + (coordinator?.additionalBottomInset ?? 0)
+            verticalScrollIndicatorInsets.bottom = bottom
+            horizontalScrollIndicatorInsets.bottom = bottom
         }
     }
 
