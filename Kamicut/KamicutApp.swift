@@ -9,9 +9,12 @@ struct KamicutApp: App {
     }
 
     var body: some Scene {
-        DocumentGroup(newDocument: { CutDocument() }) { file in
-            DocumentEditorView(document: file.document)
-        }
+        DocumentGroup(
+            newDocument: CutDocument.init,
+            editor: { file in
+                DocumentEditorView(document: file.document)
+            }
+        )
         // Keep SwiftData container available for migration reads only
         .modelContainer(for: LegacySavedCut.self)
     }

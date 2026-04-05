@@ -6,6 +6,7 @@ struct OverlayImageView: View {
     let isSelected: Bool
     let onTap: () -> Void
 
+    @Environment(\.displayScale) private var displayScale
     @GestureState private var dragOffset: CGSize = .zero
     @GestureState private var pinchScale: CGFloat = 1.0
     @GestureState private var gestureRotation: Angle = .zero
@@ -39,7 +40,7 @@ struct OverlayImageView: View {
         let totalRotation = element.rotation + activeRotation
 
         // Downsample to committed size; during pinch SwiftUI scales the same image
-        let maxPixel = max(committedWidth, committedHeight) * UIScreen.main.scale
+        let maxPixel = max(committedWidth, committedHeight) * displayScale
         let img: UIImage? = ImageDownsampler.displayImage(for: element, maxPixelSize: maxPixel)
 
         Group {
@@ -118,7 +119,10 @@ struct OverlayImageView: View {
 
     // MARK: - Selection Overlay with Grab Handles
 
-    private func imageHandleView(for handle: ResizeHandle, width: CGFloat, height: CGFloat, aspectRatio: CGFloat) -> some View {
+    private func imageHandleView(
+        for handle: ResizeHandle, width: CGFloat,
+        height: CGFloat, aspectRatio: CGFloat
+    ) -> some View {
         let pos = handle.position(in: CGSize(width: width, height: height))
         return Circle()
             .fill(Color.white)

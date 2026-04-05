@@ -3,7 +3,7 @@ import UIKit
 
 // MARK: - Meta.json
 
-struct CutMeta: Codable {
+nonisolated struct CutMeta: Codable {
     var id: UUID
     var name: String
     var circleName: String
@@ -18,18 +18,18 @@ struct CutMeta: Codable {
 
 // MARK: - Layers.json
 
-struct LayerReference: Codable {
+nonisolated struct LayerReference: Codable {
     var elementID: UUID
     var type: CanvasElementType
 }
 
-struct LayersManifest: Codable {
+nonisolated struct LayersManifest: Codable {
     var layers: [LayerReference]
 }
 
 // MARK: - Element JSON (stored as {UUID}.json in Elements/)
 
-enum ElementPayload: Codable {
+nonisolated enum ElementPayload: Codable {
     case image(ImageElementFile)
     case text(TextElement)
     case shape(ShapeElement)
@@ -68,7 +68,7 @@ enum ElementPayload: Codable {
 }
 
 /// Image element metadata stored in JSON; actual image data is in Assets/
-struct ImageElementFile: Codable {
+nonisolated struct ImageElementFile: Codable {
     var id: UUID
     var assetFilename: String
     var position: CGPoint

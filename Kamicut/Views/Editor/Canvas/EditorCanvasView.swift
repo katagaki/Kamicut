@@ -4,6 +4,7 @@ import SwiftUI
 
 struct EditorCanvasView: View {
     @Bindable var editor: EditorState
+    @Environment(\.displayScale) private var displayScale
 
     private var canvasSize: CGSize { editor.document.template.canvasSize }
 
@@ -14,7 +15,7 @@ struct EditorCanvasView: View {
 
             // Background image (image area only, unless bleed)
             if let backgroundImg = editor.document.backgroundImage {
-                let maxPixel = max(canvasSize.width, canvasSize.height) * UIScreen.main.scale
+                let maxPixel = max(canvasSize.width, canvasSize.height) * displayScale
                 if let uiImg = ImageDownsampler.displayImage(for: backgroundImg, maxPixelSize: maxPixel) {
                     backgroundImageLayer(uiImg)
                 }

@@ -133,6 +133,23 @@ final class EditorState {
         if selectedShapeID == id { selectedShapeID = nil }
     }
 
+    func renameLayer(id: UUID, name: String) {
+        guard let index = document.layers.firstIndex(where: { $0.id == id }) else { return }
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let newName: String? = trimmed.isEmpty ? nil : trimmed
+        switch document.layers[index] {
+        case .image(var img):
+            img.customName = newName
+            document.layers[index] = .image(img)
+        case .text(var txt):
+            txt.customName = newName
+            document.layers[index] = .text(txt)
+        case .shape(var shp):
+            shp.customName = newName
+            document.layers[index] = .shape(shp)
+        }
+    }
+
     var selectedLayerLabel: String {
         let id = selectedTextID ?? selectedShapeID ?? selectedImageID
         guard let id, let layer = document.layers.first(where: { $0.id == id }) else { return "" }

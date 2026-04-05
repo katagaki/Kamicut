@@ -146,7 +146,8 @@ struct SquiggleEditorView: View {
         let lightTraits = UITraitCollection(userInterfaceStyle: .light)
         var image: UIImage!
         lightTraits.performAsCurrent {
-            image = drawing.image(from: bounds, scale: UIScreen.main.scale)
+            let drawingScale = UITraitCollection.current.displayScale
+            image = drawing.image(from: bounds, scale: drawingScale)
         }
         editor.addOverlayImage(image)
         dismiss()

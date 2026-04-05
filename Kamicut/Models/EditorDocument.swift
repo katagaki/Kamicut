@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Editor Document
 
 /// Top-level model representing the full state of a circle cut document.
-struct EditorDocument: Codable, Sendable {
+nonisolated struct EditorDocument: Codable, Sendable {
     var id: UUID = UUID()
     var circleName: String = ""
     var template: CircleCutTemplate = .templateA

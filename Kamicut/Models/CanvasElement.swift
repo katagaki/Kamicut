@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Canvas Element Base
 
-enum CanvasElementType: String, Codable {
+nonisolated enum CanvasElementType: String, Codable {
     case image
     case text
     case shape
@@ -11,12 +11,13 @@ enum CanvasElementType: String, Codable {
 // MARK: - Image Cache
 
 /// Global cache so repeated accesses to `ImageElement.uiImage` don't re-decode.
-private let _imageCache = NSCache<NSData, UIImage>()
+nonisolated(unsafe) private let _imageCache = NSCache<NSData, UIImage>()
 
 // MARK: - Image Element
 
-struct ImageElement: Identifiable, Codable {
+nonisolated struct ImageElement: Identifiable, Codable {
     var id: UUID = UUID()
+    var customName: String?
     var imageData: Data
     /// Position as fraction of canvas (0–1)
     var position: CGPoint = CGPoint(x: 0.5, y: 0.5)
@@ -41,7 +42,7 @@ struct ImageElement: Identifiable, Codable {
 
 // MARK: - Text Style
 
-struct TextShadowStyle: Codable, Hashable {
+nonisolated struct TextShadowStyle: Codable, Hashable {
     var enabled: Bool = false
     var color: CodableColor = CodableColor(color: UIColor.black)
     var radius: CGFloat = 2
@@ -49,14 +50,15 @@ struct TextShadowStyle: Codable, Hashable {
     var offsetY: CGFloat = 1
 }
 
-struct TextOutlineStyle: Codable, Hashable {
+nonisolated struct TextOutlineStyle: Codable, Hashable {
     var enabled: Bool = false
     var color: CodableColor = CodableColor(color: UIColor.white)
     var width: CGFloat = 1.5
 }
 
-struct TextElement: Identifiable, Codable {
+nonisolated struct TextElement: Identifiable, Codable {
     var id: UUID = UUID()
+    var customName: String?
     var content: String = ""
     var fontName: String = "HiraginoSans-W3"
     var fontSize: CGFloat = 32
@@ -71,7 +73,7 @@ struct TextElement: Identifiable, Codable {
 
 // MARK: - Shape Element
 
-enum ShapeKind: String, Codable, CaseIterable, Identifiable {
+nonisolated enum ShapeKind: String, Codable, CaseIterable, Identifiable {
     case square
     case rectangle
     case circle
@@ -117,8 +119,9 @@ enum ShapeKind: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-struct ShapeElement: Identifiable, Codable {
+nonisolated struct ShapeElement: Identifiable, Codable {
     var id: UUID = UUID()
+    var customName: String?
     var shapeKind: ShapeKind = .rectangle
     /// Position as fraction of canvas (0–1)
     var position: CGPoint = CGPoint(x: 0.5, y: 0.5)
@@ -135,7 +138,7 @@ struct ShapeElement: Identifiable, Codable {
 
 // MARK: - Canvas Layer
 
-enum CanvasLayer: Identifiable, Codable {
+nonisolated enum CanvasLayer: Identifiable, Codable {
     case image(ImageElement)
     case text(TextElement)
     case shape(ShapeElement)
@@ -148,14 +151,25 @@ enum CanvasLayer: Identifiable, Codable {
         }
     }
 
+    var customName: String? {
+        switch self {
+        case .image(let img): return img.customName
+        case .text(let txt): return txt.customName
+        case .shape(let shp): return shp.customName
+        }
+    }
+
     var label: String {
         switch self {
-        case .image: return String(localized: "Layers.Image")
+        case .image(let img):
+            return img.customName ?? String(localized: "Layers.Image")
         case .text(let txt):
+            if let name = txt.customName { return name }
             return txt.content.isEmpty
                 ? String(localized: "Layers.Text")
                 : String(txt.content.prefix(20))
-        case .shape(let shp): return shp.shapeKind.localizedName
+        case .shape(let shp):
+            return shp.customName ?? shp.shapeKind.localizedName
         }
     }
 
@@ -170,7 +184,7 @@ enum CanvasLayer: Identifiable, Codable {
 
 // MARK: - Space Number
 
-enum SpaceNumberPosition: String, Codable, CaseIterable {
+nonisolated enum SpaceNumberPosition: String, Codable, CaseIterable {
     case textArea
     case textAreaLeading
     case textAreaTrailing
@@ -192,7 +206,7 @@ enum SpaceNumberPosition: String, Codable, CaseIterable {
     }
 }
 
-struct SpaceNumberInfo: Codable {
+nonisolated struct SpaceNumberInfo: Codable {
     var text: String = ""
     var position: SpaceNumberPosition = .textArea
     var fontName: String = "HiraginoSans-W6"
@@ -202,7 +216,7 @@ struct SpaceNumberInfo: Codable {
 
 // MARK: - Bleed Option
 
-enum BleedOption: String, Codable, CaseIterable {
+nonisolated enum BleedOption: String, Codable, CaseIterable {
     case none
     case full
 
@@ -216,7 +230,7 @@ enum BleedOption: String, Codable, CaseIterable {
 
 // MARK: - CodableColor helper
 
-struct CodableColor: Codable, Hashable {
+nonisolated struct CodableColor: Codable, Hashable {
     var red: Double
     var green: Double
     var blue: Double

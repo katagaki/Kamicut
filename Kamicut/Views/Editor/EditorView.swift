@@ -95,8 +95,18 @@ struct EditorView: View {
                     .navigationTransition(.zoom(sourceID: "layerManager", in: transitionNamespace))
             }
             .sheet(isPresented: Binding(
-                get: { editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil },
-                set: { if !$0 { editor.selectedTextID = nil; editor.selectedShapeID = nil; editor.selectedImageID = nil } }
+                get: {
+                    editor.selectedTextID != nil
+                    || editor.selectedShapeID != nil
+                    || editor.selectedImageID != nil
+                },
+                set: {
+                    if !$0 {
+                        editor.selectedTextID = nil
+                        editor.selectedShapeID = nil
+                        editor.selectedImageID = nil
+                    }
+                }
             )) {
                 SelectedElementInspectorView(editor: editor)
                     .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)

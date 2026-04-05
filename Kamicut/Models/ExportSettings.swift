@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Export Format
 
-enum ExportFormat: String, Codable, CaseIterable, Identifiable {
+nonisolated enum ExportFormat: String, Codable, CaseIterable, Identifiable {
     case png
     case jpg
 
@@ -23,7 +23,7 @@ enum ExportFormat: String, Codable, CaseIterable, Identifiable {
 
 // MARK: - Export Color Mode
 
-enum ExportColorMode: String, Codable, CaseIterable, Identifiable {
+nonisolated enum ExportColorMode: String, Codable, CaseIterable, Identifiable {
     case color
     case blackAndWhite
 
@@ -38,7 +38,7 @@ enum ExportColorMode: String, Codable, CaseIterable, Identifiable {
 
 // MARK: - Export Resolution
 
-enum ExportResolution: Int, Codable, CaseIterable, Identifiable {
+nonisolated enum ExportResolution: Int, Codable, CaseIterable, Identifiable {
     case low = 150
     case medium = 300
     case high = 350
@@ -57,7 +57,7 @@ enum ExportResolution: Int, Codable, CaseIterable, Identifiable {
 
 // MARK: - Export Settings
 
-struct ExportSettings: Codable {
+nonisolated struct ExportSettings: Codable {
     var format: ExportFormat = .png
     var colorMode: ExportColorMode = .color
     var resolution: ExportResolution = .high

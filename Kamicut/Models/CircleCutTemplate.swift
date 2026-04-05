@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Text Area Position
 
-enum TextAreaPosition: String, Codable, CaseIterable {
+nonisolated enum TextAreaPosition: String, Codable, CaseIterable {
     case top
     case bottom
 
@@ -16,7 +16,7 @@ enum TextAreaPosition: String, Codable, CaseIterable {
 
 // MARK: - Template
 
-struct CircleCutTemplate: Identifiable, Hashable, Codable {
+nonisolated struct CircleCutTemplate: Identifiable, Hashable, Codable {
     var id: UUID = UUID()
     var name: String
     var displayName: String
@@ -128,7 +128,7 @@ struct CircleCutTemplate: Identifiable, Hashable, Codable {
 
 // MARK: - Predefined Templates
 
-extension CircleCutTemplate {
+nonisolated extension CircleCutTemplate {
     // All sizes in pixels.
 
     /// Comiket サークルカットテンプレートA (635×903px)

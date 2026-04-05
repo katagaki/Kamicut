@@ -254,6 +254,23 @@
         }
       }
     },
+    "Common.Rename" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前を変更"
+          }
+        }
+      }
+    },
     "Common.Save" : {
       "extractionState" : "manual",
       "localizations" : {
