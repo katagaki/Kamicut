@@ -211,4 +211,3 @@ struct ShapeElementView: View {
         }
     }
 }
-

@@ -11,7 +11,7 @@ struct EditorView: View {
 
     private var isAnySheetActive: Bool {
         editor.showTemplatePicker || editor.showProjectSettings || editor.showExportSheet ||
-        editor.showLayerManager || editor.showBackgroundSettings ||
+        editor.showLayerManager ||
         editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil
     }
 
@@ -79,6 +79,7 @@ struct EditorView: View {
                     .presentationDetents([.height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .presentationContentInteraction(.scrolls)
+                    .interactiveDismissDisabled()
             }
             .sheet(isPresented: $editor.showExportSheet) {
                 ExportSheetView(editor: editor)
@@ -90,13 +91,8 @@ struct EditorView: View {
                     .presentationDetents([.height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .presentationContentInteraction(.scrolls)
+                    .interactiveDismissDisabled()
                     .navigationTransition(.zoom(sourceID: "layerManager", in: transitionNamespace))
-            }
-            .sheet(isPresented: $editor.showBackgroundSettings) {
-                BackgroundSettingsView(editor: editor)
-                    .presentationDetents([.height(300), .large], selection: $sheetDetent)
-                    .presentationBackgroundInteraction(.enabled)
-                    .presentationContentInteraction(.scrolls)
             }
             .sheet(isPresented: Binding(
                 get: { editor.selectedTextID != nil || editor.selectedShapeID != nil || editor.selectedImageID != nil },
@@ -106,6 +102,7 @@ struct EditorView: View {
                     .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .presentationContentInteraction(.scrolls)
+                    .interactiveDismissDisabled()
             }
             .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
                 SquiggleEditorView(editor: editor)
