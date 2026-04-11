@@ -23,7 +23,6 @@ struct EditorView: View {
             .ignoresSafeArea()
             .ignoresSafeArea(.keyboard)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(useInspector ? .automatic : .editor)
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {

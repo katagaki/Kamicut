@@ -10,13 +10,9 @@ struct ExportSheetView: View {
     private let renderer = CircleCutRenderer()
 
     var body: some View {
-        if isInspector {
+        NavigationStack {
             exportContent
-        } else {
-            NavigationStack {
-                exportContent
-                    .toolbarRole(.navigationStack)
-            }
+                .navigationBarBackButtonHidden(isInspector)
         }
     }
 

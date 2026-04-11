@@ -15,13 +15,9 @@ struct TemplatePickerView: View {
     }
 
     var body: some View {
-        if isInspector {
+        NavigationStack {
             templateContent
-        } else {
-            NavigationStack {
-                templateContent
-                    .toolbarRole(.navigationStack)
-            }
+                .navigationBarBackButtonHidden(isInspector)
         }
     }
 

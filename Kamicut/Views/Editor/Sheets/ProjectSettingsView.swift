@@ -9,13 +9,9 @@ struct ProjectSettingsView: View {
     @Environment(\.isInspectorPresentation) private var isInspector
 
     var body: some View {
-        if isInspector {
+        NavigationStack {
             settingsContent
-        } else {
-            NavigationStack {
-                settingsContent
-                    .toolbarRole(.navigationStack)
-            }
+                .navigationBarBackButtonHidden(isInspector)
         }
     }
 

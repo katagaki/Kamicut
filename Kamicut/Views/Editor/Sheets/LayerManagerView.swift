@@ -19,16 +19,11 @@ struct LayerManagerView: View {
     @FocusState private var renameFieldFocused: Bool
 
     var body: some View {
-        if isInspector {
+        NavigationStack {
             layerContent
-                .onAppear { loadBackgroundState() }
-        } else {
-            NavigationStack {
-                layerContent
-                    .toolbarRole(.navigationStack)
-            }
-            .onAppear { loadBackgroundState() }
+                .navigationBarBackButtonHidden(isInspector)
         }
+        .onAppear { loadBackgroundState() }
     }
 
     private var layerContent: some View {
