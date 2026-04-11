@@ -31,23 +31,43 @@ struct EditorView: View {
                     } label: {
                         Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
                     }
-                    Menu {
+                    if useInspector {
                         Button {
                             editor.showTemplatePicker = true
                         } label: {
-                            Label(String(localized: "More.Template"), systemImage: "rectangle.on.rectangle")
+                            Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
                         }
                         Button {
                             editor.showProjectSettings = true
                         } label: {
-                            Label(String(localized: "More.DocumentSettings"), systemImage: "doc.badge.gearshape")
+                            Label(String(localized: "Toolbar.Document"), systemImage: "doc.badge.gearshape")
                         }
-                        Divider()
-                        Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
-                            Label(String(localized: "More.SourceCode"), systemImage: "curlybraces")
+                        Menu {
+                            Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
+                                Label(String(localized: "More.SourceCode"), systemImage: "curlybraces")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
                         }
-                    } label: {
-                        Image(systemName: "ellipsis")
+                    } else {
+                        Menu {
+                            Button {
+                                editor.showTemplatePicker = true
+                            } label: {
+                                Label(String(localized: "More.Template"), systemImage: "rectangle.on.rectangle")
+                            }
+                            Button {
+                                editor.showProjectSettings = true
+                            } label: {
+                                Label(String(localized: "More.DocumentSettings"), systemImage: "doc.badge.gearshape")
+                            }
+                            Divider()
+                            Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
+                                Label(String(localized: "More.SourceCode"), systemImage: "curlybraces")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                        }
                     }
                 }
             }
