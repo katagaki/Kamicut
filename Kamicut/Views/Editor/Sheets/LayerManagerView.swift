@@ -6,6 +6,7 @@ import PhotosUI
 struct LayerManagerView: View {
     @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isInspectorPresentation) private var isInspector
 
     // Background settings state
     @State private var backgroundPickerItem: PhotosPickerItem?
@@ -18,8 +19,20 @@ struct LayerManagerView: View {
     @FocusState private var renameFieldFocused: Bool
 
     var body: some View {
-        NavigationStack {
-            List {
+        if isInspector {
+            layerContent
+                .onAppear { loadBackgroundState() }
+        } else {
+            NavigationStack {
+                layerContent
+                    .toolbarRole(.navigationStack)
+            }
+            .onAppear { loadBackgroundState() }
+        }
+    }
+
+    private var layerContent: some View {
+        List {
                 // User layers (reorderable)
                 Section {
                     if editor.document.layers.isEmpty {
@@ -103,22 +116,21 @@ struct LayerManagerView: View {
                     }
                 }
             }
-            .listStyle(.insetGrouped)
-            .listSectionSpacing(.compact)
-            .navigationTitle(String(localized: "Layers.Title"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.navigationStack)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .confirm) { dismiss() }
-                }
+        .listStyle(.insetGrouped)
+        .listSectionSpacing(.compact)
+        .navigationTitle(String(localized: "Layers.Title"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(role: .confirm) { dismiss() }
             }
         }
-        .onAppear {
-            if let existing = editor.document.backgroundColor {
-                hasBackgroundColor = true
-                backgroundColor = existing.color
-            }
+    }
+
+    private func loadBackgroundState() {
+        if let existing = editor.document.backgroundColor {
+            hasBackgroundColor = true
+            backgroundColor = existing.color
         }
     }
 

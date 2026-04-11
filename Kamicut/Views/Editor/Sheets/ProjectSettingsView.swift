@@ -6,10 +6,21 @@ import SwiftUI
 struct ProjectSettingsView: View {
     @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isInspectorPresentation) private var isInspector
 
     var body: some View {
-        NavigationStack {
-            Form {
+        if isInspector {
+            settingsContent
+        } else {
+            NavigationStack {
+                settingsContent
+                    .toolbarRole(.navigationStack)
+            }
+        }
+    }
+
+    private var settingsContent: some View {
+        Form {
                 // Circle Info
                 Section(String(localized: "Document.CircleInfo")) {
                     TextField(String(localized: "Document.CircleName"), text: $editor.document.circleName)
@@ -184,15 +195,13 @@ struct ProjectSettingsView: View {
                     }
                 }
             }
-            .listSectionSpacing(.compact)
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(String(localized: "Document.Title"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.navigationStack)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .confirm) { dismiss() }
-                }
+        .listSectionSpacing(.compact)
+        .scrollDismissesKeyboard(.interactively)
+        .navigationTitle(String(localized: "Document.Title"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(role: .confirm) { dismiss() }
             }
         }
     }

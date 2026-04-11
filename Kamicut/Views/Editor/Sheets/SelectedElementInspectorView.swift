@@ -7,6 +7,7 @@ import SwiftUI
 struct SelectedElementInspectorView: View {
     @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isInspectorPresentation) private var isInspector
     @State private var showDeleteConfirmation = false
 
     private var selectedID: UUID? {
@@ -14,51 +15,59 @@ struct SelectedElementInspectorView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if let id = editor.selectedTextID,
-                   let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
-                   case .text = editor.document.layers[layerIdx] {
-                    textInspector(layerIdx: layerIdx)
-                } else if let id = editor.selectedShapeID,
-                          let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
-                          case .shape = editor.document.layers[layerIdx] {
-                    shapeInspector(layerIdx: layerIdx)
-                } else if let id = editor.selectedImageID,
-                          let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
-                          case .image = editor.document.layers[layerIdx] {
-                    imageInspector(layerIdx: layerIdx)
-                }
+        if isInspector {
+            inspectorContent
+        } else {
+            NavigationStack {
+                inspectorContent
+                    .toolbarRole(.navigationStack)
             }
-            .navigationTitle(editor.selectedLayerLabel)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.navigationStack)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(role: .destructive) {
-                        showDeleteConfirmation = true
-                    } label: {
-                        Image(systemName: "trash")
+        }
+    }
+
+    private var inspectorContent: some View {
+        Group {
+            if let id = editor.selectedTextID,
+               let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+               case .text = editor.document.layers[layerIdx] {
+                textInspector(layerIdx: layerIdx)
+            } else if let id = editor.selectedShapeID,
+                      let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+                      case .shape = editor.document.layers[layerIdx] {
+                shapeInspector(layerIdx: layerIdx)
+            } else if let id = editor.selectedImageID,
+                      let layerIdx = editor.document.layers.firstIndex(where: { $0.id == id }),
+                      case .image = editor.document.layers[layerIdx] {
+                imageInspector(layerIdx: layerIdx)
+            }
+        }
+        .navigationTitle(editor.selectedLayerLabel)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(role: .destructive) {
+                    showDeleteConfirmation = true
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .tint(.red)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(role: .confirm) { dismiss() }
+            }
+        }
+        .alert(String(localized: "Inspector.DeleteElement"), isPresented: $showDeleteConfirmation) {
+            Button(String(localized: "Common.Delete"), role: .destructive) {
+                if let id = selectedID {
+                    withAnimation(.smooth.speed(2.0)) {
+                        editor.removeLayer(id: id)
                     }
-                    .tint(.red)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(role: .confirm) { dismiss() }
+                    dismiss()
                 }
             }
-            .alert(String(localized: "Inspector.DeleteElement"), isPresented: $showDeleteConfirmation) {
-                Button(String(localized: "Common.Delete"), role: .destructive) {
-                    if let id = selectedID {
-                        withAnimation(.smooth.speed(2.0)) {
-                            editor.removeLayer(id: id)
-                        }
-                        dismiss()
-                    }
-                }
-                Button(String(localized: "Common.Cancel"), role: .cancel) {}
-            } message: {
-                Text("Inspector.DeleteConfirmation")
-            }
+            Button(String(localized: "Common.Cancel"), role: .cancel) {}
+        } message: {
+            Text("Inspector.DeleteConfirmation")
         }
     }
 

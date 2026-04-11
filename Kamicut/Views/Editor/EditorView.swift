@@ -23,7 +23,7 @@ struct EditorView: View {
             .ignoresSafeArea()
             .ignoresSafeArea(.keyboard)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.editor)
+            .toolbarRole(useInspector ? .automatic : .editor)
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
@@ -169,6 +169,19 @@ struct EditorView: View {
     }
 }
 
+// MARK: - Inspector Presentation Environment
+
+private struct InspectorPresentationKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var isInspectorPresentation: Bool {
+        get { self[InspectorPresentationKey.self] }
+        set { self[InspectorPresentationKey.self] = newValue }
+    }
+}
+
 // MARK: - Adaptive Sheet / Inspector
 
 private extension View {
@@ -181,6 +194,7 @@ private extension View {
         if useInspector {
             self.inspector(isPresented: isPresented) {
                 content()
+                    .environment(\.isInspectorPresentation, true)
                     .inspectorColumnWidth(min: 320, ideal: 380, max: 480)
             }
         } else {
