@@ -4,10 +4,13 @@ import SwiftUI
 
 struct EditorView: View {
     @Bindable var editor: EditorState
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var sheetDetent: PresentationDetent = .height(300)
     @State private var exportSheetDetent: PresentationDetent = .large
     @State private var zoomResetToken: Int = 0
     @Namespace private var transitionNamespace
+
+    private var useInspector: Bool { horizontalSizeClass == .regular }
 
     private var isAnySheetActive: Bool {
         editor.showTemplatePicker || editor.showProjectSettings || editor.showExportSheet ||
@@ -68,25 +71,25 @@ struct EditorView: View {
             .onChange(of: editor.document.template.canvasSize) {
                 zoomResetToken += 1
             }
-            // Sheets
-            .sheet(isPresented: $editor.showTemplatePicker) {
+            // Sheets (inspector on iPad, sheet on iPhone)
+            .adaptiveSheet(isPresented: $editor.showTemplatePicker, useInspector: useInspector) {
                 TemplatePickerView(editor: editor)
                     .presentationDetents([.large])
                     .presentationContentInteraction(.scrolls)
             }
-            .sheet(isPresented: $editor.showProjectSettings) {
+            .adaptiveSheet(isPresented: $editor.showProjectSettings, useInspector: useInspector) {
                 ProjectSettingsView(editor: editor)
                     .presentationDetents([.height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
                     .presentationContentInteraction(.scrolls)
                     .interactiveDismissDisabled()
             }
-            .sheet(isPresented: $editor.showExportSheet) {
+            .adaptiveSheet(isPresented: $editor.showExportSheet, useInspector: useInspector) {
                 ExportSheetView(editor: editor)
                     .presentationDetents([.medium, .large], selection: $exportSheetDetent)
                     .presentationContentInteraction(.scrolls)
             }
-            .sheet(isPresented: $editor.showLayerManager) {
+            .adaptiveSheet(isPresented: $editor.showLayerManager, useInspector: useInspector) {
                 LayerManagerView(editor: editor)
                     .presentationDetents([.height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
@@ -94,7 +97,7 @@ struct EditorView: View {
                     .interactiveDismissDisabled()
                     .navigationTransition(.zoom(sourceID: "layerManager", in: transitionNamespace))
             }
-            .sheet(isPresented: Binding(
+            .adaptiveSheet(isPresented: Binding(
                 get: {
                     editor.selectedTextID != nil
                     || editor.selectedShapeID != nil
@@ -107,7 +110,7 @@ struct EditorView: View {
                         editor.selectedImageID = nil
                     }
                 }
-            )) {
+            ), useInspector: useInspector) {
                 SelectedElementInspectorView(editor: editor)
                     .presentationDetents([.height(100), .height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
@@ -141,6 +144,28 @@ struct EditorView: View {
                             .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
                     }
                     .padding(16)
+            }
+        }
+    }
+}
+
+// MARK: - Adaptive Sheet / Inspector
+
+private extension View {
+    @ViewBuilder
+    func adaptiveSheet<Content: View>(
+        isPresented: Binding<Bool>,
+        useInspector: Bool,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        if useInspector {
+            self.inspector(isPresented: isPresented) {
+                content()
+                    .inspectorColumnWidth(min: 320, ideal: 380, max: 480)
+            }
+        } else {
+            self.sheet(isPresented: isPresented) {
+                content()
             }
         }
     }
