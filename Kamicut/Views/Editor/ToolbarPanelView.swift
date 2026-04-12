@@ -18,7 +18,7 @@ struct ToolbarPanelView: View {
     var body: some View {
         HStack(spacing: 16) {
             Button {
-                editor.showLayerManager = true
+                editor.showLayerManager.toggle()
             } label: {
                 Image(systemName: "square.3.layers.3d")
 

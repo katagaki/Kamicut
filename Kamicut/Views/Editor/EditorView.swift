@@ -19,6 +19,19 @@ struct EditorView: View {
     }
 
     var body: some View {
+        HStack(spacing: 0) {
+            if useInspector && editor.showLayerManager {
+                LayerManagerView(editor: editor)
+                    .frame(width: 320)
+                    .environment(\.isInspectorPresentation, true)
+                Divider()
+            }
+            mainEditor
+        }
+    }
+
+    @ViewBuilder
+    private var mainEditor: some View {
         canvasPreview
             .ignoresSafeArea()
             .ignoresSafeArea(.keyboard)
@@ -61,7 +74,11 @@ struct EditorView: View {
                     .presentationDetents([.medium, .large], selection: $exportSheetDetent)
                     .presentationContentInteraction(.scrolls)
             }
-            .adaptiveSheet(isPresented: $editor.showLayerManager, useInspector: useInspector) {
+            // Layer manager: left sidebar on iPad (handled above), sheet on iPhone
+            .sheet(isPresented: Binding(
+                get: { !useInspector && editor.showLayerManager },
+                set: { if !$0 { editor.showLayerManager = false } }
+            )) {
                 LayerManagerView(editor: editor)
                     .presentationDetents([.height(300), .large], selection: $sheetDetent)
                     .presentationBackgroundInteraction(.enabled)
@@ -103,14 +120,14 @@ struct EditorView: View {
                 if useInspector {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            editor.showTemplatePicker = true
+                            editor.showTemplatePicker.toggle()
                         } label: {
                             Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
                         }
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            editor.showProjectSettings = true
+                            editor.showProjectSettings.toggle()
                         } label: {
                             Label(String(localized: "Toolbar.Document"), systemImage: "doc.badge.gearshape")
                         }
@@ -120,12 +137,12 @@ struct EditorView: View {
                     Menu {
                         if !useInspector {
                             Button {
-                                editor.showTemplatePicker = true
+                                editor.showTemplatePicker.toggle()
                             } label: {
                                 Label(String(localized: "More.Template"), systemImage: "rectangle.on.rectangle")
                             }
                             Button {
-                                editor.showProjectSettings = true
+                                editor.showProjectSettings.toggle()
                             } label: {
                                 Label(String(localized: "More.DocumentSettings"), systemImage: "doc.badge.gearshape")
                             }
