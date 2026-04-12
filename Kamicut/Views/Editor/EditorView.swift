@@ -23,53 +23,6 @@ struct EditorView: View {
             .ignoresSafeArea()
             .ignoresSafeArea(.keyboard)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        editor.showExportSheet = true
-                    } label: {
-                        Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
-                    }
-                }
-                if useInspector {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            editor.showTemplatePicker = true
-                        } label: {
-                            Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
-                        }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            editor.showProjectSettings = true
-                        } label: {
-                            Label(String(localized: "Toolbar.Document"), systemImage: "doc.badge.gearshape")
-                        }
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        if !useInspector {
-                            Button {
-                                editor.showTemplatePicker = true
-                            } label: {
-                                Label(String(localized: "More.Template"), systemImage: "rectangle.on.rectangle")
-                            }
-                            Button {
-                                editor.showProjectSettings = true
-                            } label: {
-                                Label(String(localized: "More.DocumentSettings"), systemImage: "doc.badge.gearshape")
-                            }
-                            Divider()
-                        }
-                        Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
-                            Label(String(localized: "More.SourceCode"), systemImage: "curlybraces")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                    }
-                }
-            }
             .safeAreaInset(edge: .bottom) {
                 ToolbarPanelView(editor: editor, transitionNamespace: transitionNamespace)
             }
@@ -138,6 +91,53 @@ struct EditorView: View {
             }
             .fullScreenCover(isPresented: $editor.showSquiggleEditor) {
                 SquiggleEditorView(editor: editor)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        editor.showExportSheet = true
+                    } label: {
+                        Label(String(localized: "Toolbar.Export"), systemImage: "square.and.arrow.up")
+                    }
+                }
+                if useInspector {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            editor.showTemplatePicker = true
+                        } label: {
+                            Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
+                        }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            editor.showProjectSettings = true
+                        } label: {
+                            Label(String(localized: "Toolbar.Document"), systemImage: "doc.badge.gearshape")
+                        }
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        if !useInspector {
+                            Button {
+                                editor.showTemplatePicker = true
+                            } label: {
+                                Label(String(localized: "More.Template"), systemImage: "rectangle.on.rectangle")
+                            }
+                            Button {
+                                editor.showProjectSettings = true
+                            } label: {
+                                Label(String(localized: "More.DocumentSettings"), systemImage: "doc.badge.gearshape")
+                            }
+                            Divider()
+                        }
+                        Link(destination: URL(string: "https://github.com/katagaki/Kamicut")!) {
+                            Label(String(localized: "More.SourceCode"), systemImage: "curlybraces")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
+                }
             }
     }
 
