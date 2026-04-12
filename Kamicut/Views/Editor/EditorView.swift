@@ -20,7 +20,7 @@ struct EditorView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            if useInspector && editor.showLayerManager {
+            if useInspector {
                 LayerManagerView(editor: editor)
                     .frame(width: 320)
                     .environment(\.isInspectorPresentation, true)
@@ -124,6 +124,7 @@ struct EditorView: View {
                         } label: {
                             Label(String(localized: "Toolbar.Template"), systemImage: "rectangle.on.rectangle")
                         }
+                        .tint(editor.showTemplatePicker ? .accentColor : nil)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -131,6 +132,7 @@ struct EditorView: View {
                         } label: {
                             Label(String(localized: "Toolbar.Document"), systemImage: "doc.badge.gearshape")
                         }
+                        .tint(editor.showProjectSettings ? .accentColor : nil)
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {

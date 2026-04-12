@@ -15,10 +15,16 @@ struct TemplatePickerView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        if isInspector {
             templateContent
-                .toolbarRole(.navigationStack)
-                .navigationBarBackButtonHidden(isInspector)
+                .onChange(of: editingTemplate) { _, newValue in
+                    editor.document.template = newValue
+                }
+        } else {
+            NavigationStack {
+                templateContent
+                    .toolbarRole(.navigationStack)
+            }
         }
     }
 

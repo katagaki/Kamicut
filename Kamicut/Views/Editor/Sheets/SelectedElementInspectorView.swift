@@ -15,10 +15,13 @@ struct SelectedElementInspectorView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        if isInspector {
             inspectorContent
-                .toolbarRole(.navigationStack)
-                .navigationBarBackButtonHidden(isInspector)
+        } else {
+            NavigationStack {
+                inspectorContent
+                    .toolbarRole(.navigationStack)
+            }
         }
     }
 
@@ -41,16 +44,18 @@ struct SelectedElementInspectorView: View {
         .navigationTitle(editor.selectedLayerLabel)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(role: .destructive) {
-                    showDeleteConfirmation = true
-                } label: {
-                    Image(systemName: "trash")
+            if !isInspector {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(role: .destructive) {
+                        showDeleteConfirmation = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .tint(.red)
                 }
-                .tint(.red)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(role: .confirm) { dismiss() }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .confirm) { dismiss() }
+                }
             }
         }
         .alert(String(localized: "Inspector.DeleteElement"), isPresented: $showDeleteConfirmation) {
@@ -68,6 +73,22 @@ struct SelectedElementInspectorView: View {
         }
     }
 
+    @ViewBuilder
+    private var deleteSection: some View {
+        Section {
+            Button(role: .destructive) {
+                showDeleteConfirmation = true
+            } label: {
+                HStack {
+                    Spacer()
+                    Label(String(localized: "Inspector.DeleteElement"), systemImage: "trash")
+                        .foregroundStyle(.red)
+                    Spacer()
+                }
+            }
+        }
+    }
+
     // MARK: - Text Inspector (inline settings list)
 
     private func textInspector(layerIdx: Int) -> some View {
@@ -81,6 +102,9 @@ struct SelectedElementInspectorView: View {
 
         return Form {
             TextPropertiesSections(element: textBinding)
+            if isInspector {
+                deleteSection
+            }
         }
         .formStyle(.grouped)
         .listSectionSpacing(.compact)
@@ -100,6 +124,9 @@ struct SelectedElementInspectorView: View {
 
         return Form {
             ShapePropertiesSections(element: shapeBinding)
+            if isInspector {
+                deleteSection
+            }
         }
         .formStyle(.grouped)
         .listSectionSpacing(.compact)
@@ -119,6 +146,9 @@ struct SelectedElementInspectorView: View {
 
         return Form {
             ImagePropertiesSections(element: imageBinding)
+            if isInspector {
+                deleteSection
+            }
         }
         .formStyle(.grouped)
         .listSectionSpacing(.compact)

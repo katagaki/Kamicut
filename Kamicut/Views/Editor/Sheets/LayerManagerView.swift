@@ -19,10 +19,15 @@ struct LayerManagerView: View {
     @FocusState private var renameFieldFocused: Bool
 
     var body: some View {
-        NavigationStack {
-            layerContent
-                .toolbarRole(.navigationStack)
-                .navigationBarBackButtonHidden(isInspector)
+        Group {
+            if isInspector {
+                layerContent
+            } else {
+                NavigationStack {
+                    layerContent
+                        .toolbarRole(.navigationStack)
+                }
+            }
         }
         .onAppear { loadBackgroundState() }
     }
@@ -117,8 +122,10 @@ struct LayerManagerView: View {
         .navigationTitle(String(localized: "Layers.Title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(role: .confirm) { dismiss() }
+            if !isInspector {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(role: .confirm) { dismiss() }
+                }
             }
         }
     }
