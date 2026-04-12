@@ -12,7 +12,7 @@ struct ExportSheetView: View {
     var body: some View {
         NavigationStack {
             exportContent
-                .navigationBarBackButtonHidden(isInspector)
+                .toolbarRole(isInspector ? .editor : .navigationStack)
         }
     }
 
