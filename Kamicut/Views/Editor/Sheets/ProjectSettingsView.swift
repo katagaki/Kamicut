@@ -12,6 +12,7 @@ struct ProjectSettingsView: View {
         NavigationStack {
             settingsContent
                 .toolbarRole(isInspector ? .editor : .navigationStack)
+                .navigationBarBackButtonHidden(isInspector)
         }
     }
 
