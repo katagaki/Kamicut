@@ -21,7 +21,7 @@ struct LayerManagerView: View {
     var body: some View {
         NavigationStack {
             layerContent
-                .toolbarRole(isInspector ? .editor : .navigationStack)
+                .toolbarRole(.navigationStack)
                 .navigationBarBackButtonHidden(isInspector)
         }
         .onAppear { loadBackgroundState() }
