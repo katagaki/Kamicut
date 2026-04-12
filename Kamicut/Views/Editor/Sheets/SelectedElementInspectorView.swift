@@ -18,6 +18,7 @@ struct SelectedElementInspectorView: View {
         NavigationStack {
             inspectorContent
                 .toolbarRole(isInspector ? .editor : .navigationStack)
+                .navigationBarBackButtonHidden(isInspector)
         }
     }
 
