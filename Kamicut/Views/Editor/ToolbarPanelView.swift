@@ -9,23 +9,28 @@ import PhotosUI
 struct ToolbarPanelView: View {
     var editor: EditorState
     var transitionNamespace: Namespace.ID
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     @State private var overlayPickerItem: PhotosPickerItem?
     @State private var showPhotoPicker: Bool = false
 
     private let buttonSize: CGFloat = 52
 
+    private var useInspector: Bool { horizontalSizeClass == .regular }
+
     var body: some View {
         HStack(spacing: 16) {
-            Button {
-                editor.showLayerManager = true
-            } label: {
-                Image(systemName: "square.3.layers.3d")
+            if !useInspector {
+                Button {
+                    editor.showLayerManager.toggle()
+                } label: {
+                    Image(systemName: "square.3.layers.3d")
 
-                    .frame(width: buttonSize, height: buttonSize)
+                        .frame(width: buttonSize, height: buttonSize)
+                }
+                .glassEffect(.regular.interactive(), in: .circle)
+                .matchedTransitionSource(id: "layerManager", in: transitionNamespace)
             }
-            .glassEffect(.regular.interactive(), in: .circle)
-            .matchedTransitionSource(id: "layerManager", in: transitionNamespace)
 
             Spacer()
 

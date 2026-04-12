@@ -5,12 +5,20 @@ import SwiftUI
 struct ExportSheetView: View {
     @Bindable var editor: EditorState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isInspectorPresentation) private var isInspector
 
     private let renderer = CircleCutRenderer()
 
     var body: some View {
         NavigationStack {
-            Form {
+            exportContent
+                .toolbarRole(.navigationStack)
+                .navigationBarBackButtonHidden(isInspector)
+        }
+    }
+
+    private var exportContent: some View {
+        Form {
                 // Preview
                 Section {
                     HStack {
@@ -98,19 +106,17 @@ struct ExportSheetView: View {
                     .labelsHidden()
                 }
             }
-            .listSectionSpacing(.compact)
-            .environment(\.defaultMinListRowHeight, 0)
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(String(localized: "Toolbar.Export"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.navigationStack)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if #available(iOS 26, *) {
-                        Button(role: .close) { dismiss() }
-                    } else {
-                        Button(role: .cancel) { dismiss() } label: { Text("Common.Close") }
-                    }
+        .listSectionSpacing(.compact)
+        .environment(\.defaultMinListRowHeight, 0)
+        .scrollDismissesKeyboard(.interactively)
+        .navigationTitle(String(localized: "Toolbar.Export"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if #available(iOS 26, *) {
+                    Button(role: .close) { dismiss() }
+                } else {
+                    Button(role: .cancel) { dismiss() } label: { Text("Common.Close") }
                 }
             }
         }

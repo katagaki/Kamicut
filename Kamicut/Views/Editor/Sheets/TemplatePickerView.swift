@@ -5,6 +5,7 @@ import SwiftUI
 struct TemplatePickerView: View {
     var editor: EditorState
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isInspectorPresentation) private var isInspector
 
     @State private var editingTemplate: CircleCutTemplate
 
@@ -14,8 +15,21 @@ struct TemplatePickerView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
+        if isInspector {
+            templateContent
+                .onChange(of: editingTemplate) { _, newValue in
+                    editor.document.template = newValue
+                }
+        } else {
+            NavigationStack {
+                templateContent
+                    .toolbarRole(.navigationStack)
+            }
+        }
+    }
+
+    private var templateContent: some View {
+        Form {
                 // Predefined templates
                 Section("Template.PredefinedTemplates") {
                     ForEach(CircleCutTemplate.predefined) { tmpl in
@@ -159,33 +173,31 @@ struct TemplatePickerView: View {
                     )
                 }
             }
-            .scrollDismissesKeyboard(.interactively)
-            .navigationTitle(String(localized: "Toolbar.Template"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.navigationStack)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    if #available(iOS 26, *) {
-                        Button(role: .cancel) {
-                            dismiss()
-                        }
-                    } else {
-                        Button(String(localized: "Common.Cancel")) {
-                            dismiss()
-                        }
+        .scrollDismissesKeyboard(.interactively)
+        .navigationTitle(String(localized: "Toolbar.Template"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                if #available(iOS 26, *) {
+                    Button(role: .cancel) {
+                        dismiss()
+                    }
+                } else {
+                    Button(String(localized: "Common.Cancel")) {
+                        dismiss()
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    if #available(iOS 26, *) {
-                        Button(role: .confirm) {
-                            editor.document.template = editingTemplate
-                            dismiss()
-                        }
-                    } else {
-                        Button(String(localized: "Common.Close")) {
-                            editor.document.template = editingTemplate
-                            dismiss()
-                        }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                if #available(iOS 26, *) {
+                    Button(role: .confirm) {
+                        editor.document.template = editingTemplate
+                        dismiss()
+                    }
+                } else {
+                    Button(String(localized: "Common.Close")) {
+                        editor.document.template = editingTemplate
+                        dismiss()
                     }
                 }
             }
